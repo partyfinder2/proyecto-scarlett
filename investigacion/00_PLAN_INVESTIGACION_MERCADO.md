@@ -45,4 +45,5 @@ Auditoría técnica de plataformas que pagan en dólares:
 7. `07_REPORTE_MASTERMIND_VENICE_PSEUDOFACE.md`: Análisis agregado Pseudoface (250k creadoras), Método Zorro-5, Escalera de Identidad en 3 capas, cobro limpio en MX y arbitraje de tráfico externo.
 8. `08_RUTAS_LOW_COST_Y_CERO_PESOS.md`: Escalera de arranque según presupuesto (Nivel 0: $0 MXN con audio/pies, Nivel 1: <$300 MXN kit DIY, y reinversión inteligente con ganancias).
 9. `PROMPT_AUDITORIA_MULTI_IA_TESORO.md`: Prompt de auditoría cruzada (Skool.com + ThePornDude) para correr en Claude/ChatGPT/Grok.
+10. `PROMPT_MICRO_MONETIZACION_VIRAL.md`: Prompt de micro-monetizaciones de baja inversión (wishlists, tributos, packs) y viralidad en X/Reels con curiosidad y emojis.
 

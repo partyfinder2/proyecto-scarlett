@@ -67,3 +67,4 @@ Para arrancar con imagen limpia sin gastar en tiendas especializadas:
 2. **Agencias que cobran 30% a 50% de por vida:** Si la chica aprende a abrir su cuenta y hacer su promoción en TikTok/IG, regalar la mitad de su dinero es un error financiero grave.
 3. **Juguete interactivo antes del primer cobro:** No comprar Lovense hasta validar que la sala retiene y genera.
 4. **Cámaras profesionales (DSLR/Mirrorless):** Un celular de gama media bien iluminado con una lámpara fría de $150 pesos supera a una cámara de $15,000 pesos a oscuras.
+
