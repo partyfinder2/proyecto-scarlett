@@ -28,9 +28,9 @@
 ---
 
 ### BLOQUE 2: EL BLINDAJE DE PRIVACIDAD (Págs. 5 a 8)
-* **Pág. 5 — El Arte del Antifaz y el Alter Ego:**
-  - Cómo elegir tu máscara o antifaz (materiales mate que no reflejan luz LED).
-  - La técnica de la peluca de flequillo para burlar cualquier algoritmo de reconocimiento facial.
+* **Pág. 5 — El Stack Faceless de 3 Capas (El Secreto de la Kitsune):**
+  - Sistema operativo para sustituir el rostro: Capa 1 (Voz suave/ronroneos) + Capa 2 (Cola de zorro y lenguaje corporal) + Capa 3 (Lovense Lush con LED).
+  - Cómo elegir tu máscara o antifaz (materiales mate que no reflejan luz LED) y peluca de flequillo para inutilizar el reconocimiento biométrico.
 * **Pág. 6 — La Guía Maestra del Geobloqueo (Paso a Paso con Capturas):**
   - El botón exacto dentro del panel de control para bloquear México y países de habla hispana.
   - Cómo asegurarte de que ningún conocido, familiar o vecino pueda entrar a tu sala.
@@ -45,14 +45,14 @@
 ### BLOQUE 3: EL KIT DE TRABAJO Y EL ACCESORIO CLAVE (Págs. 9 a 12)
 * **Pág. 9 — El Poder de la Cola de Zorro (*Kemonomimi*):**
   - Por qué este accesorio específico dispara el CTR (tasa de clics) en las miniaturas de las páginas.
-  - Tipos de cola: broche exterior para ropa/lencería vs. bases anatómicas.
+  - Tipos de cola: broche exterior seguro para ropa/lencería ($200–$600 MXN) vs. bases anatómicas.
   - **[BOTÓN / ENLACE DE AFILIADO AMAZON]:** *«Consigue tu Kit de Zorro y Orejas Recomendado Aquí»*.
 * **Pág. 10 — Iluminación de Estudio con $500 Pesos:**
   - La técnica de los dos puntos: aro de luz a 45° + lámpara cálida de fondo.
   - **[ENLACE AMAZON]:** *«Aro de luz LED con tripié para celular»*.
-* **Pág. 11 — El Arma del Millón: Juguetes Interactivos Lovense:**
-  - Cómo funciona la sincronización por Bluetooth con las propinas del chat.
-  - Por qué las salas con juguete interactivo facturan hasta 5 veces más tokens por hora.
+* **Pág. 11 — El Arma del Millón: Lovense Lush y Calibración Matemática:**
+  - Sincronización Bluetooth con el chat y cómo convierte tokens en dopamina física inmediata.
+  - **Tabla de calibración de las Top Models:** 1–15 tokens (3s Low), 16–99 tokens (10s Med), 100–499 tokens (30s High), 500+ tokens (60–90s Ultra/Earthquake).
   - **[BOTÓN / ENLACE DE AFILIADO LOVENSE]:** *«Adquiere tu Lovense Lush Oficial con Descuento»*.
 * **Pág. 12 — Checklist de tu Habitación:**
   - Fondos limpios, gestión de cables, temperatura y postura cómoda.
@@ -62,12 +62,14 @@
 ### BLOQUE 4: DÓNDE REGISTRARTE Y GANAR EN DÓLARES (Págs. 13 a 17)
 * **Pág. 13 — La Gran Decisión: ¿Webcam en Vivo o Suscripciones?:**
   - Comparativa de modelos de negocio: Tráfico gratis inmediato (Stripchat/Chaturbate) vs. Ingresos pasivos recurrentes (Fansly/OnlyFans).
-* **Pág. 14 — Stripchat & Chaturbate (Guía Rápida de Alta):**
-  - Cómo verificar tu cuenta con tu identificación en menos de 24 horas (tu documento es privado para la empresa, nunca público).
+* **Pág. 14 — Stripchat vs Chaturbate (Horarios Pico y Datos 2026):**
+  - **Stripchat (Líder en México con 53.3% de tips):** Horario pico diurno (9:00 AM – 1:00 PM ET) y pagos semanales por Paxum.
+  - **Chaturbate (35% de tips y mayor retención):** Horario pico nocturno (10:00 PM – 2:00 AM ET) ideal para donadores de EE.UU.
+  - Guía de verificación en menos de 24 horas con INE privada.
   - **[BOTÓN DE AFILIADO]:** *«Regístrate como Modelo Verificada en Stripchat Aquí»*.
   - **[BOTÓN DE AFILIADO]:** *«Regístrate como Creadora en Chaturbate Aquí»*.
 * **Pág. 15 — Fansly (Tu Bastión de Suscripciones y Clips):**
-  - Por qué Fansly supera a OnlyFans en privacidad, opciones de pago y geobloqueo.
+  - Por qué Fansly supera a OnlyFans en privacidad, opciones de pago y geobloqueo (80% para la creadora).
   - **[BOTÓN DE AFILIADO]:** *«Abre tu Canal Exclusivo en Fansly»*.
 * **Pág. 16 — ManyVids (Cómo Vender Clips Grabados sin Transmitir en Vivo):**
   - Graba tu show una sola vez con el cosplay y véndelo una y otra vez a compradores internacionales.
@@ -77,15 +79,15 @@
 ---
 
 ### BLOQUE 5: EL MENÚ DE PROPINAS Y LA PSICOLOGÍA DEL DONADOR (Págs. 18 a 21)
-* **Pág. 18 — La Estructura del *Tip Menu* Ganador:**
-  - Plantilla copiable de menú de propinas en 3 niveles (Bajo, Medio, Alto) con precios calibrados en tokens.
+* **Pág. 18 — La Escalera de Tokens Magnética (Framework de 5 Niveles):**
+  - Menú estructurado con anclaje psicológico: Entrada (10–25 tks), Volumen Medio (50–150 tks), Comando Especial (111–222 tks), Anclaje Alto (500–999 tks) y Whale Tier (2,000+ tks).
 * **Pág. 19 — Los Comandos de la "Zorrita": Gamificación de la Sala:**
-  - Juegos de ruleta, metas colectivas de propinas (*Token Goals*) y cómo celebrar cada donación para incentivar la siguiente.
-* **Pág. 20 — Cómo Tratar a los Donadores VIP (*Whales*):**
-  - La psicología del cliente internacional: buscan compañía, dulzura, exclusividad y respeto a su fantasía.
-  - Cómo poner límites firmes sin ser grosera para mantener propinas recurrentes.
+  - Barras de meta públicas (*Goal Bars*), retos progresivos y competencia social en el chat en tiempo real.
+* **Pág. 20 — El Protocolo Zorro 80/20 (Retención y Fidelización de Whales):**
+  - Protocolo para identificar donadores de alto poder adquisitivo ($300–$1,000 USD/semana) en sus primeras 3 visitas.
+  - Scripts de bienvenida personalizada, exclusividad sin encuentros y listas VIP para clips temáticos.
 * **Pág. 21 — Prevención de Estafas y *Time-Wasters*:**
-  - Señales rojas de usuarios que piden cosas gratis por mensaje privado o prometen pagos fuera de la plataforma. Regla de oro: *"Cero acción sin confirmación de tokens en pantalla"*.
+  - La regla de los 30 segundos y cero caridad: cómo silenciar gorrones y exigir tokens antes de interactuar.
 
 ---
 
