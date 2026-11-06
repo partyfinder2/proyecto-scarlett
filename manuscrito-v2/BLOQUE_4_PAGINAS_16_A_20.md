@@ -97,3 +97,4 @@ Cuando conectas un juguete interactivo por Bluetooth a tu transmisión, cada vez
 Un Lovense Lush 3 cuesta alrededor de **$119 a $129 USD**. Como vimos en el Bloque 2, **tú no lo vas a pagar de tu bolsillo**:
 1. Sube el juguete a tu lista de deseos de **Throne** activando la opción de *Crowdfunding (Financiamiento colectivo)* o crea una meta en tu sala llamada: *"Help the fox get her first Lovense Lush ($0 / $120)"*.
 2. **La promesa de recompensa:** Anuncia que los 3 principales donadores que ayuden a completar la meta recibirán un video privado exclusivo de 5 minutos el día que llegue la caja. En menos de dos semanas de transmisiones constantes, tus propios seguidores habrán pagado el 100% del dispositivo.
+

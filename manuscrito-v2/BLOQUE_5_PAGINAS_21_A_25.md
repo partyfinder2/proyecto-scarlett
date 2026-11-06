@@ -115,3 +115,4 @@ Los hombres en Estados Unidos enloquecen con el acento latino dulce hablando ing
 - **Texto original:** *"Say my name… no. I’m saying yours. [Nombre del cliente]… you paid for this. The tail is moving just for you."*
 - **Léelo así al micrófono:**  
   🎙️ **`"Sei mai neim… nou. Aim seying yors… [Pronuncia su nombre en susurro]… yu peid for dis. De teil is muving yost for yu."`**
+
