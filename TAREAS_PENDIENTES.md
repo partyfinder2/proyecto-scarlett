@@ -99,7 +99,7 @@ Documento maestro del pivote: `PROYECTO_SCARLETT_V2_ONLINE.md` (registrado 2026-
 - [x] **Redacción del Playbook de 35 Páginas (Volumen 1):**
   - [x] `BLOQUE_1_PAGINAS_1_A_5.md` — Manifiesto, Tesis del Futuro Inminente (IA/WEF), Arbitraje Dólares vs Pesos, OpSec Militar y Psicología Kitsune
   - [x] `BLOQUE_2_PAGINAS_6_A_10.md` — Escalera de Inversión $0, Outfit Kitsune con clip, Encuadre Collarbone Down, Iluminación de recorte y Checklist 48h
-  - [ ] `BLOQUE_3_PAGINAS_11_A_15.md` — El Algoritmo y el Embudo Viral de Intriga (7 Segundos)
+  - [x] `BLOQUE_3_PAGINAS_11_A_15.md` — Deuda Cognitiva 7s, Mapa del Embudo Mermaid, 3 Guiones Anti-Baneo, Algoritmo X 2026 (`under_the_hood`) y Filtro Pay-to-DM ($10 USD)
   - [ ] `BLOQUE_4_PAGINAS_16_A_20.md` — La Cámara, la Habitación y los Shows de Alto Valor
   - [ ] `BLOQUE_5_PAGINAS_21_A_25.md` — Las 6 Micro-Monetizaciones Sin Mostrar Rostro
   - [ ] `BLOQUE_6_PAGINAS_26_A_30.md` — Retención de Whales y el Sistema Semanal de 15 Horas

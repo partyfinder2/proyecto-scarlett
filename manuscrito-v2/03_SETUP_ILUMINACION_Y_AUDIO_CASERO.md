@@ -190,3 +190,4 @@ Antes de pulsar el botón de grabar, pasa lista mentalmente a estos 7 puntos:
 | **Filtro Anti-pop** | Calcetín de algodón delgado | Esponja para micrófono lavalier ($25 MXN) |
 | **Software de Edición** | Audacity (100% gratuito) | Audacity |
 | **TOTAL ESTIMADO** | **$0 MXN** | **~$365 a $450 MXN** |
+
