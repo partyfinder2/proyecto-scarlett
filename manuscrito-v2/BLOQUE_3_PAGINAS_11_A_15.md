@@ -155,3 +155,4 @@ No exceptions. The fox has rules.
 
 > **💰 El Resultado Financiero:**  
 > Este filtro elimina al 99% de los mirones sin dinero y garantiza que cada hombre con el que hables por privado ya te haya pagado **$10 USD (~$195 MXN)** solo por decirte *"Hola"*.
+

@@ -136,3 +136,4 @@ No exceptions. The fox has rules.
 3. Paga los **$10 USD en Throne** (donde recibes casi el 95% íntegro) solo por el derecho de hablarte.
 4. Te envía la palabra clave `"TAIL"` por mensaje directo con su captura.
 5. Una vez dentro del chat con un hombre que **ya demostró tener tarjeta y disposición de pago**, aplicas la escalera de *Drip Sexting* ($4 → $12 → $25 USD) o le vendes un audio personalizado.
+

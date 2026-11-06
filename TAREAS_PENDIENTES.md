@@ -100,8 +100,8 @@ Documento maestro del pivote: `PROYECTO_SCARLETT_V2_ONLINE.md` (registrado 2026-
   - [x] `BLOQUE_1_PAGINAS_1_A_5.md` — Manifiesto, Tesis del Futuro Inminente (IA/WEF), Arbitraje Dólares vs Pesos, OpSec Militar y Psicología Kitsune
   - [x] `BLOQUE_2_PAGINAS_6_A_10.md` — Escalera de Inversión $0, Outfit Kitsune con clip, Encuadre Collarbone Down, Iluminación de recorte y Checklist 48h
   - [x] `BLOQUE_3_PAGINAS_11_A_15.md` — Deuda Cognitiva 7s, Mapa del Embudo Mermaid, 3 Guiones Anti-Baneo, Algoritmo X 2026 (`under_the_hood`) y Filtro Pay-to-DM ($10 USD)
-  - [ ] `BLOQUE_4_PAGINAS_16_A_20.md` — La Cámara, la Habitación y los Shows de Alto Valor
-  - [ ] `BLOQUE_5_PAGINAS_21_A_25.md` — Las 6 Micro-Monetizaciones Sin Mostrar Rostro
+  - [x] `BLOQUE_4_PAGINAS_16_A_20.md` — Stripchat vs CB vs Fansly Live (Statbate 2026), Emboscada New Tag, Escalera de Tokens, Método Zorro-5 y Lovense financiado por fans
+  - [x] `BLOQUE_5_PAGINAS_21_A_25.md` — Las 6 Micro-Monetizaciones ($8 USD/hr corte), Throne Cash, Merch perfumado (90% margen), Drip Sexting bilingüe ($53 USD/15m), Paws & Tails en ManyVids y ASMR fonético
   - [ ] `BLOQUE_6_PAGINAS_26_A_30.md` — Retención de Whales y el Sistema Semanal de 15 Horas
   - [ ] `BLOQUE_7_PAGINAS_31_A_35.md` — Cobro Limpio en México, Hoja de Control y Plan de 7 Días
 - [ ] **Landing Page en Vercel Pro:** Estática (Next.js/Tailwind), carga <1s, consumo CPU $0, diseño con mockup 3D en `labelbabel.com`
