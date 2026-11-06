@@ -171,3 +171,4 @@ La **discrepancia fiscal** se produce cuando el SAT detecta que tus gastos, cons
 - *Ley del Impuesto al Valor Agregado (LIVA) — Artículos 29 y 30 (Exportación de servicios intangibles).*
 - *Diario Oficial de la Federación (DOF) — Publicación diaria del tipo de cambio oficial.*
 - *Colegio de Contadores Públicos de México (CCPM) — Guía fiscal de economía digital.*
+
