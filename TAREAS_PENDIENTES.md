@@ -76,7 +76,7 @@ Documento maestro del pivote: `PROYECTO_SCARLETT_V2_ONLINE.md` (registrado 2026-
 - [x] **Repositorio GitHub `proyecto-scarlett`:**
   - Repositorio local inicializado en `metodo-scarlett/.git` con `.gitignore` (excluye binarios pesados de `tools/` y secretos)
   - Remoto enlazado a: `https://github.com/partyfinder2/proyecto-scarlett.git` (cuenta: `partyfinder2`)
-- [ ] **Crear `proyecto-scarlett` en GitHub:** Crear repo vacío privado en `github.com/partyfinder2` para recibir el primer push
+  - [x] **Subido a GitHub:** Commit inicial (`7f79a92`) y `push -u origin main` completado con éxito
 - [ ] **Estrategia de Dominios:**
   - Asignar `labelbabel.com` a la Landing Page en Vercel para venta de los e-books/revistas
   - Comprar nuevo dominio exclusivo para VENUZ (fiesta/eventos)
