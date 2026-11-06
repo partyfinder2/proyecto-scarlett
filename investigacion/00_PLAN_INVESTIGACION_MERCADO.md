@@ -39,12 +39,13 @@ Auditoría técnica de plataformas que pagan en dólares:
 1. `01_YOUTUBE_SCRIPTS_ANALISIS.md`: Síntesis de los mejores videos de creadoras reales (oro molido, técnica de anonimato y setup casero).
 2. `02_TOP_PLATAFORMAS_Y_REFERIDOS.md`: Matriz comparativa de las 10 mejores plataformas internacionales con detalles de pago y links de afiliación/referidos.
 3. `03_AFILIADOS_COSPLAY_Y_EQUIPO.md`: Catálogo de productos exactos (cola de zorro, luces, juguetes Lovense) con enlaces listos para monetizar.
-4. `04_ESTRUCTURA_FINAL_25_PAGINAS.md`: El esqueleto definitivo página por página del e-book ($199 MXN) antes de maquetar.
+4. `04_ESTRUCTURA_FINAL_35_PAGINAS.md`: El esqueleto definitivo y exhaustivo de 35 páginas (7 bloques temáticos de 5 páginas cada uno) para el Playbook oficial ($199 MXN).
 5. `05_ANALISIS_FALLOS_Y_PREVENCION.md`: Análisis de comentarios, testimonios en foros (Reddit) y los 6 fallos críticos de novatas con sus soluciones operativas.
 6. `06_REPORTE_MASTERMIND_GROK_STATBATE.md`: Reporte de inteligencia de mercado (tracking de tips Statbate 2026, retención de Whales, Escalera de Tokens y auditoría de Stripchat/Chaturbate).
 7. `07_REPORTE_MASTERMIND_VENICE_PSEUDOFACE.md`: Análisis agregado Pseudoface (250k creadoras), Método Zorro-5, Escalera de Identidad en 3 capas, cobro limpio en MX y arbitraje de tráfico externo.
 8. `08_RUTAS_LOW_COST_Y_CERO_PESOS.md`: Escalera de arranque según presupuesto (Nivel 0: $0 MXN con audio/pies, Nivel 1: <$300 MXN kit DIY, y reinversión inteligente con ganancias).
 9. `09_GROWTH_HACKING_VIRAL_Y_MICRO_MONETIZACION.md`: Embudo viral de 7 segundos en TikTok/Reels/X (Curiosity Gap), herramientas CapCut faceless, 6 vías de micro-monetización ($0 pesos) y fórmula semanal de $300-$800 USD.
-10. `PROMPT_AUDITORIA_MULTI_IA_TESORO.md`: Prompt de auditoría cruzada (Skool.com + ThePornDude) para correr en Claude/ChatGPT/Grok.
-11. `PROMPT_MICRO_MONETIZACION_VIRAL.md`: Prompt de micro-monetizaciones de baja inversión y viralidad en X/Reels.
+10. `10_REPORTE_TACTICO_VENICE_EMBUDO_Y_MATEMATICA.md`: Deuda cognitiva en clips de 7s, los 3 guiones de retención, las 3 listas de Throne, automatización con InviteMember y embudo de conversión real.
+11. `PROMPT_AUDITORIA_MULTI_IA_TESORO.md`: Prompt de auditoría cruzada (Skool.com + ThePornDude) para correr en Claude/ChatGPT/Grok.
+12. `PROMPT_MICRO_MONETIZACION_VIRAL.md`: Prompt de micro-monetizaciones de baja inversión y viralidad en X/Reels.
 

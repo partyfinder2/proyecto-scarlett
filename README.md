@@ -27,12 +27,13 @@ proyecto-scarlett/
 │   ├── 01_YOUTUBE_SCRIPTS_ANALISIS.md   # Síntesis de creadoras reales en YouTube (oro molido)
 │   ├── 02_TOP_PLATAFORMAS_Y_REFERIDOS.md# Matriz de las 10 mejores plataformas y programas de afiliados
 │   ├── 03_AFILIADOS_COSPLAY_Y_EQUIPO.md # Catálogo de productos (cola de zorro, luces, Lovense)
-│   ├── 04_ESTRUCTURA_FINAL_25_PAGINAS.md# Desglose página por página del e-book ($199 MXN)
+│   ├── 04_ESTRUCTURA_FINAL_35_PAGINAS.md# Desglose de 35 páginas (7 bloques temáticos de 5 págs)
 │   ├── 05_ANALISIS_FALLOS_Y_PREVENCION.md# Los 6 fallos críticos de novatas y manual anti-fracaso
 │   ├── 06_REPORTE_MASTERMIND_GROK_STATBATE.md# Tracking de tips Statbate 2026, Whales y Escalera de Tokens
 │   ├── 07_REPORTE_MASTERMIND_VENICE_PSEUDOFACE.md# Análisis Pseudoface (250k creadoras), Método Zorro-5 y cobro MX
 │   ├── 08_RUTAS_LOW_COST_Y_CERO_PESOS.md# Escalera de arranque por presupuesto ($0 a $300 MXN kit DIY)
 │   ├── 09_GROWTH_HACKING_VIRAL_Y_MICRO_MONETIZACION.md# Videos virales de 7s en Reels/TikTok y 6 micro-fuentes ($0)
+│   ├── 10_REPORTE_TACTICO_VENICE_EMBUDO_Y_MATEMATICA.md# Deuda cognitiva de 7s, guiones, Throne y matemática
 │   ├── PROMPT_AUDITORIA_MULTI_IA_TESORO.md# Prompt para cruzar Skool.com y ThePornDude con otras IAs
 │   └── PROMPT_MICRO_MONETIZACION_VIRAL.md# Prompt de micro-monetizaciones ($0 inversión) y viralidad en X/Reels
 ├── capitulos/                           # Manuscrito base en Markdown

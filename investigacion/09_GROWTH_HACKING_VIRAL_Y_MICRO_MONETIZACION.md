@@ -74,3 +74,4 @@ Un horario equilibrado de **15 a 20 horas por semana (2 a 3 horas al día)** par
 - 2 a 4 packs de fotos vendidos ($40–$100 USD).
 - Propinas de streaming + tributos + regalos en Throne ($150–$350 USD).
 - **Total estimado:** **$340 a $800 USD mensuales** sin necesidad de trabajar jornadas extenuantes.
+
