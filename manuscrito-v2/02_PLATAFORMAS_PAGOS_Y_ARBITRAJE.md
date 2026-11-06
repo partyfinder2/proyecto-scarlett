@@ -165,3 +165,4 @@ Estrategia para proteger las ganancias en USD frente a la depreciación del peso
 - *Wise launches local operations in Mexico* — Mexico News Daily
 - *DolarApp: Transferencias SPEI y cuentas ACH* — DolarApp Help Center
 - *Banco de México (Banxico) — Tipo de cambio de equilibrio (FIX)*
+
