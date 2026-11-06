@@ -1,0 +1,18 @@
+# Entornos y dependencias
+.env
+.env.local
+.env.*.local
+node_modules/
+
+# Herramientas pesadas y temporales
+tools/
+build/
+scratch/
+tmp/
+*.zip
+
+# Archivos de sistema y logs
+*.log
+.DS_Store
+Thumbs.db
+
