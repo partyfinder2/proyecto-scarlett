@@ -83,3 +83,4 @@ graph TD
    - **Opción A (Canva):** Usar una plantilla de "Dossier / Revista Ejecutiva" con la paleta Dark Luxury (`#120E16`, Rosa `#E87099`, Oro `#D8B26E`). Se copian los textos de Markdown a las cajas prediseñadas en Canva y se colocan iconos y vectores limpios.
    - **Opción B (Generación Automatizada HTML-to-PDF):** Compilar el Markdown con la hoja de estilos de `STYLE_GUIDE.md` utilizando una herramienta de renderizado visual (Puppeteer / WeasyPrint / Marp) para producir un PDF idéntico a una revista física sin tener que arrastrar cajas a mano.
 3. **Fase 3 (Verificación de Clics):** Asegurar que todos los enlaces a las herramientas y programas de afiliado sean funcionales.
+
