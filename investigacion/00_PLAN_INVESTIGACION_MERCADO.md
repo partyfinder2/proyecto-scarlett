@@ -46,6 +46,7 @@ Auditoría técnica de plataformas que pagan en dólares:
 8. `08_RUTAS_LOW_COST_Y_CERO_PESOS.md`: Escalera de arranque según presupuesto (Nivel 0: $0 MXN con audio/pies, Nivel 1: <$300 MXN kit DIY, y reinversión inteligente con ganancias).
 9. `09_GROWTH_HACKING_VIRAL_Y_MICRO_MONETIZACION.md`: Embudo viral de 7 segundos en TikTok/Reels/X (Curiosity Gap), herramientas CapCut faceless, 6 vías de micro-monetización ($0 pesos) y fórmula semanal de $300-$800 USD.
 10. `10_REPORTE_TACTICO_VENICE_EMBUDO_Y_MATEMATICA.md`: Deuda cognitiva en clips de 7s, los 3 guiones de retención, las 3 listas de Throne, automatización con InviteMember y embudo de conversión real.
-11. `PROMPT_AUDITORIA_MULTI_IA_TESORO.md`: Prompt de auditoría cruzada (Skool.com + ThePornDude) para correr en Claude/ChatGPT/Grok.
-12. `PROMPT_MICRO_MONETIZACION_VIRAL.md`: Prompt de micro-monetizaciones de baja inversión y viralidad en X/Reels.
+11. `11_GUIA_EDITORIAL_TONO_Y_NARRATIVA_FUTURO.md`: Tesis del futuro inminente (fin del dinero físico, automatización femenina por IA, devaluación del título), diccionario de vocabulario de poder y arquitectura visual (diagramas, tablas, flujos de alto valor).
+12. `PROMPT_AUDITORIA_MULTI_IA_TESORO.md`: Prompt de auditoría cruzada (Skool.com + ThePornDude) para correr en Claude/ChatGPT/Grok.
+13. `PROMPT_MICRO_MONETIZACION_VIRAL.md`: Prompt de micro-monetizaciones de baja inversión y viralidad en X/Reels.
 
