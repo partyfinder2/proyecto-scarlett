@@ -96,7 +96,14 @@ Documento maestro del pivote: `PROYECTO_SCARLETT_V2_ONLINE.md` (registrado 2026-
   - [x] `PROMPT_MICRO_MONETIZACION_VIRAL.md` — Prompt de micro-monetizaciones de baja inversión y viralidad en X/Reels
 - [x] **Cruzar Respuestas de Auditoría Multi-IA (Claude / ChatGPT / Grok / Venice)** para blindar valor percibido
 - [ ] Validar altas de afiliado de plataformas clave (Stripchat / Chaturbate / Amazon / Lovense)
-- [ ] **Redacción del Playbook de 35 Páginas (Volumen 1):** Redactar en prosa pulida los 7 bloques temáticos de 5 páginas cada uno basados en la estructura aprobada
+- [x] **Redacción del Playbook de 35 Páginas (Volumen 1):**
+  - [x] `BLOQUE_1_PAGINAS_1_A_5.md` — Manifiesto, Tesis del Futuro Inminente (IA/WEF), Arbitraje Dólares vs Pesos, OpSec Militar y Psicología Kitsune
+  - [ ] `BLOQUE_2_PAGINAS_6_A_10.md` — El Kit de Arranque $0 y la Transformación Kitsune
+  - [ ] `BLOQUE_3_PAGINAS_11_A_15.md` — El Algoritmo y el Embudo Viral de Intriga (7 Segundos)
+  - [ ] `BLOQUE_4_PAGINAS_16_A_20.md` — La Cámara, la Habitación y los Shows de Alto Valor
+  - [ ] `BLOQUE_5_PAGINAS_21_A_25.md` — Las 6 Micro-Monetizaciones Sin Mostrar Rostro
+  - [ ] `BLOQUE_6_PAGINAS_26_A_30.md` — Retención de Whales y el Sistema Semanal de 15 Horas
+  - [ ] `BLOQUE_7_PAGINAS_31_A_35.md` — Cobro Limpio en México, Hoja de Control y Plan de 7 Días
 - [ ] **Landing Page en Vercel Pro:** Estática (Next.js/Tailwind), carga <1s, consumo CPU $0, diseño con mockup 3D en `labelbabel.com`
 - [ ] **Pasarelas de Pago Multi-país (México, LATAM y EE.UU.):**
   - Stripe Checkout (tarjetas globales, Apple/Google Pay, cupón OXXO en México)
