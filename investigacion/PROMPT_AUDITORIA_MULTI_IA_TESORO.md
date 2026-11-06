@@ -47,3 +47,4 @@ Entrega tu reporte estructurado en estos 4 ejes concretos, con datos duros, tác
 
 Sé directo, profesional, táctico y extremadamente detallado con números y porcentajes reales.
 ```
+

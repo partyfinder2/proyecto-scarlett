@@ -61,3 +61,4 @@ Consejos unánimes de las creadoras independientes en México y Colombia:
    - Nunca usar nombres de mascotas reales, escuelas, cumpleaños ni apodos que conozcan amigos o familiares.
 3. **Retiro bancario seguro:**
    - Uso de monederos internacionales como **Paxum** o **CosmoPayment**, o transferencias directas a cuentas bancarias secundarias sin mezclar con la cuenta de gastos familiares.
+

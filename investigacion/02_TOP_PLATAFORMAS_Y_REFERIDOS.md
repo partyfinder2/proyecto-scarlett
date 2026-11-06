@@ -97,3 +97,4 @@ Matriz técnica de las 10 mejores plataformas internacionales para creadoras de 
 | **Chaturbate** | 50% de tokens + mayor tráfico global | **$50 USD** por modelo activa |
 | **Fansly** | 80% de suscripciones + geobloqueo total | **5%** de todo lo que facture el 1er año (pasivo) |
 | **LoyalFans** | 80% de videollamadas y tips | **5%** de por vida de sus ganancias |
+

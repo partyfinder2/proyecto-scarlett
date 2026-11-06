@@ -75,3 +75,4 @@ Para que las chicas no sientan que necesitan miles de pesos para empezar:
    - Gratuito, especializado en creadores y webmasters, paga por PayPal o transferencia bancaria en dólares.
 3. **Stripcash (`stripcash.com`) y Chaturbate Affiliates:**
    - Te dan tu código único de referido de modelos para incrustar en el botón del PDF.
+

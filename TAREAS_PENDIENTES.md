@@ -80,13 +80,21 @@ Documento maestro del pivote: `PROYECTO_SCARLETT_V2_ONLINE.md` (registrado 2026-
 - [ ] **Estrategia de Dominios:**
   - Asignar `labelbabel.com` a la Landing Page en Vercel para venta de los e-books/revistas
   - Comprar nuevo dominio exclusivo para VENUZ (fiesta/eventos)
-- [ ] Validar altas de afiliado de plataformas clave (Stripchat / Chaturbate / Amazon)
-- [ ] Definir títulos y temarios de los primeros 2 volúmenes (Vol. 1 Monetización rápida; Vol. 2 Anonimato y cuentas)
+- [x] **Investigación de Mercado & Benchmarking Élite (Carpeta `investigacion/`):**
+  - [x] `00_PLAN_INVESTIGACION_MERCADO.md` — Hoja de ruta y mapa de entregables
+  - [x] `01_YOUTUBE_SCRIPTS_ANALISIS.md` — Oro molido de creadoras en YouTube (anonimato, luz, gamificación)
+  - [x] `02_TOP_PLATAFORMAS_Y_REFERIDOS.md` — Matriz de las 10 mejores plataformas y programas de afiliados
+  - [x] `03_AFILIADOS_COSPLAY_Y_EQUIPO.md` — Catálogo de productos (cola de zorro, Lovense, luces)
+  - [x] `04_ESTRUCTURA_FINAL_25_PAGINAS.md` — Desglose página por página del e-book ($199 MXN)
+  - [x] `05_ANALISIS_FALLOS_Y_PREVENCION.md` — Quejas, foros (Reddit) y los 6 fallos críticos de novatas
+  - [x] `PROMPT_AUDITORIA_MULTI_IA_TESORO.md` — Prompt de auditoría cruzada con Skool.com y ThePornDude
+- [ ] **Cruzar Respuestas de Auditoría Multi-IA (Claude / ChatGPT / Grok)** para blindar valor percibido
+- [ ] Validar altas de afiliado de plataformas clave (Stripchat / Chaturbate / Amazon / Lovense)
+- [ ] **Redacción del Volumen 1:** 25 páginas finales basadas en la estructura aprobada
 - [ ] **Landing Page en Vercel Pro:** Estática (Next.js/Tailwind), carga <1s, consumo CPU $0, diseño con mockup 3D
 - [ ] **Pasarelas de Pago Multi-país (México, LATAM y EE.UU.):**
-  - Evaluar Stripe (tarjetas globales, Apple/Google Pay, cupón OXXO en México)
-  - Evaluar Mercado Pago (tarjetas locales y pagos en efectivo en LATAM)
-  - Respaldo PayPal para compras internacionales
+  - Stripe Checkout (tarjetas globales, Apple/Google Pay, cupón OXXO en México)
+  - Respaldo Mercado Pago / PayPal
 - [ ] Crear FanPage en Facebook e Instagram para pauta regional (México / LATAM)
 - [ ] Diseñar plantilla base en Canva tipo revista/playbook ejecutivo de 20–25 páginas
 

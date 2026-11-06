@@ -36,7 +36,10 @@ Auditoría técnica de plataformas que pagan en dólares:
 
 ## Archivos de Entrega en esta Carpeta
 
-1. `01_YOUTUBE_SCRIPTS_ANALISIS.md`: Síntesis de los mejores videos de creadoras reales.
-2. `02_TOP_PLATAFORMAS_Y_REFERIDOS.md`: Matriz comparativa de 10-15 plataformas con detalles de pago y links de afiliación.
-3. `03_AFILIADOS_COSPLAY_Y_EQUIPO.md`: Catálogo de productos exactos (cola de zorro, luces, juguetes) con enlaces listos para monetizar.
-4. `04_ESTRUCTURA_FINAL_25_PAGINAS.md`: El esqueleto definitivo de 25 páginas antes de maquetar.
+1. `01_YOUTUBE_SCRIPTS_ANALISIS.md`: Síntesis de los mejores videos de creadoras reales (oro molido, técnica de anonimato y setup casero).
+2. `02_TOP_PLATAFORMAS_Y_REFERIDOS.md`: Matriz comparativa de las 10 mejores plataformas internacionales con detalles de pago y links de afiliación/referidos.
+3. `03_AFILIADOS_COSPLAY_Y_EQUIPO.md`: Catálogo de productos exactos (cola de zorro, luces, juguetes Lovense) con enlaces listos para monetizar.
+4. `04_ESTRUCTURA_FINAL_25_PAGINAS.md`: El esqueleto definitivo página por página del e-book ($199 MXN) antes de maquetar.
+5. `05_ANALISIS_FALLOS_Y_PREVENCION.md`: Análisis de comentarios, testimonios en foros (Reddit) y los 6 fallos críticos de novatas con sus soluciones operativas.
+6. `PROMPT_AUDITORIA_MULTI_IA_TESORO.md`: Prompt de auditoría cruzada (Skool.com + ThePornDude) para correr en Claude/ChatGPT/Grok.
+

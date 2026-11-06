@@ -106,3 +106,4 @@
 * **Pág. 25 — Contraportada y Acceso a la Colección:**
   - Mensaje final de empoderamiento independiente.
   - Invitación al **Volumen 2** de la colección y enlaces a las redes oficiales de la revista.
+

@@ -78,3 +78,4 @@ Transmitir por Wi-Fi doméstico. Si el internet se corta en medio de un show pri
 ### La Solución Scarlett ("Setup Técnico Infalible"):
 - Conexión obligatoria por **cable de red Ethernet** (cuesta $100 pesos un cable y elimina el 100% de las caídas).
 - Apertura y verificación de la cuenta de cobro (**Paxum** o transferencia internacional) antes de empezar a transmitir para no tener dinero congelado.
+
