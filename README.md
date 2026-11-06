@@ -32,6 +32,7 @@ proyecto-scarlett/
 │   ├── 06_REPORTE_MASTERMIND_GROK_STATBATE.md# Tracking de tips Statbate 2026, Whales y Escalera de Tokens
 │   ├── 07_REPORTE_MASTERMIND_VENICE_PSEUDOFACE.md# Análisis Pseudoface (250k creadoras), Método Zorro-5 y cobro MX
 │   ├── 08_RUTAS_LOW_COST_Y_CERO_PESOS.md# Escalera de arranque por presupuesto ($0 a $300 MXN kit DIY)
+│   ├── 09_GROWTH_HACKING_VIRAL_Y_MICRO_MONETIZACION.md# Videos virales de 7s en Reels/TikTok y 6 micro-fuentes ($0)
 │   ├── PROMPT_AUDITORIA_MULTI_IA_TESORO.md# Prompt para cruzar Skool.com y ThePornDude con otras IAs
 │   └── PROMPT_MICRO_MONETIZACION_VIRAL.md# Prompt de micro-monetizaciones ($0 inversión) y viralidad en X/Reels
 ├── capitulos/                           # Manuscrito base en Markdown

@@ -42,3 +42,4 @@ Analiza y dame el mecanismo operativo de:
 
 Sé extremadamente detallado, con nombres de herramientas reales, plataformas seguras y cero teoría genérica.
 ```
+
