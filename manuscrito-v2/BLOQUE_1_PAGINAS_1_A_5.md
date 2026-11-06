@@ -122,3 +122,4 @@ El arquetipo de la **Zorra de Cosplay (*Kitsune / Kemonomimi*)** opera bajo prin
 
 > **📌 Regla de Oro del Personaje:**  
 > Nunca pidas dinero desde la necesidad. El zorro no mendiga: el zorro seduce, juega, desaparece y hace que sean ellos quienes paguen por el derecho a entrar a su madriguera.
+
