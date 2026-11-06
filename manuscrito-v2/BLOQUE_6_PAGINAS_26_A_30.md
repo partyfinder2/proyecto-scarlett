@@ -129,3 +129,4 @@ $$\text{Mensajes VIP Pagados (8\%–10\% conv.)} > \text{Live Stream (3\% conv.)
 4. **Fijar tus precios en pesos mexicanos:** Tu mercado es internacional; todo se cotiza y se cobra en **Dólares ($USD)**.
 5. **Romper el peaje de $10 USD "solo por esta vez":** Si respondes gratis a un usuario que no pagó el tributo de entrada, destruyes la autoridad de tu personaje.
 6. **Publicar 10 videos el lunes y desaparecer 5 días:** Los algoritmos premian la constancia diaria de 2 clips cortos por encima de los atracones esporádicos.
+

@@ -65,3 +65,4 @@ Los viernes por la tarde (17:00 a 20:00 hrs CDMX), cuando los hombres en EE.UU. 
 > **En inglés:**  
 > `You went quiet after the last voice note. I’m recording a short one right now with the ears on. Your name is already in it if you want it for $25. Reply “YES” and I’ll send the payment link.`  
 > *(Traducción: Te quedaste muy callado después de la última nota de voz. Estoy grabando una ahorita mismo con las orejas puestas. Tu nombre ya está incluido si la quieres por $25. Responde "YES" y te mando el link de pago).*
+
