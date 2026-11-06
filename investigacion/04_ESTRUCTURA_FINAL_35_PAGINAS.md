@@ -157,3 +157,4 @@ BLOQUE 7 (Págs. 31–35): Cobro Limpio en México, Hoja de Control y Plan de 7 
 * **Pág. 35 — Contraportada y Acceso a la Colección:**
   - Mensaje final de empoderamiento y libertad financiera.
   - Invitación al Volumen 2 y canales oficiales de la marca.
+

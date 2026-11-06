@@ -85,18 +85,24 @@ Documento maestro del pivote: `PROYECTO_SCARLETT_V2_ONLINE.md` (registrado 2026-
   - [x] `01_YOUTUBE_SCRIPTS_ANALISIS.md` — Oro molido de creadoras en YouTube (anonimato, luz, gamificación)
   - [x] `02_TOP_PLATAFORMAS_Y_REFERIDOS.md` — Matriz de las 10 mejores plataformas y programas de afiliados
   - [x] `03_AFILIADOS_COSPLAY_Y_EQUIPO.md` — Catálogo de productos (cola de zorro, Lovense, luces)
-  - [x] `04_ESTRUCTURA_FINAL_25_PAGINAS.md` — Desglose página por página del e-book ($199 MXN)
+  - [x] `04_ESTRUCTURA_FINAL_35_PAGINAS.md` — Desglose página por página del Playbook oficial de 35 páginas ($199 MXN) en 7 bloques temáticos
   - [x] `05_ANALISIS_FALLOS_Y_PREVENCION.md` — Quejas, foros (Reddit) y los 6 fallos críticos de novatas
+  - [x] `06_REPORTE_MASTERMIND_GROK_STATBATE.md` — Datos de Statbate 2026 ($96M tips, Stripchat vs CB, Retención Whales, Escalera de Tokens)
+  - [x] `07_REPORTE_MASTERMIND_VENICE_PSEUDOFACE.md` — Datos de Pseudoface (250k creadoras, 89% tráfico externo, Método Zorro-5, 3 capas de identidad)
+  - [x] `08_RUTAS_LOW_COST_Y_CERO_PESOS.md` — Escalera de arranque por presupuesto (Nivel 0: $0 MXN audio/pies, Nivel 1: <$300 MXN DIY)
+  - [x] `09_GROWTH_HACKING_VIRAL_Y_MICRO_MONETIZACION.md` — Embudo viral de 7s en TikTok/Reels/X (Curiosity Gap), herramientas CapCut faceless, 6 vías micro-monetización ($0) y fórmula semanal de $300-$800 USD
+  - [x] `10_REPORTE_TACTICO_VENICE_EMBUDO_Y_MATEMATICA.md` — Deuda cognitiva en clips de 7s, los 3 guiones de retención, las 3 listas de Throne Cash, Drip Sexting ($41 USD en 15m), ManyVids SEO (#FoxGirl), fórmula semanal de 15 horas (Batching lunes) y hoja de control ($8/hora)
   - [x] `PROMPT_AUDITORIA_MULTI_IA_TESORO.md` — Prompt de auditoría cruzada con Skool.com y ThePornDude
-- [ ] **Cruzar Respuestas de Auditoría Multi-IA (Claude / ChatGPT / Grok)** para blindar valor percibido
+  - [x] `PROMPT_MICRO_MONETIZACION_VIRAL.md` — Prompt de micro-monetizaciones de baja inversión y viralidad en X/Reels
+- [x] **Cruzar Respuestas de Auditoría Multi-IA (Claude / ChatGPT / Grok / Venice)** para blindar valor percibido
 - [ ] Validar altas de afiliado de plataformas clave (Stripchat / Chaturbate / Amazon / Lovense)
-- [ ] **Redacción del Volumen 1:** 25 páginas finales basadas en la estructura aprobada
-- [ ] **Landing Page en Vercel Pro:** Estática (Next.js/Tailwind), carga <1s, consumo CPU $0, diseño con mockup 3D
+- [ ] **Redacción del Playbook de 35 Páginas (Volumen 1):** Redactar en prosa pulida los 7 bloques temáticos de 5 páginas cada uno basados en la estructura aprobada
+- [ ] **Landing Page en Vercel Pro:** Estática (Next.js/Tailwind), carga <1s, consumo CPU $0, diseño con mockup 3D en `labelbabel.com`
 - [ ] **Pasarelas de Pago Multi-país (México, LATAM y EE.UU.):**
   - Stripe Checkout (tarjetas globales, Apple/Google Pay, cupón OXXO en México)
   - Respaldo Mercado Pago / PayPal
 - [ ] Crear FanPage en Facebook e Instagram para pauta regional (México / LATAM)
-- [ ] Diseñar plantilla base en Canva tipo revista/playbook ejecutivo de 20–25 páginas
+- [ ] Diseñar plantilla base en Canva tipo revista/playbook ejecutivo de 35 páginas
 
 ---
 
