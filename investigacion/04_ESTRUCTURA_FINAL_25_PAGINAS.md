@@ -21,16 +21,17 @@
   - Aviso de mayoría de edad (`+18`) y enfoque 100% digital bajo la economía de creadores.
 * **Pág. 3 — El Secreto del Millón de Dólares (La Historia de Scarlett):**
   - La diferencia brutal entre desnudarse por centavos como "una chica más" vs. crear un personaje magnético con cosplay.
-  - Por qué los grandes donadores (*whales*) de EE.UU. y Europa pagan fortunas por fantasía, misterio y exclusividad.
+  - **La verdad de los datos (Pseudoface):** El 63% de los usuarios tiene una reacción positiva o neutral al anonimato, y el 25.9% tiene un interés fetichista directo en el misterio. El rostro es un producto escaso, no un requisito obligatorio.
+  - El desmontaje del mito del "tráfico gratis": el 89.08% del tráfico nuevo proviene de embudos externos en redes sociales SFW (TikTok/Instagram) con el cosplay puesto.
 * **Pág. 4 — El Mapa de la Ruta (Infografía en 1 Página):**
   - Diagrama visual de flujo: *Anonimato (Máscara + Geobloqueo) → Set en Casa → Plataforma en Vivo → Menú de Tokens → Retiro en Dólares*.
 
 ---
 
 ### BLOQUE 2: EL BLINDAJE DE PRIVACIDAD (Págs. 5 a 8)
-* **Pág. 5 — El Stack Faceless de 3 Capas (El Secreto de la Kitsune):**
-  - Sistema operativo para sustituir el rostro: Capa 1 (Voz suave/ronroneos) + Capa 2 (Cola de zorro y lenguaje corporal) + Capa 3 (Lovense Lush con LED).
-  - Cómo elegir tu máscara o antifaz (materiales mate que no reflejan luz LED) y peluca de flequillo para inutilizar el reconocimiento biométrico.
+* **Pág. 5 — El Método Zorro-5 y la Escalera de Identidad en 3 Capas:**
+  - **Método Zorro-5 (Branding de Élite):** Nombre (2 sílabas) + Silueta inconfundible (cola de zorro en thumbnail) + Voz fija + Lore (historia de 3 frases) + Límites publicados.
+  - **La Escalera de Identidad:** Capa Pública (antifaz inquebrantable gratis) → Capa Privada (revelación de 8 segundos en show privado pagado) → Capa de Archivo (álbum Face Reveal en Fansly por $20 USD).
 * **Pág. 6 — La Guía Maestra del Geobloqueo (Paso a Paso con Capturas):**
   - El botón exacto dentro del panel de control para bloquear México y países de habla hispana.
   - Cómo asegurarte de que ningún conocido, familiar o vecino pueda entrar a tu sala.
@@ -45,14 +46,17 @@
 ### BLOQUE 3: EL KIT DE TRABAJO Y EL ACCESORIO CLAVE (Págs. 9 a 12)
 * **Pág. 9 — El Poder de la Cola de Zorro (*Kemonomimi*):**
   - Por qué este accesorio específico dispara el CTR (tasa de clics) en las miniaturas de las páginas.
-  - Tipos de cola: broche exterior seguro para ropa/lencería ($200–$600 MXN) vs. bases anatómicas.
+  - **Tipos de sujeción:** Broche de cinturón o clip de metal exterior (obligatorio para shows largos de 2 a 4 horas sin fatiga física) vs. bases anatómicas.
+  - El truco de los 3 sets de orejas ($200–$600 MXN en Amazon/AliExpress) para monetizar el comando de menú: *"Elige qué orejas me pongo hoy por 60 tokens ($3 USD)"*.
   - **[BOTÓN / ENLACE DE AFILIADO AMAZON]:** *«Consigue tu Kit de Zorro y Orejas Recomendado Aquí»*.
 * **Pág. 10 — Iluminación de Estudio con $500 Pesos:**
-  - La técnica de los dos puntos: aro de luz a 45° + lámpara cálida de fondo.
+  - La técnica de los dos puntos: aro de luz a 30° sobre la línea de ojos (evita sombras del antifaz sobre la mandíbula) + luz cálida de fondo.
   - **[ENLACE AMAZON]:** *«Aro de luz LED con tripié para celular»*.
 * **Pág. 11 — El Arma del Millón: Lovense Lush y Calibración Matemática:**
   - Sincronización Bluetooth con el chat y cómo convierte tokens en dopamina física inmediata.
-  - **Tabla de calibración de las Top Models:** 1–15 tokens (3s Low), 16–99 tokens (10s Med), 100–499 tokens (30s High), 500+ tokens (60–90s Ultra/Earthquake).
+  - **La regla de oro:** El nivel 1 NUNCA empieza en 1 token (evita spam de centavos); inicia en **3 tokens**.
+  - **Configuración de las Top Models:** 3–10 tokens (3s Low), 11–50 tokens (5–8s Med), 51–150 tokens (10–15s High), 151–499 tokens (20–30s Max), 500+ tokens (60s Ultra + patrón Earthquake).
+  - El comando secreto *"Pause the Queue"* por 50 tokens para pausas de descanso.
   - **[BOTÓN / ENLACE DE AFILIADO LOVENSE]:** *«Adquiere tu Lovense Lush Oficial con Descuento»*.
 * **Pág. 12 — Checklist de tu Habitación:**
   - Fondos limpios, gestión de cables, temperatura y postura cómoda.
@@ -63,8 +67,8 @@
 * **Pág. 13 — La Gran Decisión: ¿Webcam en Vivo o Suscripciones?:**
   - Comparativa de modelos de negocio: Tráfico gratis inmediato (Stripchat/Chaturbate) vs. Ingresos pasivos recurrentes (Fansly/OnlyFans).
 * **Pág. 14 — Stripchat vs Chaturbate (Horarios Pico y Datos 2026):**
-  - **Stripchat (Líder en México con 53.3% de tips):** Horario pico diurno (9:00 AM – 1:00 PM ET) y pagos semanales por Paxum.
-  - **Chaturbate (35% de tips y mayor retención):** Horario pico nocturno (10:00 PM – 2:00 AM ET) ideal para donadores de EE.UU.
+  - **Stripchat (Líder en México con 53.3% de tips y 608M visitas):** Horario pico diurno (9:00 AM – 1:00 PM ET), Spy Mode y pagos semanales.
+  - **Chaturbate (35% de tips y retención de 8m 36s):** Horario pico nocturno (10:00 PM – 2:00 AM ET) ideal para donadores de EE.UU.
   - Guía de verificación en menos de 24 horas con INE privada.
   - **[BOTÓN DE AFILIADO]:** *«Regístrate como Modelo Verificada en Stripchat Aquí»*.
   - **[BOTÓN DE AFILIADO]:** *«Regístrate como Creadora en Chaturbate Aquí»*.
@@ -79,15 +83,38 @@
 ---
 
 ### BLOQUE 5: EL MENÚ DE PROPINAS Y LA PSICOLOGÍA DEL DONADOR (Págs. 18 a 21)
-* **Pág. 18 — La Escalera de Tokens Magnética (Framework de 5 Niveles):**
-  - Menú estructurado con anclaje psicológico: Entrada (10–25 tks), Volumen Medio (50–150 tks), Comando Especial (111–222 tks), Anclaje Alto (500–999 tks) y Whale Tier (2,000+ tks).
+* **Pág. 18 — La Escalera de 7 Peldaños y la Matemática del Token:**
+  - Cómo leer en dólares netos: 1 token = $0.05 USD para la modelo (el usuario paga $0.08–$0.10). 100 tokens = $5.00 USD netos.
+  - Estructura de menú de 6 a 10 ítems: 2 de bajo roce (15 tokens = $0.75 USD), 3 de rango medio (50–150 tokens = $2.50–$7.50 USD), 1 ancla de meta (300–500 tokens) y 1 ítem señuelo de 1,000–2,000 tokens ($50–$100 USD) que hace que el resto se venda solo.
 * **Pág. 19 — Los Comandos de la "Zorrita": Gamificación de la Sala:**
-  - Barras de meta públicas (*Goal Bars*), retos progresivos y competencia social en el chat en tiempo real.
-* **Pág. 20 — El Protocolo Zorro 80/20 (Retención y Fidelización de Whales):**
-  - Protocolo para identificar donadores de alto poder adquisitivo ($300–$1,000 USD/semana) en sus primeras 3 visitas.
-  - Scripts de bienvenida personalizada, exclusividad sin encuentros y listas VIP para clips temáticos.
+  - Barras de meta públicas (*Goal Bars*) con reinicio cada 90 minutos para evitar fatiga de meta.
+  - Premios de meta que se ejecutan en menos de 10 segundos para sostener la dopamina del chat.
+* **Pág. 20 — El Protocolo de la Madriguera (Retención de Whales en 4 Ritmos):**
+  - Protocolo para captar y fidelizar donadores de $300 a $1,000 USD semanales: Diario (saludo nominal), Semanal (show ritual fijo y ranking Top 3), Mensual (nota de voz o clip personalizado) y Trimestral (auditoría del Top 20 en Excel).
+  - Los 3 límites innegociables: Cero llamadas gratis, horario respetado y marco claro (*«esto es un personaje de fantasía, tú eres mi guardián»*).
 * **Pág. 21 — Prevención de Estafas y *Time-Wasters*:**
   - La regla de los 30 segundos y cero caridad: cómo silenciar gorrones y exigir tokens antes de interactuar.
+
+---
+
+### BLOQUE 6: FINANZAS Y TU PLAN DE ACCIÓN DE 7 DÍAS (Págs. 22 a 25)
+* **Pág. 22 — La Ruta Limpia de Cobro en México (Cero Comisiones Abusivas):**
+  - Por qué evitar las transferencias internacionales tradicionales (*wire*) que cobran $30 a $50 USD de comisión por intermediario.
+  - **Ruta recomendada:** Cosmo Payment (tarjeta física prepagada Mastercard) o PandaBlue/PagoMundo directo a cuenta bancaria nacional en pesos mexicanos.
+  - Manejo de impuestos básicos para plataformas digitales (RESICO en México).
+* **Pág. 23 — El Plan de Lanzamiento en 7 Días (Hoja de Ruta Diaria):**
+  - *Día 1:* Documentos y alta en la plataforma.
+  - *Día 2:* Pedir kit de zorro y aro de luz en Amazon.
+  - *Día 3:* Configurar geobloqueo y perfil.
+  - *Día 4:* Prueba de cámara y luz en privado.
+  - *Día 5:* Cargar el Menú de Propinas.
+  - *Día 6:* Primera transmisión piloto (2 horas).
+  - *Día 7:* Análisis de propinas y ajuste de horario.
+* **Pág. 24 — Salud Mental y la Regla de Desconexión:**
+  - La importancia de apagar la cámara, quitarte el disfraz y volver a tu vida personal. Cero agotamiento (*burnout*).
+* **Pág. 25 — Contraportada y Acceso a la Colección:**
+  - Mensaje final de empoderamiento independiente.
+  - Invitación al **Volumen 2** de la colección y enlaces a las redes oficiales de la revista.
 
 ---
 

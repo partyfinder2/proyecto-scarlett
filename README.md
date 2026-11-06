@@ -30,6 +30,7 @@ proyecto-scarlett/
 │   ├── 04_ESTRUCTURA_FINAL_25_PAGINAS.md# Desglose página por página del e-book ($199 MXN)
 │   ├── 05_ANALISIS_FALLOS_Y_PREVENCION.md# Los 6 fallos críticos de novatas y manual anti-fracaso
 │   ├── 06_REPORTE_MASTERMIND_GROK_STATBATE.md# Tracking de tips Statbate 2026, Whales y Escalera de Tokens
+│   ├── 07_REPORTE_MASTERMIND_VENICE_PSEUDOFACE.md# Análisis Pseudoface (250k creadoras), Método Zorro-5 y cobro MX
 │   └── PROMPT_AUDITORIA_MULTI_IA_TESORO.md# Prompt para cruzar Skool.com y ThePornDude con otras IAs
 ├── capitulos/                           # Manuscrito base en Markdown
 ├── assets/                              # Diagramas de flujo, banners y mockups

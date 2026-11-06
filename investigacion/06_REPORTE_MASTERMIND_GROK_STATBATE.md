@@ -85,3 +85,4 @@ Los grandes donadores de Estados Unidos, Europa y Japón se captan y retienen co
 1. **El Protocolo Zorro 80/20:** El framework para detectar y fidelizar a 2 o 3 *whales* que cubran el 70% de la meta financiera mensual sin desgaste físico.
 2. **La Escalera de Tokens Magnética:** Menú gamificado de 5 niveles con anclaje psicológico y plantillas copiables.
 3. **El Stack Faceless de 3 Capas:** El sistema que sustituye las expresiones faciales por el trinomio *Voz + Cola de Zorro + Lovense*, protegiendo la identidad al 100% y evitando el agotamiento.
+

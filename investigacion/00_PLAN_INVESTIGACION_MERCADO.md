@@ -42,5 +42,6 @@ Auditoría técnica de plataformas que pagan en dólares:
 4. `04_ESTRUCTURA_FINAL_25_PAGINAS.md`: El esqueleto definitivo página por página del e-book ($199 MXN) antes de maquetar.
 5. `05_ANALISIS_FALLOS_Y_PREVENCION.md`: Análisis de comentarios, testimonios en foros (Reddit) y los 6 fallos críticos de novatas con sus soluciones operativas.
 6. `06_REPORTE_MASTERMIND_GROK_STATBATE.md`: Reporte de inteligencia de mercado (tracking de tips Statbate 2026, retención de Whales, Escalera de Tokens y auditoría de Stripchat/Chaturbate).
-7. `PROMPT_AUDITORIA_MULTI_IA_TESORO.md`: Prompt de auditoría cruzada (Skool.com + ThePornDude) para correr en Claude/ChatGPT/Grok.
+7. `07_REPORTE_MASTERMIND_VENICE_PSEUDOFACE.md`: Análisis agregado Pseudoface (250k creadoras), Método Zorro-5, Escalera de Identidad en 3 capas, cobro limpio en MX y arbitraje de tráfico externo.
+8. `PROMPT_AUDITORIA_MULTI_IA_TESORO.md`: Prompt de auditoría cruzada (Skool.com + ThePornDude) para correr en Claude/ChatGPT/Grok.
 
