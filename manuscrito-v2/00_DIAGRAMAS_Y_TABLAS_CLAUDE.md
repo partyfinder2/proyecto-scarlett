@@ -127,3 +127,4 @@ gantt
 | Nuevas suscripciones | 3 | 10 | — |
 | Productos vendidos | 5 | 20 | — |
 | Retiro ejecutado (sí/no) | ✅ | ✅ | — |
+
