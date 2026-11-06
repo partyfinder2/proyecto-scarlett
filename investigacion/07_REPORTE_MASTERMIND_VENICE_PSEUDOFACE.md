@@ -90,3 +90,4 @@ Un gran donador regular deja entre **$50 y $300 USD por sesión y aparece 2 a 4 
    - *1. Redes SFW (TikTok) → 2. Sala Gratis → 3. Meta Colectiva → 4. Show Privado → 5. Spy Mode/Grabaciones → 6. Fansly VIP → 7. Clips Personalizados*.
 3. **El Protocolo de la Madriguera (Gestión de Whales en 4 Ritmos):**
    - *Diario* (saludo nominal), *Semanal* (show en día y hora fija), *Mensual* (nota de voz/clip exclusivo) y *Trimestral* (auditoría de clientes inactivos).
+

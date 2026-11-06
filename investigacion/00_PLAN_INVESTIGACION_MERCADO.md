@@ -43,5 +43,6 @@ Auditoría técnica de plataformas que pagan en dólares:
 5. `05_ANALISIS_FALLOS_Y_PREVENCION.md`: Análisis de comentarios, testimonios en foros (Reddit) y los 6 fallos críticos de novatas con sus soluciones operativas.
 6. `06_REPORTE_MASTERMIND_GROK_STATBATE.md`: Reporte de inteligencia de mercado (tracking de tips Statbate 2026, retención de Whales, Escalera de Tokens y auditoría de Stripchat/Chaturbate).
 7. `07_REPORTE_MASTERMIND_VENICE_PSEUDOFACE.md`: Análisis agregado Pseudoface (250k creadoras), Método Zorro-5, Escalera de Identidad en 3 capas, cobro limpio en MX y arbitraje de tráfico externo.
-8. `PROMPT_AUDITORIA_MULTI_IA_TESORO.md`: Prompt de auditoría cruzada (Skool.com + ThePornDude) para correr en Claude/ChatGPT/Grok.
+8. `08_RUTAS_LOW_COST_Y_CERO_PESOS.md`: Escalera de arranque según presupuesto (Nivel 0: $0 MXN con audio/pies, Nivel 1: <$300 MXN kit DIY, y reinversión inteligente con ganancias).
+9. `PROMPT_AUDITORIA_MULTI_IA_TESORO.md`: Prompt de auditoría cruzada (Skool.com + ThePornDude) para correr en Claude/ChatGPT/Grok.
 

@@ -23,8 +23,9 @@
   - La diferencia brutal entre desnudarse por centavos como "una chica más" vs. crear un personaje magnético con cosplay.
   - **La verdad de los datos (Pseudoface):** El 63% de los usuarios tiene una reacción positiva o neutral al anonimato, y el 25.9% tiene un interés fetichista directo en el misterio. El rostro es un producto escaso, no un requisito obligatorio.
   - El desmontaje del mito del "tráfico gratis": el 89.08% del tráfico nuevo proviene de embudos externos en redes sociales SFW (TikTok/Instagram) con el cosplay puesto.
-* **Pág. 4 — El Mapa de la Ruta (Infografía en 1 Página):**
-  - Diagrama visual de flujo: *Anonimato (Máscara + Geobloqueo) → Set en Casa → Plataforma en Vivo → Menú de Tokens → Retiro en Dólares*.
+* **Pág. 4 — El Mapa de la Ruta y la Escalera de Presupuesto:**
+  - Infografía de flujo: *Anonimato (Máscara + Geobloqueo) → Set según Presupuesto → Plataforma en Vivo → Menú de Tokens → Retiro en Dólares*.
+  - **La Escalera de Entrada:** Nivel 0 ($0 MXN: Audio y Celular) → Nivel 1 (<$300 MXN: Lámpara y Cola DIY) → Nivel 2 (Reinversión con ganancias: Lovense y Aro).
 
 ---
 
@@ -44,27 +45,31 @@
 ---
 
 ### BLOQUE 3: EL KIT DE TRABAJO Y EL ACCESORIO CLAVE (Págs. 9 a 12)
-* **Pág. 9 — El Poder de la Cola de Zorro (*Kemonomimi*):**
+* **Pág. 9 — El Poder de la Cola de Zorro (*Kemonomimi*) y la Versión DIY:**
   - Por qué este accesorio específico dispara el CTR (tasa de clics) en las miniaturas de las páginas.
-  - **Tipos de sujeción:** Broche de cinturón o clip de metal exterior (obligatorio para shows largos de 2 a 4 horas sin fatiga física) vs. bases anatómicas.
+  - **La versión DIY ($80–$150 MXN):** 1 metro de peluche de mercería con broche de cinturón cosido (en 120px la cámara no distingue entre $90 y $1,000 pesos).
+  - **Regla médica/operativa:** Broche de cinturón o clip de metal exterior (obligatorio para shows largos de 2 a 4 horas sin fatiga física) vs. bases anatómicas.
   - El truco de los 3 sets de orejas ($200–$600 MXN en Amazon/AliExpress) para monetizar el comando de menú: *"Elige qué orejas me pongo hoy por 60 tokens ($3 USD)"*.
   - **[BOTÓN / ENLACE DE AFILIADO AMAZON]:** *«Consigue tu Kit de Zorro y Orejas Recomendado Aquí»*.
-* **Pág. 10 — Iluminación de Estudio con $500 Pesos:**
-  - La técnica de los dos puntos: aro de luz a 30° sobre la línea de ojos (evita sombras del antifaz sobre la mandíbula) + luz cálida de fondo.
+* **Pág. 10 — Iluminación Profesional con Menos de $200 Pesos:**
+  - **Opción Ultra-Económica ($150 MXN):** Lámpara de pinza con foco LED de luz fría 6500K colocado a 30° sobre la línea de ojos + pared blanca o sábana clara.
+  - **Opción Upgrade ($500 MXN):** Aro de luz LED de 10-12" con tripié y soporte para celular.
   - **[ENLACE AMAZON]:** *«Aro de luz LED con tripié para celular»*.
-* **Pág. 11 — El Arma del Millón: Lovense Lush y Calibración Matemática:**
+* **Pág. 11 — El Arma del Millón: Lovense Lush (Y Cuándo Comprarlo):**
+  - **Regla financiera de oro:** Lovense Lush 3 (~$129 USD) se compra **con las primeras ganancias cobradas ($150–$200 USD)**, NUNCA con deuda personal.
   - Sincronización Bluetooth con el chat y cómo convierte tokens en dopamina física inmediata.
   - **La regla de oro:** El nivel 1 NUNCA empieza en 1 token (evita spam de centavos); inicia en **3 tokens**.
   - **Configuración de las Top Models:** 3–10 tokens (3s Low), 11–50 tokens (5–8s Med), 51–150 tokens (10–15s High), 151–499 tokens (20–30s Max), 500+ tokens (60s Ultra + patrón Earthquake).
   - El comando secreto *"Pause the Queue"* por 50 tokens para pausas de descanso.
   - **[BOTÓN / ENLACE DE AFILIADO LOVENSE]:** *«Adquiere tu Lovense Lush Oficial con Descuento»*.
-* **Pág. 12 — Checklist de tu Habitación:**
-  - Fondos limpios, gestión de cables, temperatura y postura cómoda.
+* **Pág. 12 — En Qué NO Gastar al Arrancar:**
+  - Lista negra: Cero cursos de $1,000 USD, cero agencias que quitan el 50%, cero cámaras DSLR de $15,000 pesos (un celular con luz fría gana a cualquier cámara a oscuras).
 
 ---
 
 ### BLOQUE 4: DÓNDE REGISTRARTE Y GANAR EN DÓLARES (Págs. 13 a 17)
-* **Pág. 13 — La Gran Decisión: ¿Webcam en Vivo o Suscripciones?:**
+* **Pág. 13 — La Gran Decisión: Webcam, Suscripciones o Rutas $0 Pesos:**
+  - **Rutas alternativas de $0 inversión:** Audio/Roleplay en NiteFlirt (cobro por minuto el mismo día) y nicho de Pies + Cosplay (el pedido #1 por propina en redes faceless).
   - Comparativa de modelos de negocio: Tráfico gratis inmediato (Stripchat/Chaturbate) vs. Ingresos pasivos recurrentes (Fansly/OnlyFans).
 * **Pág. 14 — Stripchat vs Chaturbate (Horarios Pico y Datos 2026):**
   - **Stripchat (Líder en México con 53.3% de tips y 608M visitas):** Horario pico diurno (9:00 AM – 1:00 PM ET), Spy Mode y pagos semanales.
