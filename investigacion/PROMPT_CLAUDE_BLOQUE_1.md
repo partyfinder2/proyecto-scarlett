@@ -40,3 +40,4 @@ Cada página debe incluir:
 
 Comienza a redactar el archivo completo `manuscrito-v2/BLOQUE_1_PAGINAS_1_A_5.md` ahora mismo.
 ```
+
