@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Fábrica de Contenido</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            tinta: "#090b10",
+            tarjeta: "#141821",
+            linea: "#2a3142"
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: "Segoe UI", system-ui, sans-serif; }
+    .nav-activa { background: #14532d; color: white; }
+    video { max-height: 70vh; }
+  </style>
+</head>
+<body class="bg-tinta text-zinc-100 min-h-screen">
+  <header class="sticky top-0 z-20 border-b border-linea bg-tinta/95 backdrop-blur">
+    <div class="max-w-6xl mx-auto px-4 py-4 flex flex-wrap items-center gap-3 justify-between">
+      <div>
+        <h1 class="text-xl font-semibold">🏭 Fábrica de Contenido</h1>
+        <p id="fecha-hoy" class="text-sm text-zinc-400"></p>
+      </div>
+      <div id="pildoras" class="flex flex-wrap gap-2 text-xs"></div>
+    </div>
+    <nav class="max-w-6xl mx-auto px-4 pb-3 flex gap-2 overflow-x-auto" id="nav"></nav>
+  </header>
+  <main id="vista" class="max-w-6xl mx-auto px-4 py-6"></main>
+  <div id="aviso" class="hidden fixed bottom-4 right-4 max-w-sm rounded-2xl bg-zinc-900 border border-linea px-4 py-3 shadow-xl text-sm"></div>
+  <script src="/panel/app.js"></script>
+</body>
+</html>
