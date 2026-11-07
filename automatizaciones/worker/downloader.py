@@ -32,7 +32,10 @@ def download_tiktok_sin_marca(url: str) -> str | None:
         },
         "quiet": True,
         "no_warnings": True,
-        "socket_timeout": 15,
+        "socket_timeout": 10,
+        "retries": 1,
+        "fragment_retries": 1,
+        "extractor_retries": 1,
     }
 
     try:
