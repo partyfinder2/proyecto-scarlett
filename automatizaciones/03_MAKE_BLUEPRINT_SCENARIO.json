@@ -1,0 +1,157 @@
+{
+    "name": "JSON - MAKE 2.0 (SANITIZADO PARA ENTORNO SEGURO)",
+    "description": "Blueprint de Make.com para automatización de procesamiento de video y publicación cruzada en Instagram, YouTube y Facebook. Credenciales configuradas para inyección en tiempo de ejecución.",
+    "flow": [
+        {
+            "id": 1,
+            "module": "google-sheets:watchRows",
+            "version": 2,
+            "parameters": {
+                "from": "drive",
+                "mode": "select",
+                "limit": 1,
+                "sheetId": "Hoja 1",
+                "tableFirstRow": "A1:Z1",
+                "includesHeaders": true,
+                "valueRenderOption": "FORMATTED_VALUE",
+                "dateTimeRenderOption": "FORMATTED_STRING"
+            }
+        },
+        {
+            "id": 265,
+            "module": "util:SetVariables",
+            "version": 1,
+            "parameters": {},
+            "mapper": {
+                "scope": "roundtrip",
+                "variables": [
+                    {
+                        "name": "editor-host",
+                        "value": "http://134.209.77.162:5001"
+                    },
+                    {
+                        "name": "Eleven Labs API",
+                        "value": "{{process.env.ELEVENLABS_API_KEY}}"
+                    },
+                    {
+                        "name": "Eleven Labs Voice ID",
+                        "value": "rpqlUOplj0Q0PIilat8h"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 5,
+            "module": "http:ActionSendDataBasicAuth",
+            "version": 3,
+            "parameters": {
+                "handleErrors": false,
+                "useNewZLibDeCompress": true
+            },
+            "mapper": {
+                "url": "{{265.`editor-host`}}/process_video",
+                "data": "{\"tiktokVoice\":\"es_male_m3\",\"audioVolume\":\"8\",\"musicVolume\":\"0.05\",\"tiktokUrl\":\"{{1.`0`}}\",\"backgroundMusicTiktokUrl\":\"{{1.`3`}}\",\"audioSource\":\"\",\"customCopy\":\"\",\"customVideoUrl\":\"\",\"copyForCustomVideo\":\"{{1.`1`}}\",\"elevenLabsApiKey\":\"{{265.`Eleven Labs API`}}\",\"elevenLabsVoiceId\":\"{{265.`Eleven Labs Voice ID`}}\",\"elevenLabsVoiceStability\":1,\"elevenLabsVoiceSimilarityBoost\":1}",
+                "gzip": true,
+                "method": "post",
+                "bodyType": "raw",
+                "contentType": "application/json"
+            }
+        },
+        {
+            "id": 6,
+            "module": "json:ParseJSON",
+            "version": 1,
+            "parameters": {
+                "type": ""
+            },
+            "filter": {
+                "name": "No field Error",
+                "conditions": [
+                    [
+                        {
+                            "a": "{{5.statusCode}}",
+                            "b": "202",
+                            "o": "text:equal"
+                        }
+                    ]
+                ]
+            },
+            "mapper": {
+                "json": "{{5.data}}"
+            }
+        },
+        {
+            "id": 4,
+            "module": "http:ActionSendData",
+            "version": 3,
+            "parameters": {
+                "handleErrors": false,
+                "useNewZLibDeCompress": true
+            },
+            "mapper": {
+                "url": "{{265.`editor-host`}}/check_status/{{6.task_id}}",
+                "method": "get"
+            }
+        },
+        {
+            "id": 18,
+            "module": "json:ParseJSON",
+            "version": 1,
+            "parameters": {
+                "type": ""
+            },
+            "mapper": {
+                "json": "{{4.data}}"
+            }
+        },
+        {
+            "id": 21,
+            "module": "builtin:BasicRouter",
+            "version": 1,
+            "routes": [
+                {
+                    "flow": [
+                        {
+                            "id": 486,
+                            "module": "instagram-business:CreateAReelPost",
+                            "version": 1,
+                            "mapper": {
+                                "caption": "{{1.`2`}}",
+                                "video_url": "{{18.result}}",
+                                "share_to_feed": false
+                            }
+                        },
+                        {
+                            "id": 492,
+                            "module": "youtube:uploadVideo",
+                            "version": 4,
+                            "mapper": {
+                                "title": "Aprende sobre mecánica de motos",
+                                "categoryId": "24",
+                                "privacyStatus": "public"
+                            }
+                        },
+                        {
+                            "id": 553,
+                            "module": "facebook-pages:uploadAReel",
+                            "version": 6,
+                            "mapper": {
+                                "url": "{{18.result}}",
+                                "description": "{{1.`2`}}",
+                                "uploadMethod": "url"
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "metadata": {
+        "version": 1,
+        "scenario": {
+            "roundtrips": 1,
+            "maxErrors": 3,
+            "autoCommit": true
+        }
+    }
+}
