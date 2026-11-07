@@ -88,14 +88,15 @@ Las 6 tarjetas/bolitas paso por paso en lenguaje humano:
 
 ### 7. Sección 6: 🤖 Bot Guardián (`AutoHealBot` 24/7)
 *"Trabaja 24/7 en segundo plano · Te avisa solo cuando algo necesita tu atención"*
-- **3 Indicadores Grandes de Salud:**
+- **3 Indicadores Grandes de Salud + Controles Prácticos de Memoria:**
   1. `✅ Todo OK` — Estado general del sistema
   2. `🔑 42 días` — Token Instagram vence en (`↑ Renovará solo 7 días antes`)
-  3. `🪶 18 MB usados (Tope Máx: 200 MB)` — Modo Ultra-Ligero Activo (`Borrado inmediato tras publicar: 0 basura en tu PC`)
-- **📋 Regla de Almacenamiento "Modo Pluma" (Crítico para proteger el disco de Pablo):**
-  - **Descarga Just-in-Time (1 video a la vez):** Prohibido descargar los 80 videos de golpe. Solo se descarga el clip que se está procesando en ese minuto (~8 MB).
-  - **Borrado Inmediato Post-Publicación (`0 días de espera`):** En cuanto el video se publica en redes (y se respalda gratis en la nube ilimitada de Telegram de Pablo), el `AutoHealBot` elimina de inmediato los archivos `.mp4` y `.mp3` temporales del disco local.
-  - **Candado Duro de 200 MB:** Si en algún momento las carpetas `cache/` + `output/` superan los `150 MB`, el Bot Guardián purga automáticamente los archivos más antiguos para que la herramienta **jamás ocupe más de 200 MB en la PC**.
+  3. `🗂️ 450 MB usados (Límite seguro: 1.5 GB)` — Barra de memoria con selector rápido (`Guardar historial por: [ 7 días | 15 días ]`) + Botón **`🧹 Limpiar Memoria Ahora`**
+- **📋 Regla de Almacenamiento Inteligente (Práctico + Seguro para tu PC):**
+  - **Borrar basura intermedia al instante, pero conservar el video terminado:** Los pedazos sueltos de trabajo (el audio `.mp3` suelto y el subtítulo `.ass`) se borran apenas sale el video, pero **el video final terminado sí se guarda en tu historial** para que lo puedas ver o descargar cuando quieras.
+  - **Rotación Automática Suave (7 o 15 días / Tope 1.5 GB):** Los videos publicados se conservan durante **7 o 15 días** (tú eliges con un selector). Pasado ese tiempo, el Bot Guardián va borrando poco a poco los más viejos para que nunca pases de `1.5 GB`.
+  - **Botón "📌 Fijar / Favorito":** En la lista de videos, cada video tiene un icono de candadito `📌`. Si un video te gustó mucho y no quieres que se borre a los 15 días, le pones `📌` y el Bot nunca lo toca.
+  - **Botón Manual "🧹 Limpiar Memoria Ahora":** Un botón directo en la pestaña del Bot Guardián que, al darle clic, libera el espacio de todos los videos ya publicados (excepto tus favoritos `📌`) en 1 segundo.
 - **📋 Últimas acciones del Bot:**
   - `13:00:00 ✅ Health check diario OK · Worker activo · DB responde en 2ms`
   - `12:58:33 ✅ 2 comentarios respondidos en Canal 1 — keyword detectada`
