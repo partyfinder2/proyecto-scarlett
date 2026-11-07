@@ -107,3 +107,4 @@ Así salí de deudas haciendo bolsos de trapillo. Me despidieron de mi trabajo y
 ```text
 ¿Sabías que puedes personalizar camisetas, tazas y mucho más desde casa y ganar dinero con ello? Hace un año personalicé una camiseta como regalo para un amigo. ¡Le encantó tanto que me pidió quince más para su equipo! Desde entonces, comencé a sublimar de forma profesional y ahora gano más de tres mil dólares al mes. ¿Te gustaría aprender a sublimar y convertir tus diseños en productos únicos que las personas amen? En mi curso online te enseño desde cero: cómo empezar, qué materiales usar y cómo lograr sublimaciones con acabados impecables. Si deseas aprender profesionalmente y realizar sublimados que disparen las ventas de tu negocio, quiero comentarte que tengo un curso online con más de cincuenta y siete lecciones. Tendrás acceso de por vida con un único pago. Comenta "sublimación" o haz clic en el enlace de mi perfil para ayudarte personalmente.
 ```
+

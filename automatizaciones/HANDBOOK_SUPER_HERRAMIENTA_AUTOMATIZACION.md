@@ -133,3 +133,4 @@ Una vez que recibamos las respuestas de Grok y Claude:
    - Crear la página de la herramienta: `/admin/social-studio`
    - Conectar la interfaz con los datos que ya tenemos listos en `02_BASE_DATOS_TIKTOKS_MECANICA.csv`.
    - Disfrutar de una herramienta donde solo das un clic y tus redes se llenan de videos en piloto automático.
+

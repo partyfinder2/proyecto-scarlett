@@ -119,3 +119,4 @@ Cada guion debería salir con estos campos, no como un texto suelto:
 - `activo` (lo que se contesta al que comenta)
 - `slot`: `almuerzo` o `noche`, con país de la audiencia
 - regla de cola: si el video anterior del mismo nicho tiene el mismo `hook_id` o la misma keyword, se desplaza al día siguiente
+

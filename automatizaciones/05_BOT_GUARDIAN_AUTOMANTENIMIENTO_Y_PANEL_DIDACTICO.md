@@ -90,3 +90,4 @@ automatizaciones/
         ├── DashboardDidactico.tsx              # Pantalla principal 1-2-3 para Pablo
         └── WidgetBotGuardian.tsx               # Semáforo y bitácora hablada del Bot
 ```
+

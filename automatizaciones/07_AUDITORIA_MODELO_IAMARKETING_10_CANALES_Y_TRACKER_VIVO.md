@@ -83,3 +83,4 @@ En lugar de tener todo revuelto, la pantalla principal de Pablo tendrá **10 Tar
 Tanto **Claude** (en su arquitectura de código) como **Cursor** (al armar las pantallas) deben incluir obligatoriamente estos 2 componentes visuales:
 1. **`MultiChannelGrid.tsx` (Panel de los 10 Canales):** Vista de cuadrícula con las 10 tarjetas de automatización independientes, cada una con su botón de `Encender/Pausar`, selector de nicho, voz y cuentas conectadas.
 2. **`LiveProcessTracker.tsx` (Visor Paso a Paso en Tiempo Real):** Barra visual mediante Server-Sent Events (SSE) o polling cada 2 segundos a `/api/check-status/[taskId]` que ilumine en vivo cada etapa: **Creando Guion $\rightarrow$ Grabando Voz $\rightarrow$ Renderizando Video $\rightarrow$ Programando $\rightarrow$ Enviando a Redes $\rightarrow$ ¡Publicado!**.
+
