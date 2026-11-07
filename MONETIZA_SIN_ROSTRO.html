@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Monetiza Sin Rostro · Por Scarlett</title>
+  <style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --bg-primary: #110d17;
+  --bg-card: #1b1524;
+  --bg-quote: #231b2f;
+  --text-main: #f3f0f7;
+  --text-muted: #b5a9c4;
+  --accent-gold: #e8c37d;
+  --accent-rose: #f472b6;
+  --accent-soft: #a78bfa;
+  --border-card: rgba(232, 195, 125, 0.22);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-main);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  line-height: 1.8;
+  font-size: 17px;
+  -webkit-font-smoothing: antialiased;
+}
+
+.reader-container {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 40px 24px 100px;
+}
+
+.book-hero {
+  text-align: center;
+  padding: 60px 20px 40px;
+  background: radial-gradient(circle at 50% 30%, rgba(244, 114, 182, 0.15), transparent 70%);
+  border-bottom: 1px solid var(--border-card);
+  margin-bottom: 50px;
+  border-radius: 20px;
+}
+
+.book-badge {
+  display: inline-block;
+  padding: 6px 16px;
+  background: rgba(232, 195, 125, 0.12);
+  border: 1px solid var(--accent-gold);
+  color: var(--accent-gold);
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+
+h1 {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 46px;
+  color: #fff;
+  line-height: 1.2;
+  margin-bottom: 14px;
+  font-weight: 700;
+}
+
+.book-subtitle {
+  font-size: 20px;
+  color: var(--accent-rose);
+  font-weight: 400;
+  margin-bottom: 16px;
+  line-height: 1.4;
+}
+
+.book-author {
+  color: var(--text-muted);
+  font-size: 15px;
+  letter-spacing: 0.5px;
+}
+
+/* Headings */
+h1:not(.book-hero h1) {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 34px;
+  color: var(--accent-gold);
+  margin-top: 60px;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(232, 195, 125, 0.2);
+  letter-spacing: 0.5px;
+}
+
+h2 {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 26px;
+  color: #fff;
+  margin-top: 10px;
+  margin-bottom: 24px;
+  font-weight: 600;
+}
+
+h3 {
+  font-size: 20px;
+  color: var(--accent-rose);
+  margin-top: 32px;
+  margin-bottom: 16px;
+  font-weight: 600;
+}
+
+h4 {
+  font-size: 17px;
+  color: var(--accent-soft);
+  margin-top: 24px;
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+p {
+  margin-bottom: 20px;
+  color: #e2dce8;
+  font-size: 17px;
+}
+
+strong {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+em {
+  color: var(--accent-gold);
+  font-style: italic;
+}
+
+hr {
+  border: none;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(232, 195, 125, 0.35), transparent);
+  margin: 50px 0;
+}
+
+/* Lists */
+ul, ol {
+  margin-left: 24px;
+  margin-bottom: 24px;
+}
+
+li {
+  margin-bottom: 10px;
+  color: #dfd8e8;
+}
+
+/* Code & Pre */
+pre {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-left: 4px solid var(--accent-gold);
+  padding: 18px 22px;
+  border-radius: 12px;
+  overflow-x: auto;
+  font-family: Consolas, Monaco, "Courier New", monospace;
+  font-size: 14.5px;
+  color: #fce7f3;
+  margin: 24px 0;
+  line-height: 1.6;
+}
+
+code {
+  background: rgba(244, 114, 182, 0.12);
+  color: var(--accent-rose);
+  padding: 3px 7px;
+  border-radius: 6px;
+  font-size: 15px;
+  font-family: Consolas, Monaco, monospace;
+}
+
+pre code {
+  background: transparent;
+  padding: 0;
+  color: inherit;
+}
+
+/* Blockquotes / Highlights */
+blockquote {
+  background: var(--bg-quote);
+  border-left: 4px solid var(--accent-rose);
+  padding: 18px 22px;
+  margin: 24px 0;
+  border-radius: 0 12px 12px 0;
+  font-style: italic;
+  color: #f3e8ff;
+}
+
+/* Table of contents styling */
+ul:first-of-type {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  padding: 24px 28px 24px 44px;
+  border-radius: 14px;
+  list-style-type: none;
+  margin-left: 0;
+}
+
+ul:first-of-type li {
+  margin-bottom: 12px;
+  font-size: 15.5px;
+}
+
+ul:first-of-type li strong {
+  color: var(--accent-gold);
+}
+
+.floating-nav {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: rgba(27, 21, 36, 0.9);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--accent-gold);
+  color: var(--accent-gold);
+  padding: 10px 18px;
+  border-radius: 999px;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 100;
+}
+.floating-nav:hover {
+  background: var(--accent-gold);
+  color: #110d17;
+}
+
+@media (max-width: 600px) {
+  h1 { font-size: 32px; }
+  h1:not(.book-hero h1) { font-size: 26px; }
+  h2 { font-size: 21px; }
+  .reader-container { padding: 20px 16px 80px; }
+}
+</style>
+</head>
+<body>
+  <div class="reader-container">
+    <div class="book-hero">
+      <div class="book-badge">Guía Exclusiva 2026</div>
+      <h1>Monetiza Sin Rostro</h1>
+      <div class="book-subtitle">Tu guía secreta para ganar en dólares desde casa sin mostrar el rostro</div>
+      <div class="book-author">De mujer a mujer · Escrito por Scarlett</div>
+    </div>
+    
+    <div class="book-content">
+      <h1>Monetiza Sin Rostro</h1>
+<h3>Tu guía secreta para ganar en dólares desde casa sin mostrar el rostro</h3>
+<p><strong>De mujer a mujer · Por Scarlett · Edición 2026</strong></p>
+<hr />
+<h2>ÍNDICE DE CAPÍTULOS</h2>
+<ul>
+<li><strong>Capítulo 1:</strong> De mujer a mujer: por qué la oficina ya no te va a salvar y cómo ser libre</li>
+<li><strong>Capítulo 2:</strong> El candado secreto: cómo blindarte para que ni tu ex, ni tu familia sospechen jamás</li>
+<li><strong>Capítulo 3:</strong> Tu kit de arranque con lo que tienes en el clóset (y cómo armar a tu personaje Kitsune)</li>
+<li><strong>Capítulo 4:</strong> El truco de los 7 segundos: cómo dejarlos hipnotizados con la colita</li>
+<li><strong>Capítulo 5:</strong> En vivo sin miedo: cómo jugar en cámara sin desnudarte gratis</li>
+<li><strong>Capítulo 6:</strong> Las 6 minas de oro desde tu cama (del chat coquetón a los audios susurrados)</li>
+<li><strong>Capítulo 7:</strong> Tu acordeón en inglés: qué decir, qué cobrar y cómo susurrar aunque no sepas inglés</li>
+<li><strong>Capítulo 8:</strong> Tus consentidores estrella: quiénes son los gringos que pagan de verdad y cómo cuidarlos</li>
+<li><strong>Capítulo 9:</strong> Tu semana de 15 horas: graba un solo día y el resto solo cobra</li>
+<li><strong>Capítulo 10:</strong> El dinero en tu banco: cómo traer tus dólares a México limpios y en paz con el SAT</li>
+<li><strong>Capítulo 11:</strong> Tu plan de despegue de 7 días: de hoy a tu primer depósito</li>
+</ul>
+<hr />
+<h1>CAPÍTULO 1</h1>
+<h2>De mujer a mujer: por qué la oficina ya no te va a salvar</h2>
+<p>Hola, bonita. Qué gusto saludarte.</p>
+<p>Si tienes este libro abierto, probablemente estás en el mismo punto donde yo estuve hace tiempo: cansada. Cansada de levantarte a las seis de la mañana, de apretujarte en el transporte público, de aguantar jefes insoportables y de mirar tu cuenta de banco a fin de mes para darte cuenta de que apenas te alcanzó para pagar la renta, el súper y las deudas.</p>
+<p>Durante años nos metieron en la cabeza el mismo cuento: <em>«Estudia una carrera, saca tu título, ponte la camiseta en una empresa y la vida se te arregla»</em>.</p>
+<p>Vamos a ser bien sinceras: en México y en toda Latinoamérica, ese cuento ya no funciona. Conozco a decenas de amigas con título universitario, preparadas, inteligentes, ganando $8,000 o $10,000 pesos al mes por encerrarse 10 horas en una oficina. Y para colmo, hoy en día con la Inteligencia Artificial y la tecnología, la mitad de los trabajos administrativos que siempre hacíamos las mujeres los están borrando las computadoras.</p>
+<p>Quedarte esperando que una empresa te rescate es una trampa.</p>
+<p>La verdadera independencia no te la da un jefe ni un contrato: te la da tener tu propio dinero, que nadie controle tus horarios y que ganes en una moneda fuerte.</p>
+<h3>El secreto del que nadie te habla: ganar en dólares desde tu cuarto</h3>
+<p>Piénsalo así: para un hombre en Estados Unidos, $20 o $30 dólares es lo que se gasta en una hamburguesa con papas y una cerveza un martes cualquiera. No es nada para él.</p>
+<p>Pero para nosotras en México, esos $30 dólares son casi $600 pesos. Ganarte $40 dólares en 15 minutos de chat coqueteando desde tu cama con una pijama calientita equivale a dos días completos de trabajo en cualquier tienda o call center.</p>
+<p>Esa es la magia de este negocio: <strong>cobramos en dólares de los gringos y gastamos en pesos mexicanos aquí</strong>.</p>
+<p>Y lo más hermoso de todo: <strong>no tienes que enseñar tu cara, no tienes que salir a la calle con desconocidos, y nadie tiene por qué enterarse.</strong></p>
+<hr />
+<h1>CAPÍTULO 2</h1>
+<h2>El candado secreto: cómo blindarte para que nadie sospeche jamás</h2>
+<p>Lo primero que pasa por tu cabeza cuando piensas en este mundo es el pánico: <em>«¿Y si mi novio me ve? ¿Y si un primo se entera? ¿Y si me reconoce alguien del trabajo?»</em>.</p>
+<p>Tranquila, respira. Te lo digo de corazón: <strong>si sigues las 4 reglas que te voy a dar, es matemáticamente imposible que alguien que te conozca te descubra.</strong></p>
+<p>El error de las chicas que terminan expuestas es que no tienen malicia técnica: abren una cuenta con su correo personal, usan los mismos nombres de Instagram y suben videos usando filtros que se traban a medio video. Nosotras no hacemos esas tonterías. Nosotras jugamos con candados de acero.</p>
+<h3>Tus 4 candados innegociables:</h3>
+<h4>1. El Geobloqueo (Desaparece de México)</h4>
+<p>Las plataformas serias (como Fansly, ManyVids o Stripchat) tienen una herramienta maravillosa llamada <strong>Geobloqueo</strong>. Con un solo clic puedes bloquear por completo a todo México o a tu estado natal. Cualquier persona que intente buscarte desde tu ciudad simplemente verá un mensaje de error o pantalla negra. Para ellos tú no existes.</p>
+<h4>2. Correo y alias 100% nuevos</h4>
+<p>Olvídate de usar tu correo de siempre. Abre una cuenta de Gmail nueva dedicada exclusivamente a tu personaje (ejemplo: <em>kitsunevaleria@gmail.com</em>). Elige un nombre artístico dulce y coqueto que no tenga nada que ver con tus nombres reales ni tu fecha de cumpleaños.</p>
+<h4>3. Limpia las fotos de tu celular (Borra el GPS)</h4>
+<p>¿Sabías que cuando tomas una foto con tu iPhone o Android, el celular guarda en secreto las coordenadas exactas de la calle y colonia donde vives?<br />
+Antes de subir cualquier foto a X (Twitter) o Telegram, pásala por una app gratuita que se llama <strong>Metapho</strong> (si tienes iPhone) o <strong>Photo Exif Editor</strong> (si tienes Android). Con un toque le borras la ubicación GPS y listo: nadie sabrá jamás desde qué rincón del mundo estás transmitiendo.</p>
+<h4>4. Nunca uses filtros de TikTok para taparte la cara en contenido privado</h4>
+<p>Hay chicas flojas que se ponen un sticker o un filtro de carita de zorro dentro de la cámara de TikTok y creen que ya con eso están a salvo. ¡Grave error! Si la app sufre un lag o se traba, por medio segundo se te ve la cara real.<br />
+Tu anonimato tiene que ser físico y real: un antifaz bonito de encaje, una máscara coqueta, o simplemente <strong>grabar del cuello para abajo</strong>.</p>
+<hr />
+<h1>CAPÍTULO 3</h1>
+<h2>Tu kit de arranque con lo que tienes en el clóset</h2>
+<p>No necesitas gastarte una fortuna en lencería cara ni comprar cámaras profesionales. De hecho, los hombres gringos y los fanáticos del cosplay no buscan a una modelo de pasarela inalcanzable: buscan a una chica misteriosa, bonita, linda y accesible que juegue con un personaje misterioso y coqueto de cosplay (<em>Kitsune</em>).</p>
+<h3>La Escalera de Inversión (Cómo arrancar con $0 pesos):</h3>
+<ul>
+<li><strong>Nivel 0 ($0 pesos):</strong> Tu celular, una ventana de día para que te dé buena luz natural, una sudadera calientita de las que ya tienes y un antifaz de $50 pesos. Con eso ya puedes empezar a vender audios y mensajitos.</li>
+<li><strong>Nivel 1 (Menos de $300 pesos):</strong> Te compras una colita de zorro con broche en Mercado Libre ($150 pesos), una diadema de orejitas afelpadas ($80 pesos) y una tira de foquitos LED morados para poner de fondo en tu recámara ($90 pesos).</li>
+<li><strong>Nivel 2 ($0 de tu bolsa):</strong> Más adelante, cuando quieras un aro de luz grande o un juguete de esos que vibran con propinas (el famoso <em>Lovense Lush</em> de $120 dólares), <strong>no lo vas a pagar tú</strong>. Lo pones en tu lista de deseos de Throne y dejas que tus propios seguidores te lo regalen.</li>
+</ul>
+<h3>Cómo ponerte la colita de zorro sin batallar</h3>
+<p>Mucha gente cree que estas colitas son incómodas o invasivas. ¡Para nada! La que nosotras usamos es la <strong>cola con broche de clip o mosquetón metálico</strong>.</p>
+<ul>
+<li>Se abrocha directo a la pretina de tus shorts deportivos, a una falda tableada corta o a un cinturón delgado debajo de la ropa.</li>
+<li>Es súper suavecita, no estorba para nada, te puedes sentar o acostar en tu cama durante horas y se mueve precioso cuando caminas.</li>
+</ul>
+<h3>Los 3 looks con ropa que ya tienes:</h3>
+<ol>
+<li><strong>La Gamer Relajada:</strong> Una sudadera grande (<em>oversize</em>) que te tape hasta medio muslo, calcetas altas arriba de la rodilla y la colita saliendo por detrás. A los hombres les vuelve locos este contraste entre inocente y coqueta.</li>
+<li><strong>Estilo Anime Escolar:</strong> Tu falda tableada corta, una camisa blanca de botones y una gargantilla negra (<em>choker</em>) en el cuello.</li>
+<li><strong>Madriguera Nocturna:</strong> Una bata de satín o pijama ligera de seda con shorts chiquitos.</li>
+</ol>
+<h3>El truco del &quot;Espejo con Flash&quot;</h3>
+<p>Para tomarte fotos hermosas sin que se vea tu cara y sin editar nada:<br />
+Apaga la luz de tu cuarto y deja solo la tira de foquitos de colores encendida de fondo. Párate frente al espejo, prende la linterna/flash de tu celular y <strong>ponte el teléfono justo frente a tu rostro</strong>.<br />
+El destello de la luz ciega por completo el reflejo de tu cara (se ve como un círculo blanco brillante súper estético), mientras ilumina a la perfección tus hombros, tu cintura y la silueta de tu colita esponjosa.</p>
+<hr />
+<h1>CAPÍTULO 4</h1>
+<h2>El truco de los 7 segundos: cómo dejarlos hipnotizados con la colita</h2>
+<p>En internet, los hombres tienen la atención de un pez dorado: ven una foto desnuda completa, se sacian en dos segundos y siguen deslizando la pantalla.</p>
+<p>La ventaja de ser una chica faceless con orejitas y cola de zorro es que tú juegas con su curiosidad:<br />
+Cuando subes un videíto corto de <strong>apenas 5 a 7 segundos</strong> donde solo se ve el movimiento rítmico de la colita esponjosa o cómo caminas en calcetas hacia la cama, su cerebro se queda con una duda enorme: <em>¿Quién es ella? ¿Cómo se sostiene esa cola? ¿Qué habrá debajo?</em></p>
+<p>Esa duda hace que repitan el video 2 o 3 veces para entenderlo. Y cuando el algoritmo de TikTok o Instagram ve que la gente repite tu video, se lo muestra gratis a miles de personas en Estados Unidos.</p>
+<h3>3 ideas de videos de 7 segundos que no te banean:</h3>
+<ol>
+<li><strong>El Mito del Imán:</strong><br />
+Te paras de espaldas a la cámara con una faldita y das dos brinquitos haciendo que la cola rebote. Te volteas de medio lado, te pones el dedo en los labios haciendo <em>&quot;shhh&quot;</em> y pones este texto:<br />
+<em>«Mi hermano cree que la cola se sostiene con un imán invisible... quién le dice 💀🦊»</em><br />
+Estás 100% vestida, pero los comentarios se van a llenar de hombres debatiendo cómo te la pusiste.</li>
+<li><strong>El Fallo de Gamer:</strong><br />
+Pones la cámara en una mesa baja apuntando a tu silla. Vas a sentarte de espaldas con calcetas altas, pero te detienes de golpe al recordar que traes la cola puesta y te acomodas de rodillas dejando caer la colita hacia la cámara.<br />
+Texto: <em>«Problemas de trabajar desde casa con mi uniforme favorito... no me puedo sentar normal 😭»</em>.</li>
+<li><strong>El Reto del Control:</strong><br />
+De la cintura para abajo frente al espejo. La cola está quieta y de repente das un brinquito como si sintieras un cosquilleo y la cola se sacude. Muestras tu mano con otro celular en chat difuminado.<br />
+Texto: <em>«Dejé que el chat controlara mi cola mientras me hacía un café... mala idea ⚡»</em>.</li>
+</ol>
+<p>Al final de los 3 videos, siempre dices lo mismo: <em>&quot;El link completo está en mi perfil&quot;</em>.</p>
+<hr />
+<h1>CAPÍTULO 5</h1>
+<h2>En vivo sin miedo: cómo jugar en cámara sin desnudarte gratis</h2>
+<p>Si decides abrir transmisión en vivo (en páginas como Stripchat o Fansly Live), quiero que te grabes esto en la frente: <strong>tu tiempo vale y no estás ahí para que nadie te falte al respeto ni te exija cosas gratis</strong>.</p>
+<p>En esas páginas la moneda son los <em>tokens</em>. Cada token que te mandan a ti te paga <strong>5 centavos de dólar limpios</strong>:</p>
+<ul>
+<li>100 tokens = $5 USD (~$100 pesos).</li>
+<li>500 tokens = $25 USD (~$500 pesos).</li>
+<li>1,000 tokens = $50 USD (~$1,000 pesos).</li>
+</ul>
+<h3>La Emboscada de tus primeros 7 días (La etiqueta &quot;NEW&quot;)</h3>
+<p>Cuando una página de cámaras aprueba tu cuenta, te regala una insignia que dice <strong>NEW</strong> durante tus primeros 7 a 14 días. Durante esa semana, la página te pone en la portada principal frente a miles de hombres que buscan modelos nuevas.</p>
+<ul>
+<li><strong>El secreto de las que saben:</strong> No verifiques tu cuenta si no estás lista para transmitir esa misma semana. Ten lista tu colita y tu luz, manda tu INE un miércoles y empieza a transmitir en viernes por la noche para que aproveches toda esa lluvia de visitas gratis.</li>
+</ul>
+<h3>El Menú de Propinas que sí funciona</h3>
+<p>No pongas metas inalcanzables. Pon cosas chiquitas y divertidas que los piquen a gastar:</p>
+<ul>
+<li><strong>15 tokens ($0.75 USD):</strong> Mover las orejitas de zorro.</li>
+<li><strong>25 tokens ($1.25 USD):</strong> Ronronear suavemente pegada al micrófono.</li>
+<li><strong>35 tokens ($1.75 USD):</strong> Decir el nombre del usuario con voz tierna y susurrada.</li>
+<li><strong>75 tokens ($3.75 USD):</strong> Pararte de espaldas y sacudir la colita 30 segundos.</li>
+<li><strong>200 tokens ($10.00 USD):</strong> Subir la sudadera despacito hasta la cintura.</li>
+<li><strong>1,000 tokens ($50.00 USD):</strong> Show privado exclusivo.</li>
+</ul>
+<h3>Cómo tratar a los que piden cosas gratis:</h3>
+<p>Siempre va a entrar algún mirón sin saldo a escribirte tonterías como: <em>&quot;Quítate la máscara&quot;</em>, <em>&quot;Enseña más&quot;</em>.<br />
+No te enganches ni te enojes. Sonríe debajo de tu antifaz, señala tu menú en la pantalla y diles con calma:<br />
+<em>«The fox only obeys tokens, baby. Check the menu»</em> (La chica de las orejitas solo obedece tokens, cariño. Revisa el menú).</p>
+<hr />
+<h1>CAPÍTULO 6</h1>
+<h2>Las 6 minas de oro desde tu cama</h2>
+<p>La magia de ser una creadora digital inteligente es que no dependes de una sola cosa. Mientras duermes, mientras estás en la escuela o mientras ves una película, puedes tener 6 caminos distintos trayéndote dólares:</p>
+<h3>1. La lista de regalos de Throne (Efectivo sin dar tu dirección)</h3>
+<p>Nunca uses la lista de deseos de Amazon, porque le enseña tu nombre completo y tu ciudad a los compradores.<br />
+Usa <strong>Throne.com</strong>. Throne es 100% anónimo: los fans pagan con tarjeta de crédito desde EE.UU., y tú puedes elegir recibir el regalo físicamente o <strong>pedir que te depositen el dinero en efectivo en dólares</strong>.<br />
+Organiza 3 listitas:</p>
+<ul>
+<li><em>Para mejorar los videos:</em> Aro de luz, tripié, cables.</li>
+<li><em>Para tu personaje:</em> Orejitas nuevas, calcetas, colitas de colores.</li>
+<li><em>Para consentirme:</em> Café gourmet, galletas, baterías o la cena del viernes. (A los hombres les fascina la fantasía de sentir que &quot;alimentan y cuidan a su zorrita&quot;).</li>
+</ul>
+<h3>2. Artículos físicos perfumados (Ganas el 90%)</h3>
+<p>A los fanáticos de este nicho les vuelve locos tener un objeto real que haya tocado tu piel:</p>
+<ul>
+<li>Unas calcetas altas usadas en una sesión (te costaron $45 pesos en Shein) se las vendes en <strong>$50 a $70 dólares + envío</strong>.</li>
+<li>Una diadema de orejas de zorro rociada con tu perfume favorito de vainilla: <strong>$60 dólares</strong>.</li>
+<li>Metes la prenda en una bolsita Ziploc bien sellada (para que no se le vaya el olor) dentro de un sobre burbuja. El cliente te paga el producto y la paquetería por adelantado en Throne. En el remitente pones un nombre inventado como <em>&quot;Estudio K&quot;</em> y la dirección de una sucursal lejana de Correos o DHL. Cero riesgo.</li>
+</ul>
+<h3>3. El chat de goteo (Drip Sexting)</h3>
+<p>Cuando alguien te escribe por mensaje privado, jamás le vendas todo tu contenido junto por $10 dólares. Aplica la venta por goteo: una foto coqueta por $8, luego un videíto corto por $15, y al final un video de 2 minutos diciendo su nombre por $30. En 15 minutos de chat te hiciste más de $50 dólares sin salir de tus cobijas.</p>
+<h3>4. Venta de videos en ManyVids (Pies + Cosplay)</h3>
+<p>La combinación de pies coquetos con cola de zorro tiene poquísima competencia y se vende como pan caliente. Grábate 4 minutos sentada en la cama descalzándote unas calcetas bonitas mientras la colita se mueve desenfocada atrás. Lo subes a ManyVids por <strong>$14.99 dólares</strong> y se vende solo en automático mientras duermes.</p>
+<h3>5. Consentir a los que les gusta ser ignorados (Soft Findom)</h3>
+<p>Hay hombres en internet a los que les da placer que una chica bonita sea caprichosa y no les haga caso. Grábate 3 minutos acostada en tu cama jugando en tu celular o Nintendo Switch, moviendo los pies y la colita al aire. De vez en cuando volteas a la cámara con tu antifaz, te ríes y dices: <em>«¿Sigues ahí viéndome mientras me mandas propinas? Qué buen chico»</em>. Ese videíto lo vendes en $20 dólares una y otra vez.</p>
+<h3>6. Notas de voz y audios ASMR</h3>
+<p>Un audio de 30 segundos susurrando con tu voz tierna y frotando el peluche de la cola en el micrófono se vende entre <strong>$15 y $25 dólares</strong>.</p>
+<hr />
+<h1>CAPÍTULO 7</h1>
+<h2>Tu acordeón en inglés: cópialo, pégalo y susurra</h2>
+<p>Sé que muchas chicas se frenan porque dicen: <em>«Scarlett, yo no hablo inglés, ¿cómo le voy a contestar a un gringo?»</em>.</p>
+<p>Respira, que aquí te dejé la tarea hecha. Solo tienes que tener este capítulo abierto en tu celular, seleccionar el texto, copiarlo y pegarlo en el chat.</p>
+<h3>Para tu perfil en X (Twitter):</h3>
+<p>Pon esto en tu biografía:</p>
+<pre><code class="language-text">🦊 secret fox | faceless kitsune  
+$10 tribute on Throne to unlock DMs  
+no free chat · she bites if you skip  
+↓ link in pinned
+</code></pre>
+<p><em>(Traducción: Chica Kitsune secreta sin rostro. Tributo de $10 en Throne para abrir mensajes privados. No hablo gratis; muerdo si te saltas la fila).</em></p>
+<p>Y pon este tuit fijado en tu perfil:</p>
+<pre><code class="language-text">DMs are closed unless you send the $10 entry tribute first.
+She doesn’t talk to freeloaders.
+
+Throne → [Pon aquí tu enlace de Throne]
+
+Once it clears, DM me the word “TAIL” and I’ll open your conversation.
+No exceptions. The fox has rules.
+</code></pre>
+<p><em>(Traducción: Los mensajes privados están cerrados a menos que mandes el tributo de entrada de $10. Ella no habla con mirones gratis. En cuanto pase tu pago, mándame la palabra &quot;TAIL&quot; y te abro el chat).</em></p>
+<hr />
+<h3>La conversación mágica paso a paso (Cuando ya pagó sus $10):</h3>
+<ol>
+<li>
+<p><strong>Mensaje 1 (Calentamiento gratis):</strong><br />
+<code>Hey… the $10 cleared. I’m still wearing the ears. The tail is on the bed next to me. Want to see how it looks from behind?</code><br />
+<em>(Hola... ya pasaron los $10. Sigo con las orejas puestas. La cola está en la cama junto a mí. ¿Quieres ver cómo se ve de espaldas?)</em></p>
+</li>
+<li>
+<p><strong>Mensaje 2 (Le vendes tu primera foto en $8 dólares):</strong><br />
+<code>I took this right after you paid. Back view, tail up, mask still on. Just the photo is $8. Want it?</code><br />
+<em>(Me tomé esta foto justo después de que pagaste. De espaldas, cola arriba, antifaz puesto. Solo la foto cuesta $8. ¿La quieres?)</em></p>
+</li>
+<li>
+<p><strong>Mensaje 3 (Le vendes un clip de 12 segundos por $15 dólares):</strong><br />
+<code>The photo wasn’t enough, was it? I recorded 12 seconds of me moving the tail on purpose. Slow, on my bed. $15 for the clip. Say yes and I’ll send it.</code><br />
+<em>(La foto no fue suficiente, ¿verdad? Grabé 12 segundos moviendo la cola a propósito. Despacio, en mi cama. $15 por el video. Di que sí y te lo mando).</em></p>
+</li>
+<li>
+<p><strong>Mensaje 4 (El premio gordo: Video de 2 minutos + audio por $30 dólares):</strong><br />
+<code>Last one. 2 minutes. I say your name while I move the tail and the ears stay on. Voice note included. $30. Once you pay I record it right now.</code><br />
+<em>(El último. 2 minutos. Digo tu nombre mientras muevo la cola con las orejas puestas. Incluye audio. $30. En cuanto pagues lo grabo).</em></p>
+</li>
+</ol>
+<p><strong>Total ganado en 15 minutos: $63 dólares (más de $1,200 pesos mexicanos).</strong></p>
+<hr />
+<h3>Si el cliente te insiste: <em>&quot;¿Puedo ver tu cara?&quot;</em></h3>
+<p>Respóndele con seguridad y estilo:<br />
+<code>No. The mask stays on. You paid for the fox, not my face. Keep asking and the price goes up.</code><br />
+<em>(No. El antifaz se queda puesto. Pagaste por el personaje de fantasía, no por mi cara. Sigue preguntando y el precio sube).</em></p>
+<hr />
+<h3>Tus 3 audios ASMR con pronunciación fonética (Léelos tal cual al micrófono):</h3>
+<p>Toma los audífonos de tu celular, cúbreles el micrófono con un calcetín limpio (para que tu respiración no se escuche golpeada) y susurra leyendo estas letras en negrita:</p>
+<ol>
+<li>
+<p><strong>Audio de la colita ($15 dólares):</strong><br />
+🎙️ <strong><code>&quot;Du yu laik jau mai teil fils…? (suspiro suave) Its sou flafi… and jevi. Aim muving it slou for yu… Can yu jir it?&quot;</code></strong><br />
+<em>(Significa: ¿Te gusta cómo se siente mi cola? Es tan esponjosa y pesada. La estoy moviendo lento para ti... ¿la escuchas?)</em></p>
+</li>
+<li>
+<p><strong>Audio de las orejitas ($15 dólares):</strong><br />
+🎙️ <strong><code>&quot;De irs ar stil on… Aim güispering clous tu de maic… Can yu jir mi briding…? Bi gud and lisen.&quot;</code></strong><br />
+<em>(Significa: Las orejitas siguen puestas... estoy susurrando cerquita del micro. ¿Me escuchas respirar? Pórtate bien y escucha).</em></p>
+</li>
+<li>
+<p><strong>Audio con su nombre ($25 dólares):</strong><br />
+🎙️ <strong><code>&quot;Sei mai neim… nou. Aim seying yors… [dices su nombre en susurro]… yu peid for dis. De teil is muving yost for yu.&quot;</code></strong><br />
+<em>(Significa: Di mi nombre... no. Yo diré el tuyo. [Su nombre]... tú pagaste por esto. La cola se mueve solo para ti).</em></p>
+</li>
+</ol>
+<hr />
+<h1>CAPÍTULO 8</h1>
+<h2>Tus consentidores estrella: quiénes son y cómo cuidarlos</h2>
+<p>En este mundo te vas a topar con dos tipos de hombres:</p>
+<ol>
+<li><strong>Los mirones:</strong> Hombres que quieren todo regalado, te regatean un dólar y te hacen perder el tiempo. A esos los bloqueas o les pones el peaje de $10 dólares.</li>
+<li><strong>Las &quot;Ballenas&quot; (Tus consentidores):</strong> Hombres profesionales en Estados Unidos (ingenieros, contadores, programadores) que están solos, tienen buen dinero y gastan entre <strong>$200 y $800 dólares al mes</strong> en una sola chica que los haga sentir especiales.</li>
+</ol>
+<p>Con que tengas a <strong>3 o 4 consentidores de estos bien atendidos</strong>, tu mes está resuelto sin que tengas que buscar clientes nuevos todos los días.</p>
+<h3>Cómo cuidarlos (Tu libreta secreta):</h3>
+<p>En las notas de tu celular, abre una nota por cada cliente consentidor y anota:</p>
+<ul>
+<li>Cómo le gusta que le digas.</li>
+<li>Si le gustan más las orejitas, la colita o los audios susurrados.</li>
+<li>Qué días le pagan en su trabajo (casi siempre son los viernes de quincena).</li>
+<li>Algún detalle que te haya contado (si tiene un perrito, si viaja mucho, etc.).</li>
+</ul>
+<p>Cuando le escribas un viernes y le digas: <em>«Hola cariño, me acordé de ti mientras me ponía la colita nueva... ¿cómo te fue en el trabajo?»</em>, ese hombre va a sentir una conexión tan bonita contigo que no se va a ir con ninguna otra.</p>
+<hr />
+<h1>CAPÍTULO 9</h1>
+<h2>Tu semana de 15 horas: graba un solo día y el resto solo cobra</h2>
+<p>No cometas el error de novata de pasar 3 horas todos los días peinándote, vistiéndote y acomodando luces para subir una sola foto. Te vas a cansar y vas a tirar la toalla en dos semanas.</p>
+<p>Las que sabemos cómo funciona esto aplicamos la técnica de <strong>grabar en lote</strong>:</p>
+<ul>
+<li><strong>El lunes por la tarde (2 horas y media):</strong> Te pones tu outfit de cosplay una sola vez. En una hora y media te tomas 15 fotos bonitas y grabas 10 o 12 videos de 7 segundos cambiando de ángulo o de calcetas. Te quitas el disfraz, te pones tu pijama de siempre y listo: ¡tienes el contenido de toda la semana guardado en tu teléfono!</li>
+<li><strong>De martes a sábado (1 o 2 horas al día):</strong> Desde tu cama, en tus ratos libres o en el sillón, vas subiendo un videíto al día, respondes los mensajes privados de los que pagaron su tributo y te conectas un rato si quieres hacer transmisión.</li>
+<li><strong>El domingo (1 hora):</strong> Revisas cuánto dinero hiciste en la semana y transfieres tus ganancias en dólares a tu banco en México.</li>
+</ul>
+<hr />
+<h1>CAPÍTULO 10</h1>
+<h2>El dinero en tu banco: cómo cobrar limpio y en paz con el SAT</h2>
+<p>¿Cómo llega ese dinero a tus manos en México? Olvídate de hacer transferencias bancarias internacionales directas, porque los bancos tradicionales te cobran comisiones carísimas y te dan un tipo de cambio malísimo.</p>
+<h3>La ruta fácil y casi gratis: DolarApp o Wise</h3>
+<ol>
+<li>Te descargas en tu celular la aplicación gratuita <strong>DolarApp</strong> (o te registras en <strong>Wise</strong>).</li>
+<li>Te piden foto de tu INE para verificar que eres mayor de edad y en menos de 24 horas te dan un <strong>número de cuenta bancaria en dólares (con Routing y Account Number)</strong> como si tuvieras una cuenta en un banco de Estados Unidos.</li>
+<li>Ese número lo pegas en tu panel de pagos de Fansly, Throne o ManyVids.</li>
+<li>Las plataformas te depositan tus dólares ahí cada semana sin cobrarte comisiones abusivas.</li>
+<li>Cuando tú quieras, dentro de la app le das al botón de &quot;Convertir a Pesos&quot; y te mandas el dinero por <strong>SPEI directo a tu tarjeta mexicana de BBVA, Nu o Hey Banco</strong>. En 30 segundos tienes tus pesos disponibles para gastar en el cajero o pagar tu súper.</li>
+</ol>
+<h3>¿Y qué onda con el SAT y los impuestos?</h3>
+<p>No te asustes. El gobierno mexicano tiene un régimen fiscal hermoso para quienes exportamos servicios digitales al extranjero que se llama <strong>RESICO (Régimen Simplificado de Confianza)</strong>:</p>
+<ul>
+<li>En RESICO pagas una nada: entre el <strong>1% y el 1.5% de impuestos</strong>. Es decir, si ganaste $10,000 pesos en el mes, de impuestos al SAT solo le pagas como <strong>$100 pesitos</strong>.</li>
+<li>Además, como tus clientes viven en Estados Unidos y consumen tu contenido fuera de México, por ley <strong>pagas 0% de IVA</strong>.</li>
+<li>Con eso tienes tus cuentas bancarias 100% limpias y legales para comprarte tu coche, rentar tu departamento o ahorrar sin miedo a que nadie te congele nada.</li>
+</ul>
+<hr />
+<h1>CAPÍTULO 11</h1>
+<h2>Tu plan de despegue de 7 días: de hoy a tu primer depósito</h2>
+<p>Se acabó la teoría, bonita. Hoy empieza tu independencia. Sigue este calendario paso a paso durante los próximos 7 días:</p>
+<ul>
+<li><strong>Jueves (Lanzamiento):</strong><br />
+A las 8:30 de la noche subes tu primera foto de espaldas en tu cuarto, mostrando tu colita y tu antifaz. Pones tu enlace de Throne en el segundo tuit y abres tu cuenta.</li>
+<li><strong>Viernes (Noche de quincena gringa):</strong><br />
+A las 9:00 de la noche subes un close-up bonito de tu gargantilla y tus orejitas. Lanzas tu tuit con el peaje de $10 dólares para entrar a tu chat.</li>
+<li><strong>Sábado:</strong><br />
+A las 7:00 de la tarde subes un videíto de 7 segundos moviendo la cola en la cama. Si alguien pagó los $10, le aplicas la secuencia de goteo en el chat. Subes tu primer videíto de pies a ManyVids por $14.99.</li>
+<li><strong>Domingo:</strong><br />
+Foto en el espejo con flash de clavícula para abajo. Cierras la semana revisando tus primeros dólares en Throne.</li>
+<li><strong>Lunes:</strong><br />
+Tarde de grabación relajada: preparas tu lote de fotos y videos para la siguiente semana.</li>
+<li><strong>Martes:</strong><br />
+Subes un clip nuevo y abres tu primera transmisión de 90 minutos con tu etiqueta de nueva (NEW) para recibir tus primeras propinas en vivo.</li>
+<li><strong>Miércoles:</strong><br />
+Día de cosecha: revisas tu saldo acumulado en DolarApp, lo conviertes a pesos mexicanos y te mandas tu primer retiro por SPEI a tu banco.</li>
+</ul>
+<hr />
+<h2>Palabras finales de Scarlett</h2>
+<p>Nadie dijo que el camino fuera fácil, pero te prometo que la tranquilidad de saber que no dependes de un jefe, que tu tiempo es tuyo y que tu privacidad está 100% protegida detrás de tu máscara no tiene precio.</p>
+<p>Ponte tus orejitas, acomoda tu colita, camina con la frente en alto y bienvenida a tu propia libertad.</p>
+<p>Con cariño y complicidad,<br />
+<strong>Scarlett</strong> 🦊✨</p>
+
+    </div>
+  </div>
+  
+  <a href="#" class="floating-nav">⬆ Volver Arriba</a>
+</body>
+</html>
