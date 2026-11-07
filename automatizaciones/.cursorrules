@@ -1,0 +1,10 @@
+# Reglas Exclusivas para el Módulo `automatizaciones/` (Cursor IDE)
+
+1. **NO TOCAR EL MANUSCRITO:** Todo tu trabajo vive exclusivamente dentro de `automatizaciones/`. Prohibido modificar `capitulos/`, `manuscrito-v2/`, `investigacion/` o archivos `.html` de la raíz.
+2. **ORDEN DE LECTURA Y JERARQUÍA TÉCNICA:**
+   - **Prioridad #1 (`10_GROK_DICTAMEN_CRITICO_Y_CORRECCION_SQL_FFMPEG.md`):** Usa obligatoriamente la query SQL sin bug de `NULL`, rotación por `veces_usado`, el comando FFmpeg con `ffprobe -t duracion_voz`, `amix normalize=0`, `fontsdir='C\:/Windows/Fonts'`, karaoke a partir del segundo `3.0` y la semilla de 16 guiones.
+   - **Prioridad #2 (`09_PIEZA_FALTANTE_AUTORESPONDER_BROLL_Y_PUBLICADOR.md`):** Integra `broll_finder.py` (Pexels), `auto-responder.ts` y `publicador.ts` (carpeta local + Telegram + APIs).
+   - **Prioridad #3 (`08_VERIFICACION_DOBLE_ANTIGRAVITY_BLINDAJE_WINDOWS.md`):** Usa rutas nativas de Windows (`cache/temp/`) y auto-actualización semanal de `yt-dlp`.
+   - **Prioridad #4 (`06_CLAUDE_AUDITORIA_Y_ARQUITECTURA_CODIGO.md`):** Estructura base del Worker FastAPI en `localhost:5001`, SQLite `automatizaciones.db`, `AutoHealBot`, `MultiChannelHub` (10 canales) y `LiveTracker` (SSE 6 pasos).
+3. **INTERFAZ DIDÁCTICA:** Toda la interfaz para Pablo debe estar en español sencillo, visual (con el Semáforo del Bot Guardián y el Rastreador de 6 pasos estilo Domino's) y con cero jerga técnica.
+4. **SEGURIDAD:** Nunca escribas API keys ni secretos en el código; léelos siempre desde variables de entorno (`.env.local`).

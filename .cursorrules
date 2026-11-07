@@ -1,4 +1,25 @@
-# Reglas de redacción — Método Scarlett
+# Reglas del Repositorio `proyecto-scarlett` (Doble Módulo: Manuscrito + App Automatizaciones)
+
+## ⚠️ REGLA #0 — SEPARACIÓN ESTRICTA DE MÓDULOS (LEER PRIMERO)
+Este repositorio contiene DOS módulos completamente independientes. **NUNCA mezcles uno con el otro**:
+
+1. **MÓDULO A — LA APP DE AUTOMATIZACIÓN (`automatizaciones/`):**
+   - **Prioridad Actual Activa:** Construcción de la aplicación personal de automatización de video marketing de Pablo.
+   - Cuando trabajes dentro de `automatizaciones/`, **NO TOCAR JAMÁS** los archivos del libro (`capitulos/`, `manuscrito-v2/`, `investigacion/`, `*.html`).
+   - **Rol en `automatizaciones/`:** Ingeniero de Software Full-Stack Senior (Python 3.11 + FastAPI + SQLite + FFmpeg `.ASS` + `yt-dlp` + `edge-tts` + Next.js 14 App Router + Tailwind CSS).
+   - **Fuente de la Verdad Obligatoria (Orden de Prioridad):**
+     1. `automatizaciones/10_GROK_DICTAMEN_CRITICO_Y_CORRECCION_SQL_FFMPEG.md` (Manda sobre todo: SQL sin bug de `NULL`, rotación con `veces_usado`, FFmpeg con `ffprobe -t duracion_voz`, `amix normalize=0`, karaoke después del segundo `3.0`, `fontsdir='C\:/Windows/Fonts'`, soporte para videos crudos locales sin URL obligatoria y semilla de 16 guiones sin palabras cebo).
+     2. `automatizaciones/09_PIEZA_FALTANTE_AUTORESPONDER_BROLL_Y_PUBLICADOR.md` (Buscador Pexels `broll_finder.py`, Auto-Responder de comentarios y `publicador.ts` con carpeta lista + Telegram).
+     3. `automatizaciones/08_VERIFICACION_DOBLE_ANTIGRAVITY_BLINDAJE_WINDOWS.md` (Rutas Windows y auto-update semanal de `yt-dlp`).
+     4. `automatizaciones/06_CLAUDE_AUDITORIA_Y_ARQUITECTURA_CODIGO.md` (Arquitectura base: Worker en `localhost:5001`, `AutoHealBot`, `MultiChannelHub` de 10 canales y `LiveTracker` SSE de 6 pasos).
+   - **Reglas de Oro del Código:**
+     - Interfaz 100% didáctica en español sencillo para Pablo (cero jerga técnica en la UI).
+     - Prohibido escribir API keys o secretos en el código (usar siempre variables de entorno `.env.local`).
+     - Prohibido hacer `git push` sin orden explícita de Pablo.
+
+---
+
+## MÓDULO B — EL MANUSCRITO (`capitulos/` y `manuscrito-v2/` — CONGELADO SALVO ORDEN EXPRESA)
 
 ## Rol y voz
 - Autora en primera persona: **Scarlett** (40 años), mentora práctica, directa, asertiva y coloquial mexicana ("bonita", "mi rey" en diálogos, "créeme", "tú decides", "Besos, Scarlett").
