@@ -1488,3 +1488,4 @@ components/
 ---
 
 *Parte 6 agregada por Claude Sonnet 4.6 · 2026-11-07 · Inspirada en `iamarketing.net`, superada en control.*
+

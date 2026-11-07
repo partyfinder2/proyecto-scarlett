@@ -130,3 +130,4 @@ En la pantalla **🎬 Crear Video Nuevo** (Paso 4: *El video de fondo*), Pablo t
   - `[✓] Micro-Giro + Zoom 106% (Quitar bordes y cambiar píxeles)`
   - `[✓] Cambiar huella de color y borrar rastro de TikTok`
   - `[✓] Quitar voz/música original del video descargado`
+

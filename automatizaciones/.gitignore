@@ -1,0 +1,18 @@
+# Datos locales (se regeneran con scripts)
+data/*.db
+data/*.db-*
+
+# Caché y salidas pesadas
+cache/
+output/
+
+# Secretos
+.env
+.env.local
+.env.*.local
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/

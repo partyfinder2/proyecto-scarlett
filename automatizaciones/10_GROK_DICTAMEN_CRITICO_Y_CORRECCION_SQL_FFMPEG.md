@@ -314,3 +314,4 @@ INSERT INTO guiones (canal_id, hook_id, spoken_hook, frame1_text, body_aida, cta
  'Cuatro series al fallo todos los días no te hacen crecer más rápido: te estancan a la tercera semana porque tu sistema nervioso tarda más en recuperarse que el músculo. Dejar una o dos repeticiones en recámara en los primeros ejercicios te permite sostener el progreso todo el mes.',
  'RUTINA', 'Si quieres la distribución semanal de volumen y descanso real, escribe RUTINA en comentarios.', 'Plantilla de distribución semanal de series efectivas y recuperación', 'noche', 'fitness');
 ```
+
