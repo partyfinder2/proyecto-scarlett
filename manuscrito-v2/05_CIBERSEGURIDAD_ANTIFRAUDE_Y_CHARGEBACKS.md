@@ -114,3 +114,4 @@ Todo video o foto que tú tomas con tu celular te pertenece legalmente bajo las 
 - **Instagram / Meta DMCA:** `help.instagram.com/copyright`
 - **Google Search Removal:** `support.google.com/legal/troubleshooter/1114905`
 - **Reddit Copyright:** `reddit.com/report`
+
