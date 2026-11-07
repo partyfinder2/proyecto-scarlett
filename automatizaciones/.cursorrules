@@ -8,5 +8,9 @@
    - **Prioridad #3 (`08_VERIFICACION_DOBLE_ANTIGRAVITY_BLINDAJE_WINDOWS.md`):** Usa rutas nativas de Windows (`cache/temp/`) y auto-actualización semanal de `yt-dlp`.
    - **Prioridad #4 (`06_CLAUDE_AUDITORIA_Y_ARQUITECTURA_CODIGO.md`):** Estructura base del Worker FastAPI en `localhost:5001`, SQLite `automatizaciones.db`, `AutoHealBot`, `MultiChannelHub` (10 canales) y `LiveTracker` (SSE 6 pasos).
 3. **INTERFAZ DIDÁCTICA:** Toda la interfaz para Pablo debe estar en español sencillo, visual (con el Semáforo del Bot Guardián y el Rastreador de 6 pasos estilo Domino's) y con cero jerga técnica.
-4. **SEGURIDAD:** Nunca escribas API keys ni secretos en el código; léelos siempre desde variables de entorno (`.env.local`).
+4. **MODO PLUMA / ULTRA-LIGERO (MÁXIMO 200 MB EN DISCO):** La PC de Pablo tiene espacio limitado (46 GB libres). **PROHIBIDO** acumular GBs de caché o esperar 7 días para borrar:
+   - Descarga solo el video que se va a renderizar en ese momento (Just-in-Time).
+   - En cuanto el video termina de publicarse (y enviarse al Telegram de Pablo como respaldo gratis en la nube), **borra inmediatamente** el `.mp4` renderizado, el video base descargado y el `.mp3`/`.ass` temporal.
+   - El `AutoHealBot` debe tener un límite duro de `MAX_STORAGE_MB = 200`: si `cache/` + `output/` pasa de 150 MB, limpia al instante.
+5. **SEGURIDAD:** Nunca escribas API keys ni secretos en el código; léelos siempre desde variables de entorno (`.env.local`).
 

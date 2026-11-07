@@ -91,7 +91,11 @@ Las 6 tarjetas/bolitas paso por paso en lenguaje humano:
 - **3 Indicadores Grandes de Salud:**
   1. `✅ Todo OK` — Estado general del sistema
   2. `🔑 42 días` — Token Instagram vence en (`↑ Renovará solo 7 días antes`)
-  3. `🧹 3.2 GB` — Caché de videos (`Limpieza automática >7 días activada`)
+  3. `🪶 18 MB usados (Tope Máx: 200 MB)` — Modo Ultra-Ligero Activo (`Borrado inmediato tras publicar: 0 basura en tu PC`)
+- **📋 Regla de Almacenamiento "Modo Pluma" (Crítico para proteger el disco de Pablo):**
+  - **Descarga Just-in-Time (1 video a la vez):** Prohibido descargar los 80 videos de golpe. Solo se descarga el clip que se está procesando en ese minuto (~8 MB).
+  - **Borrado Inmediato Post-Publicación (`0 días de espera`):** En cuanto el video se publica en redes (y se respalda gratis en la nube ilimitada de Telegram de Pablo), el `AutoHealBot` elimina de inmediato los archivos `.mp4` y `.mp3` temporales del disco local.
+  - **Candado Duro de 200 MB:** Si en algún momento las carpetas `cache/` + `output/` superan los `150 MB`, el Bot Guardián purga automáticamente los archivos más antiguos para que la herramienta **jamás ocupe más de 200 MB en la PC**.
 - **📋 Últimas acciones del Bot:**
   - `13:00:00 ✅ Health check diario OK · Worker activo · DB responde en 2ms`
   - `12:58:33 ✅ 2 comentarios respondidos en Canal 1 — keyword detectada`
@@ -110,3 +114,4 @@ Las 6 tarjetas/bolitas paso por paso en lenguaje humano:
   - ▶️ **YouTube:** `Conectado (Token activo)`
   - 📘 **Facebook:** `Conectado`
   - 🎵 **TikTok / Telegram:** `Envío directo a tu Telegram o API`
+
