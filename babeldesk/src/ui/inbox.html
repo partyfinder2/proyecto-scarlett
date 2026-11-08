@@ -1,0 +1,41 @@
+<!--
+  Snippet de referencia — tab Mis Videos (downloader yt-dlp).
+  La app carga src/renderer/index.html; mantener este archivo sincronizado como plantilla.
+-->
+<section id="tab-inbox" class="tab">
+  <h2>Mis Videos (Inbox)</h2>
+  <p class="hint">Arrastra mp4/jpg a la carpeta <code>Inbox/</code> del proyecto o pega una URL abajo para descargar.</p>
+
+  <div class="downloader-block">
+    <h3>Descargar Video (TikTok, Instagram, YouTube, Facebook, X)</h3>
+    <p id="ytdlp-warning" class="warning hidden">
+      <strong>yt-dlp no encontrado en PATH.</strong><br />
+      Para habilitar descargas en Windows, ejecuta:<br />
+      <code>winget install yt-dlp</code><br />
+      o descarga el ejecutable desde
+      <a href="https://github.com/yt-dlp/yt-dlp/releases" target="_blank">https://github.com/yt-dlp/yt-dlp/releases</a>
+      y colócalo en <code>C:\Windows\System32\</code> o en el PATH.
+    </p>
+
+    <form id="downloader-form">
+      <div class="downloader-input-group">
+        <input
+          type="url"
+          id="downloader-url"
+          placeholder="Pega la URL del video (TikTok, IG, YouTube, FB, X)..."
+          required
+        />
+        <button type="submit" id="downloader-btn">Descargar</button>
+      </div>
+      <div class="downloader-meta">
+        <span id="downloader-net-tag" class="pill hidden"></span>
+        <span id="downloader-status" class="status-msg"></span>
+      </div>
+      <div id="downloader-progress-bg" class="progress-bar-container hidden">
+        <div id="downloader-progress-bar" class="progress-bar-fill" style="width: 0%;"></div>
+      </div>
+    </form>
+  </div>
+
+  <ul id="media-list"></ul>
+</section>

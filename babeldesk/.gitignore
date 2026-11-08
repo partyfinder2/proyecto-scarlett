@@ -1,0 +1,13 @@
+node_modules
+dist
+release
+data/*.sqlite
+data/*.sqlite-*
+data/*cookies*.txt
+data/config.json
+data/media
+Inbox/*
+!Inbox/.gitkeep
+.env
+*.log
+.DS_Store

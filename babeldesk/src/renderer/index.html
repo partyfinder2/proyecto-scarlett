@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; media-src 'self' file: blob:; img-src 'self' file: data:" />
+  <title>BabelDesk — LabelBabel</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <h1>BabelDesk</h1>
+    <p class="sub">LabelBabel · local · sin dominio · <a href="#" id="link-empezar-aqui">docs/EMPEZAR_AQUI.md</a></p>
+    <span id="version" class="pill"></span>
+  </header>
+
+  <nav>
+    <button data-tab="inbox" class="active">1 · Mis Videos</button>
+    <button data-tab="cortar">2 · Cortar</button>
+    <button data-tab="composer">3 · Crear Post</button>
+    <button data-tab="cola">4 · Por Publicar</button>
+    <button data-tab="historial">5 · Publicados</button>
+    <span class="nav-spacer"></span>
+    <button data-tab="cuentas" class="nav-secondary">Mis Redes</button>
+    <button data-tab="grupos" class="nav-secondary">Grupos FB</button>
+    <button data-tab="logs" class="nav-secondary">Registro</button>
+    <button data-tab="ajustes" class="nav-secondary">Ajustes</button>
+  </nav>
+
+  <main>
+    <section id="tab-cuentas" class="tab">
+      <h2>Mis Redes</h2>
+      <div class="accounts-toolbar">
+        <button type="button" id="meta-connect-btn" title="OAuth Meta (Page + IG)">
+          Conectar Meta
+        </button>
+        <button type="button" id="meta-reconnect-btn" class="btn-secondary hidden" title="Renovar token Meta">
+          Reconectar Meta
+        </button>
+        <button type="button" id="tiktok-connect-btn" title="OAuth TikTok (Login Kit desktop)">
+          Conectar TikTok
+        </button>
+        <button type="button" id="toggle-advanced-account" class="btn-secondary">Pegar token (avanzado)</button>
+      </div>
+      <p class="hint">
+        Page/IG: token de Graph API Explorer o OAuth en P1. Grupos/TikTok: solo assist (sin API Graph).
+        Page token no tiene fecha propia; caduca si cambias contraseña o revocas la app.
+      </p>
+      <form id="account-form" class="hidden">
+        <select name="network" required>
+          <option value="facebook_page">Facebook Page</option>
+          <option value="instagram">Instagram Pro</option>
+          <option value="facebook_group">Grupo FB (assist)</option>
+          <option value="tiktok">TikTok (assist v1)</option>
+        </select>
+        <input name="displayName" placeholder="Nombre visible" required />
+        <input name="externalId" placeholder="Page ID / IG user ID / URL grupo" required />
+        <input name="tokenPlain" placeholder="Token (solo Page/IG)" autocomplete="off" />
+        <button type="submit">Guardar cuenta</button>
+      </form>
+      <p id="account-probe-toast" class="status-msg hidden" role="status"></p>
+      <div id="accounts-list" class="accounts-list"></div>
+
+      <div id="meta-page-picker" class="modal hidden" role="dialog" aria-labelledby="meta-picker-title">
+        <div class="modal-card">
+          <h3 id="meta-picker-title">Elige una Facebook Page</h3>
+          <p class="hint">Tras iniciar sesión en el navegador, selecciona la Page a usar en BabelDesk.</p>
+          <div id="meta-page-options" class="meta-page-options"></div>
+          <label class="field inline-check">
+            <input type="checkbox" id="meta-include-ig" checked />
+            Crear también cuenta Instagram (si la Page la tiene ligada)
+          </label>
+          <div class="modal-actions">
+            <button type="button" id="meta-page-cancel" class="btn-secondary">Cancelar</button>
+            <button type="button" id="meta-page-save">Guardar Page</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab-inbox" class="tab active">
+      <h2>Mis Videos (Inbox)</h2>
+      <p class="hint">
+        Las URLs se guardan en tu carpeta <code>Descargas</code> (ahí los agarras). También puedes
+        arrastrar mp4 a <code>Inbox/</code>. +18/login: <code>docs/YTDLP_COOKIES.md</code>.
+      </p>
+
+      <div class="downloader-block">
+        <h3>Descargar Video (TikTok, Instagram, YouTube, Facebook, X)</h3>
+        <p id="ytdlp-warning" class="warning hidden">
+          <strong>yt-dlp no encontrado en PATH.</strong><br />
+          Para habilitar descargas en Windows, ejecuta:<br />
+          <code>winget install yt-dlp</code><br />
+          o descarga el ejecutable desde
+          <a href="https://github.com/yt-dlp/yt-dlp/releases" target="_blank">https://github.com/yt-dlp/yt-dlp/releases</a>
+          y colócalo en <code>C:\Windows\System32\</code> o en el PATH.
+        </p>
+
+        <form id="downloader-form">
+          <div class="downloader-input-group">
+            <input
+              type="url"
+              id="downloader-url"
+              placeholder="Pega la URL del video (TikTok, IG, YouTube, FB, X)..."
+              required
+            />
+            <button type="submit" id="downloader-btn">Descargar</button>
+          </div>
+          <div class="downloader-meta">
+            <span id="downloader-net-tag" class="pill hidden"></span>
+            <span id="downloader-status" class="status-msg"></span>
+          </div>
+          <div id="downloader-progress-bg" class="progress-bar-container hidden">
+            <div id="downloader-progress-bar" class="progress-bar-fill" style="width: 0%;"></div>
+          </div>
+          <label class="field downloader-wm">
+            <span>Marca de agua tras descargar</span>
+            <select id="downloader-wm-mode">
+              <option value="off" selected>No quitar (máxima nitidez)</option>
+              <option value="standard">Estándar — esquinas por red</option>
+              <option value="max">Máximo — IA + ffmpeg agresivo (puede verse borroso)</option>
+            </select>
+          </label>
+          <p class="hint downloader-wm-hint">
+            Por defecto se guarda el video tal cual en Descargas. Máximo difumina marcas y baja nitidez.
+            Anti-marca puntual: botón 💧 en la tarjeta. Doc: <code>docs/WATERMARK_REMOVER.md</code>
+          </p>
+        </form>
+      </div>
+
+      <div id="media-list" class="media-grid"></div>
+    </section>
+
+    <section id="tab-cortar" class="tab">
+      <h2>✂️ Cortar Video en Clips</h2>
+      <p class="hint">Selecciona un video largo de tu Inbox y define los clips que quieres extraer. Se guardan directo en Inbox listos para publicar.</p>
+
+      <div class="cutter-block">
+        <div class="cutter-row">
+          <label for="cutter-source"><strong>Video fuente:</strong></label>
+          <select id="cutter-source"><option value="">— Selecciona un video de Inbox —</option></select>
+          <span id="cutter-duration" class="cutter-duration"></span>
+        </div>
+
+        <div class="cutter-preview-container">
+          <div class="preview-card-916">
+            <video id="cutter-video-preview" controls muted playsinline></video>
+            <div id="cutter-clip-badge" class="cutter-clip-badge hidden">Clip (0:00 - fin)</div>
+          </div>
+          <div class="cutter-preview-toolbar">
+            <span id="cutter-preview-time" class="cutter-preview-time">0:00</span>
+            <button type="button" id="btn-mark-start" class="btn-secondary">⏱ Inicio aquí</button>
+            <button type="button" id="btn-mark-end" class="btn-secondary">⏱ Fin aquí</button>
+            <label class="field inline-check cutter-audio-check">
+              <input type="checkbox" id="cutter-preview-audio" />
+              Sonido en preview
+            </label>
+          </div>
+          <p class="hint cutter-preview-hint">
+            Vista previa 9:16 · clic en una fila para bucle · pausa el video y marca inicio/fin en la fila seleccionada.
+          </p>
+        </div>
+
+        <div class="cutter-options">
+          <label class="field inline-check">
+            <input type="checkbox" id="cutter-vertical" checked />
+            Recortar a vertical 9:16 (1080×1920)
+          </label>
+          <label class="field inline-check">
+            <input type="checkbox" id="cutter-overlay" />
+            Agregar hook de texto en el clip
+          </label>
+          <input type="text" id="cutter-hook-text" placeholder="Texto del hook (ej: Puerto Vallarta 🌅)" class="cutter-hook-input hidden" />
+        </div>
+
+        <div class="cutter-chapters-block">
+          <strong>📺 Capítulos de YouTube</strong>
+          <p class="hint">Pega la misma URL del video que descargaste al Inbox. Si YouTube tiene capítulos, llenan la tabla con nombres y tiempos.</p>
+          <div class="cutter-auto-row">
+            <input
+              type="url"
+              id="cutter-yt-url"
+              class="cutter-yt-url-input"
+              placeholder="https://www.youtube.com/watch?v=..."
+            />
+            <button id="btn-load-chapters" type="button">📥 Cargar capítulos</button>
+          </div>
+          <p id="chapters-status" class="status-msg chapters-status"></p>
+        </div>
+
+        <div class="cutter-auto-block">
+          <strong>⚡ Auto-corte por intervalo</strong>
+          <div class="cutter-auto-row">
+            <label>Cortar cada (seg)
+              <input type="number" id="cutter-interval" min="5" max="3600" value="60" />
+            </label>
+            <label>Desde (opcional)
+              <input type="text" id="cutter-auto-start" placeholder="0:00" />
+            </label>
+            <label>Hasta (opcional)
+              <input type="text" id="cutter-auto-end" placeholder="fin" />
+            </label>
+            <button id="btn-auto-generate" type="button">⚡ Generar clips en la tabla</button>
+          </div>
+          <p class="hint">Llena la tabla sola; mira las miniaturas <strong>In / Out</strong> de cada fila (cuándo entra y sale), ajusta segundos, borra filas malas y luego «Cortar Todos». Un sobrante final muy corto se pega al clip anterior.</p>
+        </div>
+
+        <table class="cutter-table" id="cutter-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Inicio (mm:ss)</th>
+              <th>Fin (mm:ss)</th>
+              <th>Nombre del clip</th>
+              <th>Entrada / salida</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="cutter-tbody">
+            <tr data-row="1">
+              <td>1</td>
+              <td><input type="text" class="clip-start" placeholder="0:00" value="0:00" /></td>
+              <td><input type="text" class="clip-end" placeholder="0:45" /></td>
+              <td><input type="text" class="clip-name" placeholder="clip-1" /></td>
+              <td class="clip-preview-cell">
+                <div class="cutter-thumb-pair">
+                  <button type="button" class="cutter-thumb-btn" data-thumb-at="start" title="Ver inicio en reproductor">
+                    <img class="cutter-thumb clip-thumb-start" alt="Inicio" />
+                    <span class="cutter-thumb-label">In</span>
+                  </button>
+                  <button type="button" class="cutter-thumb-btn" data-thumb-at="end" title="Ver fin en reproductor">
+                    <img class="cutter-thumb clip-thumb-end" alt="Fin" />
+                    <span class="cutter-thumb-label">Out</span>
+                  </button>
+                </div>
+              </td>
+              <td class="clip-row-actions">
+                <button class="btn-set-end-total" type="button" title="Fin = duración total">⏭</button>
+                <button class="btn-remove-row" type="button">✕</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="cutter-actions">
+          <button id="btn-refresh-thumbs" type="button" class="btn-secondary" title="Genera miniaturas de inicio/fin de cada fila">
+            🖼 Actualizar miniaturas
+          </button>
+          <button id="btn-add-clip-row" type="button">+ Agregar clip</button>
+          <button id="btn-clear-table" type="button" class="btn-secondary">🗑 Vaciar tabla</button>
+          <button id="btn-cut-selected" type="button">▶ Cortar fila seleccionada</button>
+          <button id="btn-cut-all" type="button" class="btn-primary">▶ Cortar Todos</button>
+          <button id="btn-cancel-cut" type="button" class="btn-danger hidden">❌ Cancelar</button>
+          <button id="btn-post-last-cut" type="button" class="btn-secondary hidden">📝 Crear post con último clip</button>
+        </div>
+
+        <div id="cutter-progress" class="cutter-progress hidden"></div>
+        <div id="cutter-result" class="status-msg"></div>
+      </div>
+    </section>
+
+    <section id="tab-cola" class="tab">
+      <h2>Cola</h2>
+      <table id="targets-table">
+        <thead><tr><th>Estado</th><th>Red</th><th>Nivel</th><th>Programado</th><th>Error</th><th>Acciones</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <section id="tab-composer" class="tab">
+      <h2>Nuevo post</h2>
+      <form id="post-form">
+        <input name="title" placeholder="Título interno" required />
+        <select name="mediaId" id="media-select"><option value="">Sin media</option></select>
+        <textarea name="caption" rows="4" placeholder="Caption base" required></textarea>
+        <input name="linkUrl" placeholder="Link (default labelbabel)" />
+        <select name="level">
+          <option value="A_relax">A relax</option>
+          <option value="B_moderado">B moderado</option>
+          <option value="C_morboso">C morboso</option>
+        </select>
+        <label class="field schedule-field">
+          <span>Publicar el (vacío = ahora)</span>
+          <input type="datetime-local" name="scheduledAt" id="scheduled-at" />
+        </label>
+        <div id="account-checkboxes"></div>
+        <div id="preview-by-network" class="preview-grid"></div>
+        <p id="preview-errors" class="preview-warn"></p>
+        <button type="button" id="btn-trim-caption" class="btn-secondary hidden">Recortar caption</button>
+        <button type="submit" id="enqueue-btn" disabled>Encolar</button>
+      </form>
+
+      <section class="tanda13-block">
+        <h3>Exportar Reel 9:16</h3>
+        <p class="hint">Hook en los primeros 2 s + letrero fijo. Usa el video elegido arriba en «Sin media» / selector.</p>
+        <label class="field">
+          Hook (máx 42 caracteres)
+          <input type="text" id="hook-input" maxlength="42" placeholder="Sunset in Puerto Vallarta" />
+          <span id="hook-counter" class="char-counter">0 / 42</span>
+        </label>
+        <label class="field inline-check">
+          <input type="checkbox" id="branding-toggle" checked />
+          Letrero fijo: <em>Puerto Vallarta · Banderas Bay</em>
+        </label>
+        <p id="ffmpeg-warning" class="warning hidden">ffmpeg no encontrado en PATH (winget install ffmpeg).</p>
+        <button type="button" id="btn-export-reel" class="btn-secondary">Exportar Reel 9:16</button>
+        <p id="export-status" class="status-msg"></p>
+      </section>
+
+      <section class="tanda13-block">
+        <h3>Plan de la semana</h3>
+        <p class="hint">7 ideas en inglés vía OpenRouter. No encola ni publica.</p>
+        <button type="button" id="btn-week-plan" class="btn-secondary">Generar plan de la semana</button>
+        <p id="week-plan-status" class="status-msg"></p>
+        <table id="week-plan-table" class="hidden">
+          <thead><tr><th>Día</th><th>Idea de toma</th></tr></thead>
+          <tbody id="week-plan-body"></tbody>
+        </table>
+      </section>
+
+      <div class="copy-block">
+        <h3>Copy IA (OpenRouter)</h3>
+        <input id="copy-topic" placeholder="Tema del clip" />
+        <button type="button" id="copy-pv-btn" class="btn-secondary">Usar plantilla PV Tourist EN</button>
+        <p id="copy-pv-status" class="status-msg"></p>
+        <div id="copy-variant-cards" class="preview-grid"></div>
+        <details class="copy-advanced">
+          <summary>Copy genérico por red</summary>
+          <select id="copy-network">
+            <option value="instagram">Instagram</option>
+            <option value="tiktok">TikTok</option>
+            <option value="facebook_page">Facebook Page</option>
+            <option value="facebook_group">Grupo EN</option>
+          </select>
+          <button type="button" id="copy-btn">Generar 3 variantes</button>
+          <pre id="copy-out"></pre>
+        </details>
+      </div>
+    </section>
+
+    <section id="tab-historial" class="tab">
+      <h2>Historial</h2>
+      <div class="history-filters">
+        <select id="hist-filter-network">
+          <option value="">Todas las redes</option>
+          <option value="instagram">Instagram</option>
+          <option value="facebook_page">Facebook Page</option>
+          <option value="tiktok">TikTok</option>
+          <option value="facebook_group">Grupo FB</option>
+        </select>
+        <select id="hist-filter-status">
+          <option value="">Todos los status</option>
+          <option value="published">published</option>
+          <option value="published_private">published_private</option>
+          <option value="failed">failed</option>
+          <option value="awaiting_human">awaiting_human</option>
+          <option value="skipped">skipped</option>
+        </select>
+        <button type="button" id="hist-refresh">Actualizar</button>
+      </div>
+      <table id="history-table">
+        <thead><tr><th>Fecha</th><th>Red</th><th>Caption</th><th>Status</th><th>Error</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <section id="tab-grupos" class="tab">
+      <h2>Catálogo grupos</h2>
+      <form id="group-form">
+        <input name="name" placeholder="Nombre" />
+        <input name="url" placeholder="https://facebook.com/groups/..." required />
+        <button type="submit">Añadir</button>
+      </form>
+      <ul id="groups-list"></ul>
+      <button id="assist-groups-btn">Abrir siguientes 3 (clipboard + delay)</button>
+    </section>
+
+    <section id="tab-logs" class="tab">
+      <h2>Logs</h2>
+      <pre id="logs-out"></pre>
+    </section>
+
+    <section id="tab-ajustes" class="tab">
+      <h2>OpenRouter</h2>
+      <p class="hint">
+        Usa una <strong>API key distinta</strong> a la de VENUZ (OpenRouter → Management Keys → p. ej.
+        <code>babeldesk-local</code>). Guía: <code>docs/OPENROUTER_BABELDESK.md</code>.
+        Se guarda en <code>data/config.json</code> (local, no git).
+      </p>
+      <form id="openrouter-form" class="settings-form">
+        <label class="field">
+          <span>API key</span>
+          <input id="or-api-key" type="password" autocomplete="off" placeholder="" />
+          <span id="or-key-status" class="pill"></span>
+        </label>
+        <label class="field">
+          <span>Modelo sugerido</span>
+          <select id="or-model-preset"></select>
+        </label>
+        <label class="field">
+          <span>Otro slug OpenRouter</span>
+          <input id="or-model-custom" type="text" placeholder="ej. google/gemini-2.5-flash" />
+        </label>
+        <div class="settings-actions">
+          <button type="button" id="or-save">Guardar</button>
+          <button type="button" id="or-test">Probar conexión</button>
+        </div>
+        <p id="or-test-result" class="settings-result" aria-live="polite"></p>
+      </form>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

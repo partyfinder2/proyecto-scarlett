@@ -1,0 +1,87 @@
+{
+  "name": "babeldesk",
+  "version": "0.2.0",
+  "private": true,
+  "description": "BabelDesk — LabelBabel: cola local Page/IG + assist grupos/TikTok, sin dominio",
+  "main": "dist/main/main.js",
+  "scripts": {
+    "build": "tsc && node scripts/copy-static.mjs",
+    "dev": "npm run build && electron-rebuild -f -w better-sqlite3 && electron .",
+    "rebuild:native": "electron-rebuild -f -w better-sqlite3",
+    "build:win": "electron-rebuild -f -w better-sqlite3 && electron-builder --win",
+    "postinstall": "electron-builder install-app-deps",
+    "typecheck": "tsc --noEmit",
+    "test": "npm run test:src",
+    "test:src": "node --import tsx --test src/scheduler/worker.test.ts src/main/queue-recovery.test.ts src/main/openrouter-config.test.ts src/main/pv-tourist-template.test.ts src/media/overlay.test.ts src/plan/weekPlan.test.ts src/connectors/instagram-resumable.test.ts src/shared/caption-limits.test.ts src/shared/types-skip.test.ts src/connectors/downloader.test.ts src/connectors/watermarkRemover.test.ts src/connectors/inboxMediaFilter.test.ts",
+    "cookies:export": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/export-chrome-cookies.ps1"
+  },
+  "build": {
+    "appId": "com.labelbabel.babeldesk",
+    "productName": "BabelDesk",
+    "forceCodeSigning": false,
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "files": [
+      "dist/main/**/*",
+      "dist/renderer/**/*",
+      "dist/scheduler/**/*",
+      "dist/connectors/**/*",
+      "dist/shared/**/*",
+      "dist/assist/**/*",
+      "data/templates.json",
+      "package.json"
+    ],
+    "asar": true,
+    "asarUnpack": [
+      "**/node_modules/better-sqlite3/**/*"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icon.ico",
+      "signAndEditExecutable": false
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "BabelDesk",
+      "artifactName": "BabelDesk Setup.${ext}"
+    },
+    "portable": {
+      "artifactName": "BabelDesk-Portable-${version}.${ext}"
+    }
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.10.0",
+    "chokidar": "^4.0.3",
+    "dotenv": "^16.4.7"
+  },
+  "devDependencies": {
+    "@electron/rebuild": "^4.2.0",
+    "@types/better-sqlite3": "^7.6.12",
+    "@types/node": "^22.13.10",
+    "electron": "^34.3.0",
+    "electron-builder": "^25.1.8",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2"
+  }
+}

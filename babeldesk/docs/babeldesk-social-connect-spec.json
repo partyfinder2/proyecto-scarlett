@@ -1,0 +1,180 @@
+{
+  "schema_version": 1,
+  "project": "BabelDesk",
+  "graph_api_version": "v26.0",
+  "generated_from": "Grok 2026-09-30 (handoff Cursor)",
+  "constraints": {
+    "local_electron_only": true,
+    "scheduler_requires_app_open": true,
+    "no_venuz": true,
+    "no_cloud_cron": true,
+    "no_facebook_groups_graph_api": true,
+    "groups_api_retired": "2024-04-22"
+  },
+  "channels": [
+    {
+      "id": "facebook_page",
+      "mode": "auto",
+      "phase_text_link_photo": "P1",
+      "phase_video_reel": "P2",
+      "scopes": [
+        "pages_show_list",
+        "pages_read_engagement",
+        "pages_manage_posts",
+        "publish_video"
+      ],
+      "endpoints": {
+        "feed": "POST /{page-id}/feed",
+        "photos": "POST /{page-id}/photos",
+        "video_reels": "POST /{page-id}/video_reels (upload_phase start|upload|finish, video_state=PUBLISHED)"
+      },
+      "token_notes": "Page access token from /me/accounts; no separate expiry but invalidates on password change, app revoke, or role loss"
+    },
+    {
+      "id": "instagram",
+      "mode": "auto",
+      "phase": "P2",
+      "host": "graph.facebook.com",
+      "scopes": [
+        "instagram_basic",
+        "instagram_content_publish",
+        "pages_show_list"
+      ],
+      "flow": "/me/accounts → instagram_business_account → media + media_publish",
+      "local_video": "resumable rupload (existing BabelDesk)"
+    },
+    {
+      "id": "instagram_login_optional",
+      "mode": "auto",
+      "phase": "P3",
+      "host": "graph.instagram.com",
+      "scopes": [
+        "instagram_business_basic",
+        "instagram_business_content_publish"
+      ],
+      "note": "Do not mix tokens with Facebook Graph"
+    },
+    {
+      "id": "facebook_group",
+      "mode": "assist_only",
+      "phase": "P0",
+      "scopes": []
+    },
+    {
+      "id": "tiktok",
+      "mode": "assist_default",
+      "phase_api": "P3",
+      "oauth": {
+        "authorize": "https://www.tiktok.com/v2/auth/authorize/",
+        "token": "https://open.tiktokapis.com/v2/oauth/token/",
+        "pkce": "S256",
+        "redirect": "http://127.0.0.1:{port}/oauth/tiktok/callback"
+      },
+      "scopes_assist": ["video.upload"],
+      "scopes_direct_post": ["video.publish"],
+      "direct_post_requires_app_audit": true,
+      "limits_without_audit": {
+        "visibility": "SELF_ONLY",
+        "users_per_24h": 5,
+        "init_per_minute": 6
+      }
+    }
+  ],
+  "phases": [
+    {
+      "id": "P0",
+      "title": "Mis Redes UX + vault + Probar",
+      "deliverables": [
+        "Account states: disconnected | connected | expiring | invalid | assist_only",
+        "Buttons: Connect (placeholder P1), Test, Reconnect, Disconnect, Advanced paste token",
+        "IPC accounts:test with debug_token + Page/IG GET probes (no POST)",
+        "IPC accounts:disconnect clears secrets",
+        "UI delete/edit account",
+        "Map Graph errors 190, 200, 10 to Spanish hints",
+        "Keep manual token form as fallback"
+      ],
+      "out_of_scope": ["OAuth loopback", "Page video/reels", "TikTok API", "cloud cron"]
+    },
+    {
+      "id": "P1",
+      "title": "Meta OAuth loopback Electron",
+      "deliverables": [
+        "metaLoopback.ts: BrowserWindow/dialog, state CSRF, code exchange",
+        "GET /oauth/access_token authorization_code then fb_exchange_token (~60d user token)",
+        "GET /me/accounts fields=id,name,access_token,tasks,instagram_business_account",
+        "Page picker UI; encrypt page_token + user_token + ig_id in vault",
+        "Publish Page text/link/photo via Page token"
+      ],
+      "env_vars": ["META_APP_ID", "META_APP_SECRET", "META_OAUTH_REDIRECT_URI", "META_OAUTH_PORT"]
+    },
+    {
+      "id": "P2",
+      "title": "Video Page + Reels + IG publish polish",
+      "deliverables": [
+        "metaPage video_reels pipeline for local mp4",
+        "IG media_publish path verified with OAuth accounts",
+        "Expiry banner + Reconnect when debug_token near expiry"
+      ]
+    },
+    {
+      "id": "P3",
+      "title": "TikTok Login Kit + optional Instagram Login",
+      "deliverables": [
+        "TikTok PKCE desktop flow",
+        "Prefer video.upload assist; video.publish only if audited",
+        "Optional graph.instagram.com login path"
+      ]
+    }
+  ],
+  "env_vars": {
+    "existing": ["STUDIO_MASTER_KEY", "ALLOW_PLAIN_TOKENS", "TIKTOK_USE_API"],
+    "p1_meta": ["META_APP_ID", "META_APP_SECRET", "META_OAUTH_REDIRECT_URI", "META_OAUTH_PORT"],
+    "security": "App secret only in main process; never renderer, logs, or git"
+  },
+  "sqlite_migrations_suggested": [
+    "accounts.token_expires_at (exists)",
+    "accounts.scopes_json TEXT",
+    "accounts.connection_status TEXT",
+    "accounts.last_probe_at INTEGER",
+    "accounts.last_probe_error TEXT",
+    "accounts.page_name TEXT",
+    "accounts.ig_username TEXT"
+  ],
+  "ipc_suggested": [
+    "accounts:probe",
+    "accounts:disconnect",
+    "meta:oauthStart",
+    "meta:oauthFinish",
+    "meta:listPages"
+  ],
+  "oauth_meta_sequence": [
+    "User clicks Conectar Meta",
+    "Open https://www.facebook.com/dialog/oauth response_type=code&redirect_uri=loopback&state=",
+    "Loopback receives code",
+    "Main: GET /oauth/access_token grant_type=authorization_code",
+    "Main: GET /oauth/access_token grant_type=fb_exchange_token",
+    "Main: GET /me/accounts",
+    "User picks Page; save encrypted tokens + ig business id"
+  ],
+  "pablo_checklist_windows": [
+    "Loopback port free; firewall allows 127.0.0.1",
+    "BrowserWindow can load facebook.com (login cookies)",
+    "Redirect URI registered in Meta app: http://127.0.0.1:{port}/oauth/meta/callback",
+    "App secret in .env local only",
+    "Expired token shows Invalid → Reconnect",
+    "Video uses local path; do not require public URL for IG reel",
+    "App closed = queue stays in SQLite, no publish until reopened"
+  ],
+  "official_doc_urls_to_verify": [
+    "https://developers.facebook.com/docs/graph-api/overview",
+    "https://developers.facebook.com/docs/facebook-login/guides/access-tokens/get-long-lived",
+    "https://developers.facebook.com/docs/pages-api/posts",
+    "https://developers.facebook.com/docs/video-api/guides/reels-publishing",
+    "https://developers.facebook.com/docs/instagram-api/guides/content-publishing",
+    "https://developers.facebook.com/docs/graph-api/reference/page/video_reels",
+    "https://developers.facebook.com/docs/graph-api/overview/rate-limiting",
+    "https://developers.tiktok.com/doc/content-posting-api-get-started",
+    "https://developers.tiktok.com/doc/login-kit-desktop",
+    "https://developers.tiktok.com/doc/oauth-user-access-token-management"
+  ]
+}
