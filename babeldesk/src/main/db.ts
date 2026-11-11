@@ -47,6 +47,9 @@ export type DbMedia = {
   height: number | null;
   duration_ms: number | null;
   public_url: string | null;
+  title?: string | null;
+  caption?: string | null;
+  meta_json?: string | null;
   created_at: number;
 };
 
@@ -244,6 +247,10 @@ function runMigration(db: Database.Database): void {
   ensureColumn(db, "accounts", "last_probe_error", "TEXT");
   ensureColumn(db, "accounts", "page_name", "TEXT");
   ensureColumn(db, "accounts", "ig_username", "TEXT");
+
+  ensureColumn(db, "media", "title", "TEXT");
+  ensureColumn(db, "media", "caption", "TEXT");
+  ensureColumn(db, "media", "meta_json", "TEXT");
 
   // Deduplicate media entries sharing the same file path
   db.exec(`
@@ -564,10 +571,36 @@ export function tailLog(db: Database.Database, limit = 100) {
 export function insertMedia(db: Database.Database, m: DbMedia): void {
   db.prepare(`
     INSERT OR REPLACE INTO media
-      (id, path, kind, width, height, duration_ms, public_url, created_at)
+      (id, path, kind, width, height, duration_ms, public_url, title, caption, meta_json, created_at)
     VALUES
-      (@id, @path, @kind, @width, @height, @duration_ms, @public_url, @created_at)
-  `).run({ ...m, created_at: m.created_at ?? Math.floor(Date.now() / 1000) });
+      (@id, @path, @kind, @width, @height, @duration_ms, @public_url, @title, @caption, @meta_json, @created_at)
+  `).run({
+    ...m,
+    title: m.title ?? null,
+    caption: m.caption ?? null,
+    meta_json: m.meta_json ?? null,
+    created_at: m.created_at ?? Math.floor(Date.now() / 1000),
+  });
+}
+
+export function updateMediaMetadataByPath(
+  db: Database.Database,
+  filePath: string,
+  meta: { title?: string | null; caption?: string | null; meta_json?: string | null }
+): number {
+  const res = db.prepare(`
+    UPDATE media
+    SET title = COALESCE(@title, title),
+        caption = COALESCE(@caption, caption),
+        meta_json = COALESCE(@meta_json, meta_json)
+    WHERE path = @path
+  `).run({
+    path: filePath,
+    title: meta.title ?? null,
+    caption: meta.caption ?? null,
+    meta_json: meta.meta_json ?? null,
+  });
+  return res.changes;
 }
 
 export function getMedia(db: Database.Database, id: string): DbMedia | null {

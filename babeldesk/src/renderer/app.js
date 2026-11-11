@@ -81,10 +81,42 @@ async function refreshInfo() {
   }
 }
 
+function applySelectedMediaDefaults(form, sel) {
+  const opt = sel.options[sel.selectedIndex];
+  if (!opt) return;
+  const titleInput = form.querySelector('[name="title"]');
+  const captionInput = form.querySelector('[name="caption"]');
+  const suggestedTitle = opt.dataset.title || "";
+  const suggestedCaption = opt.dataset.caption || "";
+
+  if (titleInput && suggestedTitle && (!titleInput.value.trim() || titleInput.dataset.autofilled === "1")) {
+    titleInput.value = suggestedTitle;
+    titleInput.dataset.autofilled = "1";
+  }
+  if (captionInput && suggestedCaption && (!captionInput.value.trim() || captionInput.dataset.autofilled === "1")) {
+    captionInput.value = suggestedCaption;
+    captionInput.dataset.autofilled = "1";
+  }
+}
+
 function bindComposerInputs() {
   const form = $("#post-form");
-  form.querySelector('[name="caption"]').addEventListener("input", () => void updateComposerPreview());
-  form.querySelector("#media-select").addEventListener("change", () => void updateComposerPreview());
+  const titleInput = form.querySelector('[name="title"]');
+  const captionInput = form.querySelector('[name="caption"]');
+  const mediaSel = form.querySelector("#media-select");
+  if (titleInput) {
+    titleInput.addEventListener("input", () => {
+      delete titleInput.dataset.autofilled;
+    });
+  }
+  captionInput.addEventListener("input", () => {
+    delete captionInput.dataset.autofilled;
+    void updateComposerPreview();
+  });
+  mediaSel.addEventListener("change", () => {
+    applySelectedMediaDefaults(form, mediaSel);
+    void updateComposerPreview();
+  });
 }
 
 async function updateComposerPreview() {
@@ -386,7 +418,7 @@ let lastMediaSignature = null;
 
 async function refreshMedia() {
   const rows = (await api.invoke("media:list")) || [];
-  const signature = rows.map((m) => `${m.id}:${m.path}`).join("|");
+  const signature = rows.map((m) => `${m.id}:${m.path}:${m.title || ""}:${m.caption || ""}`).join("|");
   if (signature === lastMediaSignature) return;
   lastMediaSignature = signature;
 
@@ -423,8 +455,8 @@ async function refreshMedia() {
 
       const nameEl = document.createElement("div");
       nameEl.className = "media-card-name";
-      nameEl.textContent = fileName;
-      nameEl.title = fileName;
+      nameEl.textContent = m.title ? `${m.title} · ${fileName}` : fileName;
+      nameEl.title = m.title ? `${m.title} (${fileName})` : fileName;
 
       const actions = document.createElement("div");
       actions.className = "media-card-actions";
@@ -538,7 +570,10 @@ async function refreshMedia() {
   rows.forEach((m, idx) => {
     const opt = document.createElement("option");
     opt.value = m.id;
-    opt.textContent = `#${total - idx} · ${m.path.split(/[/\\]/).pop()}`;
+    const baseName = m.path.split(/[/\\]/).pop();
+    opt.textContent = m.title ? `#${total - idx} · ${m.title}` : `#${total - idx} · ${baseName}`;
+    if (m.title) opt.dataset.title = m.title;
+    if (m.caption) opt.dataset.caption = m.caption;
     sel.appendChild(opt);
   });
   if (prevSelected && rows.some((m) => m.id === prevSelected)) sel.value = prevSelected;
@@ -825,6 +860,8 @@ $("#post-form").onsubmit = async (e) => {
     alert(result.skipped.join("\n"));
   }
   e.target.reset();
+  delete e.target.querySelector('[name="title"]')?.dataset.autofilled;
+  delete e.target.querySelector('[name="caption"]')?.dataset.autofilled;
   refreshTargets();
   refreshHistory();
   await updateComposerPreview();

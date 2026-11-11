@@ -19,6 +19,9 @@ CREATE TABLE IF NOT EXISTS media (
   height INTEGER,
   duration_ms INTEGER,
   public_url TEXT,
+  title TEXT,
+  caption TEXT,
+  meta_json TEXT,
   created_at INTEGER
 );
 

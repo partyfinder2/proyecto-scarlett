@@ -12,7 +12,7 @@
     "postinstall": "electron-builder install-app-deps",
     "typecheck": "tsc --noEmit",
     "test": "npm run test:src",
-    "test:src": "node --import tsx --test src/scheduler/worker.test.ts src/main/queue-recovery.test.ts src/main/openrouter-config.test.ts src/main/pv-tourist-template.test.ts src/media/overlay.test.ts src/plan/weekPlan.test.ts src/connectors/instagram-resumable.test.ts src/shared/caption-limits.test.ts src/shared/types-skip.test.ts src/connectors/downloader.test.ts src/connectors/watermarkRemover.test.ts src/connectors/inboxMediaFilter.test.ts",
+    "test:src": "node --import tsx --test src/scheduler/worker.test.ts src/main/queue-recovery.test.ts src/main/inbox-watcher.test.ts src/main/openrouter-config.test.ts src/main/pv-tourist-template.test.ts src/media/overlay.test.ts src/plan/weekPlan.test.ts src/connectors/instagram-resumable.test.ts src/shared/caption-limits.test.ts src/shared/types-skip.test.ts src/connectors/downloader.test.ts src/connectors/watermarkRemover.test.ts src/connectors/inboxMediaFilter.test.ts",
     "cookies:export": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/export-chrome-cookies.ps1"
   },
   "build": {
