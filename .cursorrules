@@ -1,5 +1,6 @@
-# proyecto-scarlett — tres carpetas
+# proyecto-scarlett — cuatro carpetas
 
-1. `fabrica-de-contenido/` es la app activa. Sus reglas están en `fabrica-de-contenido/.cursorrules`.
-2. `babeldesk/` es el respaldo de BabelDesk. No mezclarlo con la fábrica.
-3. `libro/` es el manuscrito, en pausa. No editarlo salvo que Pablo lo pida.
+1. `fabrica-de-contenido/` es la app activa de automatización. Sus reglas están en `fabrica-de-contenido/.cursorrules`.
+2. `ranking-app/` es la app local de Ranking Shorts (puerto 5002). Sus reglas están en `ranking-app/.cursorrules` y su tablero en `ranking-app/ESTADO_AVANCE.md`. No mezclarla con `fabrica-de-contenido/`.
+3. `babeldesk/` es el respaldo de BabelDesk. No mezclarlo con la fábrica ni con ranking-app.
+4. `libro/` es el manuscrito, en pausa. No editarlo salvo que Pablo lo pida.
