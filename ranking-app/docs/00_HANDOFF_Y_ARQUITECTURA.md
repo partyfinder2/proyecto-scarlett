@@ -12,7 +12,17 @@
 `ranking-app/` vive **separada** de `fabrica-de-contenido/` porque:
 1. Cursor está trabajando en paralelo en `fabrica-de-contenido/`; separar evita conflictos en `app.py`, `renderer.py` y `panel/app.js`.
 2. Son flujos distintos: la Fábrica automatiza guion + voz IA + lotes desde Telegram; `ranking-app` es un editor manual rápido de una pantalla para armar Top 3–10 en menos de 3 minutos sin abrir CapCut.
-3. Si uno falla, no tumba al otro. Más adelante se pueden conectar recogiendo el `.mp4` exportado desde una carpeta compartida.
+3. Si uno falla, no tumba al otro. Además, `ranking-app/` ya incluye su conector autónomo [`../babeldesk_entrega.py`](../babeldesk_entrega.py) (también disponible vía `worker.babeldesk_entrega`) para entregar opcionalmente el `.mp4` + miniatura `.jpg` + `.json` gemelo hacia `C:\Users\pablo\Downloads\BabelDesk\Inbox\` con escritura atómica (`.tmp` → definitivo), replicando el patrón de `fabrica-de-contenido/` sin importar código suyo.
+
+---
+
+## 1B. Conexión directa con BabelDesk (`Inbox\`)
+
+El pipeline completo en la máquina de Pablo queda así:
+
+1. **BabelDesk** descarga clips con `yt-dlp` → carpeta local de Pablo (`C:\Users\pablo\Downloads\...`).
+2. **`ranking-app/` (`:5002`)** importa esos clips, arma el Top 3–10 y exporta el `.mp4` final (`1080×1920`).
+3. Al usar **`Exportar + Enviar a BabelDesk ↗`** (`POST /api/enviar-a-babeldesk`), [`babeldesk_entrega.py`](../babeldesk_entrega.py) copia de forma atómica (`.tmp` → archivo final) el `.mp4`, una miniatura `.jpg` y un `.json` gemelo (`title`, `caption`, `fuente: "ranking-app"`, `puestos`) a `C:\Users\pablo\Downloads\BabelDesk\Inbox\` (o la ruta en `BABELDESK_INBOX` / `data/babeldesk_inbox.txt`), donde `chokidar` de BabelDesk lo detecta sin mover archivos a mano.
 
 ---
 
@@ -20,11 +30,11 @@
 
 | Componente | Decisión | Por qué |
 |---|---|---|
-| **Puerto local** | `http://127.0.0.1:5002` | Separado de la Fábrica (`:5001`). |
-| **Backend** | Python 3.14 + FastAPI + Uvicorn | Mismo entorno ya instalado en la PC de Pablo; cero dependencias nuevas pesadas. |
-| **Ventana / Empaquetado** | `.bat` + `.vbs` abriendo Chrome/Edge en `--app` | Sin Tauri (requiere Rust) ni Electron (`node_modules` pesados). Patrón ya probado en `fabrica-de-contenido/scripts/abrir_fabrica.vbs`. |
+| **Puerto local** | `http://127.0.0.1:5002` (verificado libre) | Separado de la Fábrica (`:5001`). |
+| **Backend** | Python 3.14.2 + FastAPI `0.162.2` + Pydantic `2.12.5` + Uvicorn `0.54.0` | Ya instalados y probados juntos en la PC de Pablo; arrancar siempre con `python -m uvicorn`. |
+| **Ventana / Empaquetado** | `.bat` + `.vbs` con `C:\Program Files\Google\Chrome\Application\chrome.exe --app=http://127.0.0.1:5002/` (respaldo `C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe`) | Sin Tauri (requiere Rust) ni Electron (`node_modules` pesados). Ambos navegadores verificados en disco. No usar `webbrowser.open()`. |
 | **Overlays de texto** | **Pillow (`12.1.1` ya instalado)** generando PNG transparente por segmento | Mismo PNG para el preview HTML (`<img>` sobre `<video>`) y para FFmpeg (`overlay=`). Garantiza que **Preview == Export** y evita peleas con fuentes en `drawtext`. |
-| **Render** | **FFmpeg 8.0.1 local** por segmentos normalizados | Mucho más rápido y estable con MOV/VFR/codecs raros que renderizar en navegador (WebCodecs). |
+| **Render** | **FFmpeg 8.0.1 local** (en PATH vía WinGet; resolver con `shutil.which` + respaldo `%LOCALAPPDATA%\Microsoft\WinGet\Links\`) por segmentos normalizados | Mucho más rápido y estable con MOV/VFR/codecs raros que renderizar en navegador (WebCodecs). |
 
 ---
 
@@ -117,3 +127,4 @@ Para tener un MVP usable y sólido sin sacrificar los criterios 1–7 y 10 del b
 
 1. **Clips de terceros:** recortar, reordenar y poner overlays ayuda a transformar, pero no elimina reclamos si el dueño original reclama o si las plataformas marcan contenido reutilizado sin aporte propio. Para monetizar a largo plazo, agregar voice-over (Commit 2) y crédito si aplica.
 2. **Nicho adultos vs. Finanzas/IA para `labelbabel.com`:** TikTok, Instagram y YouTube Shorts restringen fuertemente contenido adulto (riesgo alto de baneo y cero monetización). No mezclar ese nicho en las mismas cuentas de Finanzas o IA.
+

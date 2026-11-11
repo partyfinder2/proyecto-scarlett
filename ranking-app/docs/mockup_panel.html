@@ -1,0 +1,562 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ranking-app — Referencia visual del panel (Módulo 6)</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:"Segoe UI",system-ui,-apple-system,sans-serif;
+  background:#090909;
+  color:#e0e0e0;
+  font-size:13px;
+  height:100vh;
+  padding:10px;
+}
+.app{
+  display:grid;
+  grid-template-columns:260px 1fr 250px;
+  grid-template-rows:42px 1fr;
+  height:calc(100vh - 20px);
+  min-height:580px;
+  background:#111;
+  border-radius:10px;
+  overflow:hidden;
+  border:1px solid #2b2b2b;
+}
+.topbar{
+  grid-column:1/-1;
+  background:#181818;
+  border-bottom:1px solid #2b2b2b;
+  display:flex;
+  align-items:center;
+  padding:0 14px;
+  justify-content:space-between;
+}
+.topbar-title{
+  font-size:14px;
+  font-weight:600;
+  color:#f2f2f2;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.topbar-right{display:flex;align-items:center;gap:8px}
+.badge{
+  font-size:11px;
+  padding:3px 9px;
+  border-radius:4px;
+  background:#232323;
+  color:#9a9a9a;
+  border:1px solid #333;
+}
+.badge.green{
+  background:#172b17;
+  color:#5fd367;
+  border-color:#2d4f2d;
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+}
+.dot-live{
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:#4caf50;
+  display:inline-block;
+}
+.col{
+  border-right:1px solid #2b2b2b;
+  overflow-y:auto;
+  padding:12px;
+  background:#111;
+}
+.col:last-child{border-right:none}
+.col-label{
+  font-size:10px;
+  font-weight:700;
+  color:#facc15;
+  text-transform:uppercase;
+  letter-spacing:.8px;
+  margin-bottom:10px;
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+.section{margin-bottom:14px}
+.section-title{
+  font-size:10px;
+  color:#888;
+  text-transform:uppercase;
+  letter-spacing:.6px;
+  margin-bottom:7px;
+  line-height:1.35;
+}
+.drop-zone{
+  border:1px dashed #3c3c3c;
+  border-radius:6px;
+  padding:14px 10px;
+  text-align:center;
+  color:#7c7c7c;
+  font-size:11px;
+  cursor:pointer;
+  margin-bottom:10px;
+  background:#151515;
+}
+.drop-zone:hover{border-color:#facc15;color:#ccc}
+.drop-icon{font-size:18px;display:block;margin-bottom:4px;color:#facc15}
+.clip-card{
+  background:#1a1a1a;
+  border:1px solid #2a2a2a;
+  border-radius:6px;
+  padding:8px;
+  margin-bottom:6px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  cursor:pointer;
+}
+.clip-card.active{
+  border-color:#facc15;
+  background:#1e1c10;
+}
+.thumb{
+  width:34px;
+  height:34px;
+  border-radius:4px;
+  background:#282828;
+  flex-shrink:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:11px;
+  color:#888;
+}
+.clip-info{flex:1;min-width:0}
+.clip-name{
+  font-size:11px;
+  color:#e0e0e0;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.clip-meta{font-size:10px;color:#777;margin-top:2px}
+.rank-badge{
+  font-size:12px;
+  font-weight:700;
+  color:#facc15;
+  min-width:24px;
+  text-align:right;
+}
+.clip-actions{display:flex;gap:2px}
+.btn-xs{
+  background:#242424;
+  border:1px solid #333;
+  color:#aaa;
+  cursor:pointer;
+  padding:2px 6px;
+  border-radius:4px;
+  font-size:11px;
+  line-height:1.2;
+}
+.btn-xs:hover{color:#fff;border-color:#facc15}
+.audio-row{display:flex;align-items:center;gap:8px;margin-top:10px}
+.audio-toggle{
+  width:30px;height:17px;
+  background:#2a2a2a;
+  border-radius:9px;
+  position:relative;
+  cursor:pointer;
+  border:1px solid #3a3a3a;
+  flex-shrink:0;
+}
+.audio-toggle.on{background:#2d4a2d;border-color:#4caf50}
+.audio-toggle::after{
+  content:'';
+  position:absolute;
+  top:2px;left:2px;
+  width:11px;height:11px;
+  background:#888;
+  border-radius:50%;
+  transition:.18s;
+}
+.audio-toggle.on::after{left:15px;background:#4caf50}
+.audio-label{font-size:11px;color:#999}
+
+/* Centro: Preview 9:16 */
+.preview-col{
+  background:#0c0c0c;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:14px;
+  padding:16px 12px;
+  border-right:1px solid #2b2b2b;
+}
+.phone-frame{
+  width:210px;
+  height:373px;
+  background:#050505;
+  border-radius:16px;
+  border:2px solid #2e2e2e;
+  overflow:hidden;
+  position:relative;
+  box-shadow:0 12px 32px rgba(0,0,0,.6);
+}
+.phone-video{
+  width:100%;
+  height:100%;
+  background:radial-gradient(circle at 50% 45%,#242006,#080808 75%);
+  position:relative;
+}
+.overlay-title-top{
+  position:absolute;
+  top:24px;
+  left:10px;
+  right:10px;
+  text-align:center;
+  font-size:11px;
+  font-weight:800;
+  color:#fff;
+  text-shadow:0 2px 4px #000,1px 1px 0 #000,-1px -1px 0 #000;
+  letter-spacing:.4px;
+}
+.overlay-center{
+  position:absolute;
+  top:88px;
+  left:10px;
+  right:10px;
+  text-align:center;
+}
+.overlay-num{
+  font-size:46px;
+  font-weight:900;
+  color:#facc15;
+  line-height:1;
+  text-shadow:2px 2px 0 #000,-2px -2px 0 #000,2px -2px 0 #000,-2px 2px 0 #000;
+}
+.overlay-label{
+  font-size:13px;
+  color:#fff;
+  font-weight:700;
+  margin-top:4px;
+  text-shadow:1px 1px 0 #000,-1px -1px 0 #000;
+}
+.preview-controls{display:flex;align-items:center;gap:10px}
+.btn-ctrl{
+  background:#1c1c1c;
+  border:1px solid #333;
+  border-radius:6px;
+  color:#ccc;
+  padding:6px 12px;
+  cursor:pointer;
+  font-size:13px;
+}
+.btn-ctrl:hover{border-color:#facc15;color:#fff}
+.preview-hint{font-size:11px;color:#666;text-align:center}
+
+/* Derecha: Estilo y Export */
+.field{margin-bottom:10px}
+.field label{display:block;font-size:10px;color:#888;margin-bottom:4px}
+.field input[type=text]{
+  width:100%;
+  background:#181818;
+  border:1px solid #2e2e2e;
+  border-radius:5px;
+  padding:6px 8px;
+  color:#e5e5e5;
+  font-size:12px;
+}
+.field input[type=text]:focus{outline:none;border-color:#facc15}
+.presets{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.preset-btn{
+  background:#181818;
+  border:1px solid #2e2e2e;
+  border-radius:5px;
+  padding:6px 8px;
+  text-align:center;
+  cursor:pointer;
+  font-size:11px;
+  color:#999;
+}
+.preset-btn.active{border-color:#facc15;color:#facc15;background:#1e1c10;font-weight:600}
+.preset-btn.soon{opacity:.45;cursor:not-allowed}
+.accent-row{display:flex;align-items:center;gap:7px;margin-bottom:10px}
+.accent-dot{
+  width:18px;height:18px;border-radius:50%;
+  border:2px solid transparent;cursor:pointer;
+}
+.accent-dot.active{border-color:#fff}
+.accent-label{font-size:11px;color:#888}
+.framing-row{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.frame-btn{
+  background:#181818;
+  border:1px solid #2e2e2e;
+  border-radius:5px;
+  padding:6px;
+  text-align:center;
+  cursor:pointer;
+  font-size:11px;
+  color:#888;
+}
+.frame-btn.active{border-color:#4a9eff;color:#4a9eff;background:#111d2c}
+.slider-row{margin-bottom:9px}
+.slider-row label{font-size:11px;color:#888;display:flex;justify-content:space-between}
+.slider-row input[type=range]{width:100%;margin-top:4px;accent-color:#facc15}
+.divider{border:none;border-top:1px solid #262626;margin:10px 0}
+.progress-bar{width:100%;height:5px;background:#1c1c1c;border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;width:0%;background:#facc15;border-radius:3px;transition:width .25s}
+.btn-export{
+  width:100%;
+  background:#facc15;
+  border:none;
+  border-radius:6px;
+  padding:9px;
+  color:#111;
+  font-weight:700;
+  font-size:12px;
+  cursor:pointer;
+  margin-bottom:7px;
+}
+.btn-export:hover{background:#fde047}
+.btn-babeldesk{
+  width:100%;
+  background:#172a17;
+  border:1px solid #2d552d;
+  border-radius:6px;
+  padding:8px;
+  color:#66db70;
+  font-weight:600;
+  font-size:11px;
+  cursor:pointer;
+}
+.btn-babeldesk:hover{background:#1f381f}
+.btn-cancel{
+  width:100%;
+  margin-top:6px;
+  background:#241414;
+  border:1px solid #4a2323;
+  border-radius:6px;
+  padding:6px;
+  color:#f87171;
+  font-size:11px;
+  cursor:pointer;
+}
+.tip{font-size:10px;color:#777;margin-top:7px;text-align:center;line-height:1.4}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <span class="topbar-title">🏆 ranking-app</span>
+    <div class="topbar-right">
+      <span class="badge green"><span class="dot-live"></span> :5002 activo</span>
+      <span class="badge">5 clips · 0:38</span>
+      <span class="badge">1080×1920</span>
+    </div>
+  </header>
+
+  <!-- ZONA IZQUIERDA: DECK -->
+  <aside class="col">
+    <div class="col-label">☰ Tu ranking</div>
+
+    <div class="drop-zone">
+      <span class="drop-icon">↑</span>
+      Suelta videos aquí<br>MP4 · MOV · WebM · hasta 60s
+    </div>
+
+    <div class="section">
+      <div class="section-title">El último de la lista es el #1 y sale al final</div>
+
+      <div class="clip-card">
+        <div class="thumb">▶</div>
+        <div class="clip-info">
+          <div class="clip-name">chatgpt_demo.mp4</div>
+          <div class="clip-meta">0:00 – 0:08 (8s)</div>
+        </div>
+        <div class="rank-badge">#5</div>
+        <div class="clip-actions">
+          <button class="btn-xs" title="Subir">▲</button>
+          <button class="btn-xs" title="Bajar">▼</button>
+        </div>
+      </div>
+
+      <div class="clip-card">
+        <div class="thumb">▶</div>
+        <div class="clip-info">
+          <div class="clip-name">midjourney_v7.mp4</div>
+          <div class="clip-meta">0:02 – 0:09 (7s)</div>
+        </div>
+        <div class="rank-badge">#4</div>
+        <div class="clip-actions">
+          <button class="btn-xs" title="Subir">▲</button>
+          <button class="btn-xs" title="Bajar">▼</button>
+        </div>
+      </div>
+
+      <div class="clip-card">
+        <div class="thumb">▶</div>
+        <div class="clip-info">
+          <div class="clip-name">perplexity_demo.mp4</div>
+          <div class="clip-meta">0:00 – 0:07 (7s)</div>
+        </div>
+        <div class="rank-badge">#3</div>
+        <div class="clip-actions">
+          <button class="btn-xs" title="Subir">▲</button>
+          <button class="btn-xs" title="Bajar">▼</button>
+        </div>
+      </div>
+
+      <div class="clip-card">
+        <div class="thumb">▶</div>
+        <div class="clip-info">
+          <div class="clip-name">sora_v2_clip.mp4</div>
+          <div class="clip-meta">0:01 – 0:08 (7s)</div>
+        </div>
+        <div class="rank-badge">#2</div>
+        <div class="clip-actions">
+          <button class="btn-xs" title="Subir">▲</button>
+          <button class="btn-xs" title="Bajar">▼</button>
+        </div>
+      </div>
+
+      <div class="clip-card active">
+        <div class="thumb" style="background:#2a2800;color:#facc15">▶</div>
+        <div class="clip-info">
+          <div class="clip-name">claude_opus5.mp4</div>
+          <div class="clip-meta">0:00 – 0:06 (6s)</div>
+        </div>
+        <div class="rank-badge">#1</div>
+        <div class="clip-actions">
+          <button class="btn-xs" title="Subir">▲</button>
+          <button class="btn-xs" title="Bajar">▼</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="audio-row">
+      <button class="audio-toggle" aria-label="Audio original del clip"></button>
+      <span class="audio-label">Audio original del clip seleccionado</span>
+    </div>
+  </aside>
+
+  <!-- ZONA CENTRO: PREVIEW 9:16 -->
+  <main class="preview-col">
+    <div class="col-label" style="margin-bottom:0">📱 Preview 9:16</div>
+
+    <div class="phone-frame">
+      <div class="phone-video">
+        <div class="overlay-title-top">TOP 5 HERRAMIENTAS DE IA 2026</div>
+        <div class="overlay-center">
+          <div class="overlay-num">#1</div>
+          <div class="overlay-label">Claude Opus 5</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="preview-controls">
+      <button class="btn-ctrl" title="Puesto anterior">←</button>
+      <button class="btn-ctrl" title="Reproducir / Pausa">▶ / ❚❚</button>
+      <button class="btn-ctrl" title="Siguiente puesto">→</button>
+    </div>
+    <div class="preview-hint">Atajos: ← → para cambiar puesto · Espacio para pausar</div>
+  </main>
+
+  <!-- ZONA DERECHA: ESTILO Y EXPORT -->
+  <aside class="col">
+    <div class="col-label">✦ Estilo y export</div>
+
+    <div class="field">
+      <label>Título del ranking</label>
+      <input type="text" value="TOP 5 HERRAMIENTAS DE IA 2026">
+    </div>
+
+    <div class="section">
+      <div class="section-title">Preset</div>
+      <div class="presets">
+        <div class="preset-btn active">Classic</div>
+        <div class="preset-btn">Neon</div>
+        <div class="preset-btn soon" title="Disponible en Commit 2">Gold (Pronto)</div>
+        <div class="preset-btn soon" title="Disponible en Commit 2">Clean (Pronto)</div>
+      </div>
+    </div>
+
+    <div class="accent-row">
+      <div class="accent-dot active" style="background:#facc15"></div>
+      <div class="accent-dot" style="background:#4a9eff"></div>
+      <div class="accent-dot" style="background:#ff6b6b"></div>
+      <div class="accent-dot" style="background:#4caf50"></div>
+      <span class="accent-label">Color acento</span>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Encuadre</div>
+      <div class="framing-row">
+        <div class="frame-btn active">Fill (recorte)</div>
+        <div class="frame-btn">Fit (barras)</div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <div class="slider-row">
+      <label>Música <span>25%</span></label>
+      <input type="range" min="0" max="100" value="25">
+    </div>
+
+    <div class="slider-row">
+      <label>Sting en cortes <span>80%</span></label>
+      <input type="range" min="0" max="100" value="80">
+    </div>
+
+    <hr class="divider">
+
+    <div class="field">
+      <label>Carpeta de salida</label>
+      <input type="text" value="C:\Users\pablo\Videos\Rankings" style="font-size:11px">
+    </div>
+
+    <div class="progress-bar"><div class="progress-fill" id="pf"></div></div>
+
+    <div style="margin-top:10px">
+      <button class="btn-export" onclick="simular('export')">⬇ Exportar MP4</button>
+      <button class="btn-babeldesk" onclick="simular('babeldesk')">Exportar + Enviar a BabelDesk ↗</button>
+      <button class="btn-cancel" onclick="cancelar()">Cancelar export</button>
+    </div>
+
+    <div class="tip" id="export-tip">Se guardará como ranking_YYYYMMDD_HHMMSS.mp4</div>
+  </aside>
+</div>
+
+<script>
+let timer = null;
+function simular(modo) {
+  if (timer) clearInterval(timer);
+  const pf = document.getElementById('pf');
+  const tip = document.getElementById('export-tip');
+  let p = 0;
+  pf.style.background = modo === 'babeldesk' ? '#4caf50' : '#facc15';
+  tip.textContent = modo === 'babeldesk' ? 'Exportando y enviando a BabelDesk...' : 'Exportando segmentos...';
+  timer = setInterval(() => {
+    p = Math.min(100, p + 15);
+    pf.style.width = p + '%';
+    if (p >= 100) {
+      clearInterval(timer);
+      timer = null;
+      tip.textContent = modo === 'babeldesk'
+        ? '✓ Entregado en BabelDesk Inbox (FB + IG + TikTok)'
+        : '✓ ranking_20261110_235500.mp4 listo';
+    }
+  }, 220);
+}
+function cancelar() {
+  if (timer) clearInterval(timer);
+  timer = null;
+  document.getElementById('pf').style.width = '0%';
+  document.getElementById('export-tip').textContent = 'Export cancelado y archivos temporales limpios.';
+}
+</script>
+</body>
+</html>

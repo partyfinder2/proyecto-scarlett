@@ -12,12 +12,13 @@
 | # | Módulo | Responsable | Estado | Verificación / Notas |
 |---|---|---|---|---|
 | 0 | Carpeta, `.cursorrules`, handoff y prompt para Cursor | Antigravity | ✅ Listo | `docs/00_HANDOFF_Y_ARQUITECTURA.md` y `docs/01_PROMPT_CURSOR_MVP.md` |
+| 0b | `babeldesk_entrega.py` + `worker/babeldesk_entrega.py` (entrega atómica a `BabelDesk\Inbox`) | Antigravity | ✅ Listo | Sin dependencia de `fabrica-de-contenido/`; soporta `BABELDESK_INBOX` |
 | 1 | `render/segmentos.py` (recorte, Fill/Fit, 1080×1920, 30fps, `yuv420p`, `anullsrc`) | Cursor | ⬜ Pendiente | Probar con 1 clip con audio y 1 clip mudo |
 | 2 | `render/overlay.py` (Pillow PNG por puesto, presets Classic y Neon) | Cursor | ⬜ Pendiente | Legible en pantalla de teléfono |
 | 3 | `render/exportar.py` (concat, overlay PNG, música + sting, `amix normalize=0`, cancelar limpio) | Cursor | ⬜ Pendiente | Probar orden `#5→#1` y `+faststart` |
 | 4 | `proyecto.py` (cargar/guardar JSON local + autoguardado último proyecto) | Cursor | ⬜ Pendiente | Al reabrir conserva orden, trims y estilo |
-| 5 | `app.py` (FastAPI en `:5002`: importar, miniatura, preview PNG, export + SSE) | Cursor | ⬜ Pendiente | Sin internet sigue funcionando |
-| 6 | `panel/` (1 vista, 3 zonas: Deck, Preview 9:16, Estilo y Export + acceso directo `.bat`/`.vbs`) | Cursor | ⬜ Pendiente | Regla: la tarjeta de abajo es `#1` y sale al final |
+| 5 | `app.py` (FastAPI en `:5002`: importar, miniatura, preview PNG, export + SSE + `/api/enviar-a-babeldesk`) | Cursor | ⬜ Pendiente | Sin internet sigue funcionando |
+| 6 | `panel/` (1 vista, 3 zonas: Deck, Preview 9:16, Estilo y Export + botón `Enviar a BabelDesk ↗` + `.bat`/`.vbs`) | Cursor | ⬜ Pendiente | Regla: la tarjeta de abajo es `#1` y sale al final |
 | 7 | `tests/test_export_sintetico.py` (5 clips `testsrc2` + `ffprobe` + modo offline) | Cursor | ⬜ Pendiente | Criterios 1–7 y 10 en verde |
 | 8 | Commit 2: `voiceover` con ducking (`sidechaincompress`), `hook` 1–2s, `watermark`, `shuffle`, presets Gold/Clean | Cursor | ⬜ Pendiente | Después de validar el MVP |
 
@@ -41,3 +42,5 @@
 ## Registro de Cambios
 
 - **2026-11-10 (Antigravity):** Evaluación de arquitectura aprobada (proyecto separado en `ranking-app/`, puerto `5002`, FastAPI + Pillow + FFmpeg local + Chrome `--app`). Creada estructura inicial y handoff para Cursor.
+- **2026-11-10 (Antigravity):** Añadido conector autónomo `babeldesk_entrega.py` (y `worker/babeldesk_entrega.py`) + especificación de `POST /api/enviar-a-babeldesk` (Módulo 5) y botón `Exportar + Enviar a BabelDesk ↗` (Módulo 6) en el handoff y prompt de Cursor.
+

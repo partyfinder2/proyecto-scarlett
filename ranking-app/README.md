@@ -24,8 +24,11 @@ Herramienta local de escritorio para crear **Shorts/Reels verticales de ranking 
 | `ESTADO_AVANCE.md` | Tablero de avance compartido entre IAs (qué está hecho, qué falta, criterios de aceptación). |
 | `docs/00_HANDOFF_Y_ARQUITECTURA.md` | Briefing de producto + dictamen de arquitectura y decisiones cerradas. |
 | `docs/01_PROMPT_CURSOR_MVP.md` | Prompt exacto y orden de módulos para que Cursor construya el MVP. |
+| `docs/mockup_panel.html` | Referencia visual offline (3 zonas, modo oscuro, sin CDNs) para el Módulo 6. |
 | `.cursorrules` | Reglas operativas exclusivas para trabajar dentro de `ranking-app/`. |
 | `requirements.txt` | Dependencias Python mínimas del proyecto. |
+| `babeldesk_entrega.py` y `worker/babeldesk_entrega.py` | Conector atómico (`.tmp` → final) para entregar `.mp4` + `.jpg` + `.json` a `BabelDesk\Inbox`. |
 | `render/` *(por crear)* | `segmentos.py`, `overlay.py`, `exportar.py`. |
 | `panel/` *(por crear)* | Interfaz de 1 pantalla en 3 zonas (Deck, Preview 9:16, Estilo y Export). |
 | `tests/` *(por crear)* | Test automático de export con 5 clips sintéticos + verificación `ffprobe`. |
+
