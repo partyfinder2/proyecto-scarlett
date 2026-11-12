@@ -29,11 +29,11 @@ git bundle create (Join-Path $destino "proyecto-scarlett-$fecha.bundle") --all
 Set-Location $repo
 git bundle create (Join-Path $destino "partyfinder-$fecha.bundle") --all
 
-$excluir = @("node_modules", ".next", "cache", "output", "__pycache__", ".venv", "venv", "dist")
+$excluir = @("node_modules", ".next", "cache", "__pycache__", ".venv", "venv")
 robocopy $scarlett (Join-Path $destino "proyecto-scarlett") /E /NFL /NDL /NJH /NJS /XD $excluir | Out-Null
 robocopy $repo (Join-Path $destino "venuz-repo") /E /NFL /NDL /NJH /NJS /XD $excluir | Out-Null
 if (Test-Path $babel) {
-  robocopy $babel (Join-Path $destino "BabelDesk") /E /NFL /NDL /NJH /NJS /XD @("node_modules", "dist") | Out-Null
+  robocopy $babel (Join-Path $destino "BabelDesk") /E /NFL /NDL /NJH /NJS /XD @("node_modules") | Out-Null
 }
 
 @"
@@ -41,7 +41,7 @@ Respaldo $fecha
 - proyecto-scarlett: BabelDesk (codigo), Ranking y Fabrica
 - partyfinder-2.0: VENUZ / LabelBabel
 - BabelDesk de todos los dias: carpeta BabelDesk (sin node_modules)
-Los videos exportados de Ranking se quedan en la PC, carpeta ranking-app\output.
+Los videos exportados de Ranking van en proyecto-scarlett\ranking-app\output.
 Esta USB puede tener archivos .env. No prestarla.
 "@ | Set-Content (Join-Path $destino "LEEME.txt") -Encoding UTF8
 
