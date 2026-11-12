@@ -7,6 +7,7 @@ from __future__ import annotations
 import asyncio
 import json
 import os
+import shutil
 import sqlite3
 import threading
 import uuid
@@ -53,6 +54,8 @@ from .consultas import (
 from .copyright_shield import auditar_riesgo_copyright
 from .downloader import download_audio_fondo, download_tiktok_sin_marca
 from .renderer import renderizar_video
+from .lote_runner import asegurar_esquema_lote, procesar_siguiente_lote, procesar_tanda_lote
+from .telegram_bot import asegurar_tabla_y_excel, poller_telegram, registrar_link_en_lote, resumen_lote
 from .voz import generar_voz
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -75,6 +78,8 @@ def cargar_env_local() -> None:
 async def lifespan(_app: FastAPI):
     cargar_env_local()
     if DB_PATH.exists():
+        asegurar_tabla_y_excel()
+        poller_telegram.iniciar()
         anotar("health_check", "verde", "✅ Fábrica de Contenido lista en tu computadora.")
     yield
 
@@ -234,11 +239,13 @@ def _resolver_video_fondo(req: ProcesarVideoRequest) -> str:
             "⚠️ Un enlace de TikTok no respondió. El Bot Guardián activó un video de respaldo automático para no frenar tu fábrica.",
             req.tiktokUrl,
         )
-        respaldo_pexels = obtener_video_fondo_automatico("mechanic car workshop")
+        respaldo_pexels = obtener_video_fondo_automatico("mecanica")
         if respaldo_pexels and os.path.exists(respaldo_pexels):
             return respaldo_pexels
-        return _generar_fondo_respaldo()
-    return _generar_fondo_respaldo()
+        raise ValueError(
+            "No pude descargar el video. Usa otro link, sube un MP4 local o exporta cookies a data/cookies.txt."
+        )
+    raise ValueError("Falta link de TikTok o archivo de video local.")
 
 
 def _worker_con_pasos(task_id: str, req: ProcesarVideoRequest) -> None:
@@ -578,6 +585,72 @@ async def api_subir(archivo: UploadFile = File(...)):
     return {"ruta": str(destino)}
 
 
+class RecibirRankingBody(BaseModel):
+    mp4_path: str
+    title: str = ""
+    caption: str = ""
+    puestos: list[dict] = []
+
+
+@app.post("/api/recibir-ranking")
+def api_recibir_ranking(body: RecibirRankingBody):
+    """Copia el MP4 exportado por Ranking App y lo deja listo como video local."""
+    origen = Path(body.mp4_path).expanduser()
+    if not origen.is_file():
+        raise HTTPException(400, f"No encuentro el MP4: {body.mp4_path}")
+    if origen.suffix.lower() not in {".mp4", ".mov", ".webm"}:
+        raise HTTPException(400, "El archivo tiene que ser MP4, MOV o WebM.")
+
+    destino_dir = BASE_DIR / "cache" / "desde-ranking"
+    destino_dir.mkdir(parents=True, exist_ok=True)
+    sello = datetime.now().strftime("%Y%m%d-%H%M%S")
+    nombre = f"ranking-{sello}-{origen.stem[:40]}.mp4"
+    final = destino_dir / nombre
+    temporal = destino_dir / f"{nombre}.tmp"
+    shutil.copy2(origen, temporal)
+    if final.exists():
+        final.unlink()
+    temporal.replace(final)
+
+    meta = {
+        "title": body.title,
+        "caption": body.caption or body.title,
+        "puestos": body.puestos,
+        "origen": str(origen),
+        "recibido_en": datetime.now().isoformat(timespec="seconds"),
+        "fuente": "ranking-app",
+    }
+    (destino_dir / f"{final.stem}.json").write_text(
+        json.dumps(meta, ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
+
+    video_id = None
+    canal_id = None
+    if DB_PATH.exists():
+        try:
+            canal = primer_canal_activo()
+            if canal:
+                canal_id = int(canal["id"])
+                video_id = insertar_video(canal_id, "ranking-app", None, str(final), None)
+                anotar(
+                    "health_check",
+                    "verde",
+                    f"Ranking recibido: {body.title or final.name}",
+                    str(final),
+                )
+        except sqlite3.Error:
+            video_id = None
+
+    return {
+        "ok": True,
+        "ruta": str(final),
+        "video_id": video_id,
+        "canal_id": canal_id,
+        "mensaje": f"Ranking guardado en Fábrica: {final.name}",
+    }
+
+
 @app.get("/api/status/{task_id}")
 async def api_status_sse(task_id: str):
     async def eventos():
@@ -638,8 +711,103 @@ def api_claves():
 def api_guardar_claves(body: ClavesForm):
     escribir_env(body.model_dump())
     cargar_env_local()
+    poller_telegram.conectado = False
+    poller_telegram.iniciar()
     anotar("health_check", "verde", "✅ Guardé tus claves en esta computadora. No salen de aquí.")
     return {"ok": True, "claves": claves_enmascaradas()}
+
+
+@app.get("/api/lote")
+def api_lote():
+    asegurar_esquema_lote()
+    est = resumen_lote()
+    est["bot_conectado"] = poller_telegram.conectado
+    est["bot_username"] = poller_telegram.bot_username
+    return est
+
+
+class LoteLinkInput(BaseModel):
+    url: str
+    nota: str = ""
+    canal_id: int | None = None
+
+
+@app.post("/api/lote/agregar")
+def api_lote_agregar(body: LoteLinkInput):
+    return registrar_link_en_lote(body.url, nota_pablo=body.nota, canal_id=body.canal_id)
+
+
+_lote_lock = threading.Lock()
+_lote_tareas: dict[str, dict] = {}
+
+
+def _lote_en_background(task_id: str, fn, *args, **kwargs) -> None:
+    with _lote_lock:
+        try:
+            _lote_tareas[task_id] = {"status": "procesando", "result": None, "error": None}
+            res = fn(*args, **kwargs)
+            _lote_tareas[task_id] = {"status": "listo", "result": res, "error": None}
+        except Exception as e:
+            _lote_tareas[task_id] = {"status": "fallido", "result": None, "error": str(e)[:500]}
+
+
+class LoteTandaInput(BaseModel):
+    max_items: int = 1
+
+
+@app.post("/api/lote/procesar-siguiente")
+def api_lote_procesar_siguiente():
+    task_id = str(uuid.uuid4())[:8]
+    threading.Thread(
+        target=_lote_en_background,
+        args=(task_id, procesar_siguiente_lote),
+        daemon=True,
+    ).start()
+    return {"task_id": task_id, "status": "procesando"}
+
+
+@app.post("/api/lote/procesar-tanda")
+def api_lote_procesar_tanda(body: LoteTandaInput):
+    task_id = str(uuid.uuid4())[:8]
+    threading.Thread(
+        target=_lote_en_background,
+        args=(task_id, procesar_tanda_lote),
+        kwargs={"max_items": body.max_items},
+        daemon=True,
+    ).start()
+    return {"task_id": task_id, "status": "procesando"}
+
+
+@app.get("/api/lote/tarea/{task_id}")
+def api_lote_tarea(task_id: str):
+    tarea = _lote_tareas.get(task_id)
+    if not tarea:
+        raise HTTPException(404, "Tarea de lote no encontrada")
+    return tarea
+
+
+@app.get("/api/lote/{lote_id}/video")
+def api_lote_video(lote_id: int):
+    out_dir = (BASE_DIR / "output").resolve()
+    con = sqlite3.connect(DB_PATH)
+    con.row_factory = sqlite3.Row
+    try:
+        row = con.execute(
+            "SELECT output_path, estado_fabrica FROM lote_links WHERE id = ?",
+            (lote_id,),
+        ).fetchone()
+    finally:
+        con.close()
+    if not row or not row["output_path"]:
+        raise HTTPException(404, "Ese lote aún no tiene video listo.")
+    ruta = Path(row["output_path"]).resolve()
+    if not ruta.is_file():
+        raise HTTPException(404, "No encontré el archivo en tu carpeta output.")
+    try:
+        ruta.relative_to(out_dir)
+    except ValueError as e:
+        raise HTTPException(403, "Ruta de video no permitida.") from e
+    return FileResponse(ruta, media_type="video/mp4", filename=ruta.name)
 
 
 @app.post("/auditar_copyright")

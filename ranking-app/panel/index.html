@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ranking App</title>
+  <link rel="stylesheet" href="/static/style.css?v=5" />
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <span class="topbar-title">🏆 Ranking App</span>
+      <div class="topbar-right">
+        <span class="badge green" id="badge-servidor"><span class="dot-live"></span> comprobando…</span>
+        <span class="badge" id="badge-resumen">0 clips</span>
+        <span class="badge">1080×1920</span>
+      </div>
+    </header>
+
+    <aside class="col col-deck">
+      <div class="col-label">☰ Tu ranking</div>
+      <div class="drop-zone" id="zona-soltar" tabindex="0">
+        <span class="drop-icon">↑</span>
+        Suelta videos aquí o haz clic<br>
+        MP4 · MOV · WebM · recorta hasta 60 s
+      </div>
+      <input type="file" id="input-videos" accept=".mp4,.mov,.webm,video/*" multiple hidden />
+
+      <div class="section">
+        <div class="section-title regla-oro">
+          El último de la lista es el #1 y sale al final del video
+        </div>
+        <div id="lista-clips" class="lista-clips" aria-live="polite"></div>
+      </div>
+
+      <div class="aviso-trim" id="aviso-trim" hidden></div>
+
+      <div class="deck-toolbar">
+        <label class="btn-sec" for="input-videos">+ Añadir videos</label>
+        <button type="button" class="btn-sec" id="btn-shuffle">🔀 Mezclar</button>
+        <button type="button" class="btn-sec" id="btn-clear-deck" title="Quitar todos los clips de la lista">🗑 Vaciar</button>
+      </div>
+      <p class="deck-vacio" id="deck-vacio">Aún no hay clips. Suelta o añade entre 3 y 10 videos.</p>
+    </aside>
+
+    <main class="preview-col">
+      <div class="col-label">📱 Vista previa 9:16</div>
+      <div class="phone-frame">
+        <video id="video-preview" class="phone-video" playsinline></video>
+        <img id="overlay-preview" class="overlay-img" alt="" />
+      </div>
+      <div class="preview-seek-row">
+        <input type="range" id="preview-seek" class="preview-seek" min="0" max="100" step="0.05" value="0" title="Adelantar o atrasar video" />
+        <span id="preview-time" class="preview-time">0:00 / 0:00</span>
+      </div>
+      <div class="preview-controls">
+        <button type="button" class="btn-ctrl" id="btn-anterior" title="Puesto anterior">←</button>
+        <button type="button" class="btn-ctrl" id="btn-play" title="Reproducir / pausa">▶</button>
+        <button type="button" class="btn-ctrl" id="btn-siguiente" title="Siguiente puesto">→</button>
+        <button type="button" class="btn-ctrl" id="btn-mute" title="Sonido de la vista previa">🔊</button>
+        <input type="range" id="preview-volume" min="0" max="100" value="80" title="Volumen de la vista previa" />
+      </div>
+      <div class="preview-controls trim-quick">
+        <button type="button" class="btn-ctrl" id="btn-trim-inicio">Inicio aquí</button>
+        <button type="button" class="btn-ctrl" id="btn-trim-fin">Fin aquí</button>
+        <button type="button" class="btn-ctrl" id="btn-trim-menos" title="Acorta el fin medio segundo">−0.5s</button>
+        <button type="button" class="btn-ctrl" id="btn-trim-mas" title="Alarga el fin medio segundo">+0.5s</button>
+      </div>
+      <p class="preview-hint" id="etiqueta-puesto">Puesto —</p>
+      <p class="preview-hint">Atajos: ← → cambiar puesto · Espacio pausar</p>
+    </main>
+
+    <aside class="col col-export">
+      <div class="col-label">✦ Estilo y exportar</div>
+
+      <div class="field">
+        <label for="campo-titulo">Título del ranking</label>
+        <input type="text" id="campo-titulo" maxlength="120" autocomplete="off" />
+        <div id="titulo-chips" class="titulo-chips"></div>
+        <p class="field-tip">Clic en una palabra para cambiar su color, o usa <code>Auto</code>.</p>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Estilo del texto</div>
+        <div class="presets" id="grupo-presets">
+        <button type="button" class="preset-btn" data-preset="classic">Classic</button>
+        <button type="button" class="preset-btn" data-preset="neon">Neon</button>
+        <button type="button" class="preset-btn" data-preset="gold">Gold</button>
+        <button type="button" class="preset-btn" data-preset="clean">Clean</button>
+        </div>
+      </div>
+
+      <div class="accent-row" id="grupo-accentos">
+        <button type="button" class="accent-dot" data-color="#facc15" style="background:#facc15" title="Amarillo"></button>
+        <button type="button" class="accent-dot" data-color="#4a9eff" style="background:#4a9eff" title="Azul"></button>
+        <button type="button" class="accent-dot" data-color="#ff6b6b" style="background:#ff6b6b" title="Rojo"></button>
+        <button type="button" class="accent-dot" data-color="#4caf50" style="background:#4caf50" title="Verde"></button>
+        <input type="color" id="color-personalizado" value="#facc15" title="Color personalizado" />
+      </div>
+
+      <div class="section">
+        <div class="section-title">Encuadre</div>
+        <div class="framing-row" id="grupo-framing">
+          <button type="button" class="frame-btn active" data-framing="fill">Fill (recorte)</button>
+          <button type="button" class="frame-btn" data-framing="fit">Fit (barras)</button>
+        </div>
+      </div>
+
+      <hr class="divider" />
+
+      <div class="slider-row">
+        <label>Música de fondo <span id="txt-musica-vol">25%</span></label>
+        <input type="range" id="slider-musica" min="0" max="100" value="25" />
+      </div>
+      <div class="field field-inline">
+        <button type="button" class="btn-sec" id="btn-musica">Elegir música…</button>
+        <span class="hint-archivo" id="nombre-musica">Sin música</span>
+      </div>
+      <input type="file" id="input-musica" accept="audio/*,.mp3,.wav,.m4a,.aac" hidden />
+
+      <div class="slider-row">
+        <label>Sting en cortes <span id="txt-sting-vol">80%</span></label>
+        <input type="range" id="slider-sting" min="0" max="100" value="80" />
+      </div>
+
+      <hr class="divider" />
+
+      <div class="section commit2">
+        <div class="section-title">Gancho inicial (1–2 s)</div>
+        <label class="check-row">
+          <input type="checkbox" id="hook-enabled" />
+          Mostrar teaser al inicio
+        </label>
+        <div class="field">
+          <label for="hook-seconds">Duración (segundos)</label>
+          <input type="number" id="hook-seconds" min="0.5" max="2" step="0.1" value="1.5" />
+        </div>
+        <div class="field">
+          <label for="hook-clip">Clip del gancho (por defecto el #1)</label>
+          <select id="hook-clip" class="select-dark"></select>
+        </div>
+      </div>
+
+      <div class="field field-inline">
+        <button type="button" class="btn-sec" id="btn-voz">Voz en off…</button>
+        <span class="hint-archivo" id="nombre-voz">Sin voz</span>
+      </div>
+      <input type="file" id="input-voz" accept="audio/*,.mp3,.wav,.m4a,.aac" hidden />
+
+      <div class="field field-inline">
+        <button type="button" class="btn-sec" id="btn-marca">Marca de agua PNG…</button>
+        <span class="hint-archivo" id="nombre-marca">Sin marca</span>
+      </div>
+      <input type="file" id="input-marca" accept="image/png,image/webp,.png,.webp" hidden />
+
+      <hr class="divider" />
+
+      <div class="field">
+        <label for="campo-salida">Carpeta de salida</label>
+        <div class="salida-row">
+          <input type="text" id="campo-salida" placeholder="Vacío = carpeta output del proyecto" />
+          <button type="button" class="btn-sec" id="btn-abrir-salida" title="Abrir en Explorador">📁</button>
+        </div>
+      </div>
+
+      <div class="progress-bar" aria-hidden="true">
+        <div class="progress-fill" id="barra-progreso"></div>
+      </div>
+      <p class="tip" id="texto-export">Listo para exportar.</p>
+
+      <div class="export-actions">
+        <button type="button" class="btn-sec" id="btn-preview-full">👁 Previsualizar video completo</button>
+        <button type="button" class="btn-export" id="btn-exportar">⬇ Exportar MP4</button>
+        <button type="button" class="btn-babeldesk" id="btn-babeldesk">Exportar + Enviar a BabelDesk ↗</button>
+        <button type="button" class="btn-fabrica" id="btn-fabrica">🏭 Exportar + Enviar a Fábrica</button>
+        <button type="button" class="btn-cancel" id="btn-cancelar" hidden>Cancelar exportación</button>
+      </div>
+    </aside>
+  </div>
+
+  <div id="modal-preview-final" class="modal-overlay" hidden>
+    <div class="modal-card modal-wide">
+      <div class="modal-head">
+        <span>📱 Vista previa y miniatura</span>
+        <button type="button" class="btn-xs" id="btn-cerrar-modal">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-col-video">
+          <div class="modal-video-wrap">
+            <video id="video-final-preview" class="modal-video" controls playsinline></video>
+          </div>
+          <p class="tip" id="modal-final-ruta"></p>
+          <div class="modal-actions">
+            <button type="button" class="btn-sec" id="modal-btn-carpeta">📁 Abrir carpeta</button>
+            <button type="button" class="btn-babeldesk" id="modal-btn-babeldesk">📤 Enviar a BabelDesk</button>
+            <button type="button" class="btn-fabrica" id="modal-btn-fabrica">🏭 Enviar a Fábrica</button>
+          </div>
+        </div>
+        <div class="thumb-panel">
+          <div class="thumb-head">🎨 Miniatura del video</div>
+          <div class="thumb-row">
+            <button type="button" class="btn-sec" id="btn-capturar-frame">📸 Capturar fotograma</button>
+            <button type="button" class="btn-sec" id="btn-subir-thumb">🖼 Subir imagen</button>
+            <input type="file" id="input-thumb-file" accept="image/png,image/jpeg,image/webp" hidden />
+          </div>
+          <div class="thumb-canvas-wrap">
+            <canvas id="canvas-thumb-editor" class="thumb-canvas" width="540" height="960"></canvas>
+          </div>
+          <input type="text" id="thumb-texto" class="thumb-input" placeholder="Título encima de la miniatura (opcional)…" />
+          <div class="thumb-row">
+            <select id="thumb-pos" class="thumb-select" aria-label="Posición del título">
+              <option value="top">Arriba</option>
+              <option value="center">Centro</option>
+              <option value="bottom">Abajo</option>
+            </select>
+            <div class="thumb-swatches" id="thumb-colores">
+              <button type="button" class="thumb-swatch activo" data-color="#FFFFFF" style="background:#FFFFFF" title="Blanco"></button>
+              <button type="button" class="thumb-swatch" data-color="#FACC15" style="background:#FACC15" title="Amarillo"></button>
+              <button type="button" class="thumb-swatch" data-color="#EF4444" style="background:#EF4444" title="Rojo"></button>
+              <button type="button" class="thumb-swatch" data-color="#38BDF8" style="background:#38BDF8" title="Azul"></button>
+              <button type="button" class="thumb-swatch" data-color="#22C55E" style="background:#22C55E" title="Verde"></button>
+            </div>
+          </div>
+          <label class="check-row"><input type="checkbox" id="thumb-fondo" checked /> Fondo oscuro detrás del texto</label>
+          <button type="button" class="btn-sec" id="btn-guardar-thumb">💾 Guardar miniatura</button>
+          <p class="tip" id="thumb-estado">Pausa el video y pulsa "Capturar fotograma" o sube una imagen.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/app.js?v=5"></script>
+</body>
+</html>

@@ -167,10 +167,35 @@ def generar_voz(
     except Exception as e:
         print(f"[VOZ] edge-tts timeout/error: {e}")
 
-    _generar_voz_offline_windows(texto, output_path)
-    dur = _duracion_mp3(output_path)
-    return {
-        "ruta_audio": output_path,
-        "palabras": estimar_palabras_por_duracion(texto, dur),
-        "fuente": "edge-tts",
-    }
+    raise RuntimeError(
+        "No pude generar voz (edge-tts/ElevenLabs fallaron). Revisa internet o agrega ELEVENLABS_API_KEY."
+    )
+
+
+def alinear_voz_con_gancho(voice_path: str, delay_ms: int = 2800) -> str:
+    """Retrasa la voz para que coincida con los 3 s de gancho en pantalla."""
+    salida = str(Path(voice_path).with_suffix(".aligned.mp3"))
+    proc = subprocess.run(
+        [
+            "ffmpeg",
+            "-y",
+            "-hide_banner",
+            "-loglevel",
+            "error",
+            "-i",
+            voice_path,
+            "-af",
+            f"adelay={delay_ms}|{delay_ms}",
+            "-c:a",
+            "libmp3lame",
+            "-b:a",
+            "192k",
+            salida,
+        ],
+        capture_output=True,
+        text=True,
+        timeout=60,
+    )
+    if proc.returncode != 0 or not Path(salida).exists():
+        return voice_path
+    return salida

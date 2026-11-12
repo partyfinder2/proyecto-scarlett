@@ -1,0 +1,46 @@
+{
+  "canal": "El Libro de la Sabiduría",
+  "ganchos_pantalla": [
+    "¿Sabías que el 97% no lee esto?",
+    "Este libro cambió mi forma de pensar",
+    "3 minutos que valen más que un curso",
+    "Lo que nadie te dice del éxito personal",
+    "¿Por qué los sabios leen esto primero?",
+    "Un secreto que comparto contigo hoy",
+    "Si solo ves un video hoy, que sea este",
+    "La sabiduría no es suerte: es hábito",
+    "¿Listo para un dato que te despierta?",
+    "Esto es lo que haría si empezara de cero",
+    "No es motivación barata: es estrategia",
+    "El libro que los gurús no quieren que veas",
+    "Tu mente necesita esto antes del lunes",
+    "1 idea = 1 cambio en tu rutina",
+    "Compártelo con quien quieres ver crecer"
+  ],
+  "datos_libro_voz": [
+    "En el libro se explica que la disciplina diaria supera al talento sin hábito.",
+    "Un capítulo clave habla de decidir con calma antes de reaccionar en redes.",
+    "La guía destaca que leer 10 minutos al día cambia tu narrativa interna.",
+    "Ahí verás por qué la gratitud estructurada no es cliché: es entrenamiento.",
+    "El autor insiste en medir lo que importa, no lo que impresiona en pantalla.",
+    "Incluye ejercicios para filtrar ruido y enfocarte en una meta a la vez.",
+    "Plantea que la sabiduría práctica empieza con pequeñas decisiones repetidas.",
+    "Recomienda anotar una lección por día y revisarla cada domingo.",
+    "Conecta lectura con acción: una idea aplicada vale más que diez guardadas.",
+    "Te muestra cómo convertir curiosidad en constancia sin quemarte."
+  ],
+  "narracion_base": "Mira este clip y fíjate en el mensaje: aplica una idea hoy, no mañana.",
+  "ctas_voz": [
+    "Consíguelo desde el enlace en mi biografía.",
+    "El libro completo está en el link de mi perfil.",
+    "Si te sirvió, búscalo en la bio y empieza hoy."
+  ],
+  "caption_plantillas": [
+    "{gancho} 📖 {dato} — {cta} {hashtags}",
+    "{gancho}\n{dato}\n\n{cta}\n{hashtags}",
+    "Hoy toca sabiduría aplicada: {gancho} {dato} {cta} {hashtags}"
+  ],
+  "hashtags_default": "#sabiduria #libro #crecimientopersonal #habitos #mentoria",
+  "miniatura_titulo": "El Libro de la Sabiduría",
+  "affiliate_cta_caption": "Link en la bio 🔗"
+}

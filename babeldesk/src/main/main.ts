@@ -294,6 +294,66 @@ ipcMain.handle("app:getInfo", () => ({
   docsEmpezarAqui: path.join(ROOT, "docs", "EMPEZAR_AQUI.md"),
 }));
 
+function rankingLauncherPath(): string | null {
+  const home = process.env.USERPROFILE || process.env.HOME || "";
+  const candidates = [
+    process.env.RANKING_LAUNCHER,
+    path.join(ROOT, "..", "VENUZ-Complete-App", "metodo-scarlett", "ranking-app", "scripts", "abrir_ranking.vbs"),
+    path.join(home, "Downloads", "VENUZ-Complete-App", "metodo-scarlett", "ranking-app", "scripts", "abrir_ranking.vbs"),
+  ].filter((p): p is string => Boolean(p));
+  for (const candidate of candidates) {
+    if (fs.existsSync(candidate)) return candidate;
+  }
+  return null;
+}
+
+ipcMain.handle("ranking:launch", async () => {
+  const launcher = rankingLauncherPath();
+  if (!launcher) {
+    return {
+      ok: false,
+      error: "No encuentro Rankings Scarlett junto a BabelDesk. Ábrelo desde su acceso directo.",
+    };
+  }
+  const err = await shell.openPath(launcher);
+  return err ? { ok: false, error: err } : { ok: true, path: launcher };
+});
+
+ipcMain.handle("ranking:import", async (_e, filePath: string) => {
+  const target = "http://127.0.0.1:5002";
+  const health = await fetch(`${target}/health`, { signal: AbortSignal.timeout(2500) }).catch(() => null);
+  if (!health || !health.ok) {
+    return { ok: false, offline: true, error: "Rankings Scarlett no está abierto." };
+  }
+  const res = await fetch(`${target}/api/importar-y-guardar`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ paths: [filePath], al_inicio: false }),
+  });
+  const data = (await res.json().catch(() => ({}))) as {
+    ok?: boolean;
+    detail?: string;
+    error?: string;
+    total_clips?: number;
+    clips_agregados?: number;
+  };
+  if (!res.ok || !data.ok) {
+    const detail = typeof data.detail === "string" ? data.detail : data.error;
+    return { ok: false, error: detail || `HTTP ${res.status}` };
+  }
+  return { ok: true, total_clips: data.total_clips, clips_agregados: data.clips_agregados };
+});
+
+ipcMain.handle("shell:openPath", async (_e, filePath: string) => {
+  // Abre un archivo/aplicación local con la aplicación predeterminada del sistema
+  try {
+    await shell.openPath(filePath);
+    return { ok: true };
+  } catch (err) {
+    return { ok: false, error: String(err) };
+  }
+});
+
 ipcMain.handle("app:openDoc", async (_e, relativePath: string) => {
   const safe = relativePath.replace(/\\/g, "/").replace(/\.\./g, "");
   const full = path.join(ROOT, safe);
@@ -499,7 +559,7 @@ ipcMain.handle("media:copyToDownloads", (_e, mediaId: string) => {
   const m = getMedia(db, mediaId);
   if (m?.path && fs.existsSync(m.path)) {
     const filename = path.basename(m.path);
-    const downloadsDir = path.join(process.env.USERPROFILE || "C:\\Users\\pablo", "Downloads");
+    const downloadsDir = path.join(process.env.USERPROFILE || process.env.HOME || "", "Downloads");
     const destPath = path.join(downloadsDir, filename);
     fs.copyFileSync(m.path, destPath);
     shell.showItemInFolder(destPath);

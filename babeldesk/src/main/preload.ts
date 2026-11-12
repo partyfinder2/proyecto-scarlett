@@ -46,11 +46,15 @@ const channels = [
   "downloader:detectNetwork",
   "downloader:download",
   "watermark:remove",
+  "watermark:detect",
   "cutter:checkFfmpeg",
   "cutter:getDuration",
   "cutter:cut",
   "cutter:getYoutubeChapters",
   "inbox:openFolder",
+  "shell:openPath",
+  "ranking:import",
+  "ranking:launch",
 ] as const;
 
 contextBridge.exposeInMainWorld("babeldesk", {

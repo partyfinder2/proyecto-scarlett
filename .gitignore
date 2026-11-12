@@ -17,3 +17,12 @@ tmp/
 Thumbs.db
 
 backup_descargas/
+
+# Caché, salidas y basura local (no van a GitHub)
+__pycache__/
+*.pyc
+cache/
+output/
+*.mp4
+*.lnk
+**/cookies.txt

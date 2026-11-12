@@ -62,6 +62,255 @@ function toFileUrl(p) {
   return `file:///${encoded}`;
 }
 
+// ---- Editor de quitamarcas manual (dibujar recuadro sobre la marca) ----
+let wmState = null;
+
+function wmEls() {
+  return {
+    modal: $("#wm-modal"),
+    video: $("#wm-video"),
+    overlay: $("#wm-overlay"),
+    stage: $("#wm-stage"),
+    count: $("#wm-count"),
+    status: $("#wm-status"),
+    apply: $("#wm-apply"),
+    detect: $("#wm-detect"),
+  };
+}
+
+function wmRenderBoxes() {
+  const { overlay, count } = wmEls();
+  if (!overlay) return;
+  overlay.querySelectorAll(".wm-box").forEach((b) => b.remove());
+  wmState.boxes.forEach((box, idx) => {
+    const el = document.createElement("div");
+    el.className = "wm-box";
+    el.style.left = `${box.xPct * 100}%`;
+    el.style.top = `${box.yPct * 100}%`;
+    el.style.width = `${box.wPct * 100}%`;
+    el.style.height = `${box.hPct * 100}%`;
+    const del = document.createElement("button");
+    del.type = "button";
+    del.className = "wm-del";
+    del.textContent = "✕";
+    del.title = "Quitar este recuadro";
+    del.addEventListener("pointerdown", (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      wmState.boxes.splice(idx, 1);
+      wmRenderBoxes();
+    });
+    el.appendChild(del);
+    overlay.appendChild(el);
+  });
+  if (count) count.textContent = `${wmState.boxes.length} recuadro${wmState.boxes.length === 1 ? "" : "s"}`;
+}
+
+function openWatermarkEditor(media, preview) {
+  const { modal, video, overlay, status } = wmEls();
+  if (!modal || !video || !overlay) return;
+  wmState = { media, boxes: [], preview, drag: null };
+
+  // Liberar el <video> de la tarjeta para que Windows no bloquee el archivo al aplicar.
+  const cardVideo = preview?.querySelector("video");
+  if (cardVideo) {
+    cardVideo.pause();
+    cardVideo.removeAttribute("src");
+    cardVideo.load();
+  }
+
+  video.src = toFileUrl(media.path);
+  video.load();
+  if (status) {
+    status.className = "status-msg";
+    status.textContent = "";
+  }
+  wmRenderBoxes();
+  modal.classList.remove("hidden");
+  modal.setAttribute("aria-hidden", "false");
+}
+
+function closeWatermarkEditor() {
+  const { modal, video } = wmEls();
+  if (video) {
+    video.pause();
+    video.removeAttribute("src");
+    video.load();
+  }
+  modal?.classList.add("hidden");
+  modal?.setAttribute("aria-hidden", "true");
+  wmState = null;
+}
+
+function initWatermarkEditor() {
+  const { modal, overlay, apply, detect, status, video } = wmEls();
+  if (!modal || !overlay) return;
+
+  const frac = (ev) => {
+    const rect = overlay.getBoundingClientRect();
+    return {
+      x: Math.min(1, Math.max(0, (ev.clientX - rect.left) / rect.width)),
+      y: Math.min(1, Math.max(0, (ev.clientY - rect.top) / rect.height)),
+    };
+  };
+
+  overlay.addEventListener("pointerdown", (e) => {
+    if (!wmState || e.target.classList.contains("wm-del")) return;
+    e.preventDefault();
+    const p = frac(e);
+    wmState.drag = { x0: p.x, y0: p.y, x1: p.x, y1: p.y };
+    const ghost = document.createElement("div");
+    ghost.className = "wm-box";
+    ghost.id = "wm-ghost";
+    overlay.appendChild(ghost);
+    overlay.setPointerCapture?.(e.pointerId);
+  });
+
+  overlay.addEventListener("pointermove", (e) => {
+    if (!wmState?.drag) return;
+    const p = frac(e);
+    wmState.drag.x1 = p.x;
+    wmState.drag.y1 = p.y;
+    const g = $("#wm-ghost");
+    if (g) {
+      const x = Math.min(wmState.drag.x0, wmState.drag.x1);
+      const y = Math.min(wmState.drag.y0, wmState.drag.y1);
+      g.style.left = `${x * 100}%`;
+      g.style.top = `${y * 100}%`;
+      g.style.width = `${Math.abs(wmState.drag.x1 - wmState.drag.x0) * 100}%`;
+      g.style.height = `${Math.abs(wmState.drag.y1 - wmState.drag.y0) * 100}%`;
+    }
+  });
+
+  const finishDrag = () => {
+    if (!wmState?.drag) return;
+    const d = wmState.drag;
+    wmState.drag = null;
+    $("#wm-ghost")?.remove();
+    const xPct = Math.min(d.x0, d.x1);
+    const yPct = Math.min(d.y0, d.y1);
+    const wPct = Math.abs(d.x1 - d.x0);
+    const hPct = Math.abs(d.y1 - d.y0);
+    if (wPct > 0.015 && hPct > 0.015) {
+      wmState.boxes.push({ xPct, yPct, wPct, hPct });
+      wmRenderBoxes();
+    }
+  };
+  overlay.addEventListener("pointerup", finishDrag);
+  overlay.addEventListener("pointercancel", finishDrag);
+
+  $("#wm-undo")?.addEventListener("click", () => {
+    if (!wmState) return;
+    wmState.boxes.pop();
+    wmRenderBoxes();
+  });
+  $("#wm-clear")?.addEventListener("click", () => {
+    if (!wmState) return;
+    wmState.boxes = [];
+    wmRenderBoxes();
+  });
+  $("#wm-close")?.addEventListener("click", closeWatermarkEditor);
+  $("#wm-cancel")?.addEventListener("click", closeWatermarkEditor);
+  modal.addEventListener("pointerdown", (e) => {
+    if (e.target === modal) closeWatermarkEditor();
+  });
+
+  detect?.addEventListener("click", async () => {
+    if (!wmState) return;
+    detect.disabled = true;
+    detect.textContent = "🤖 Detectando…";
+    status.className = "status-msg";
+    status.textContent = "Analizando el video con IA…";
+    try {
+      const r = await api.invoke("watermark:detect", { mediaId: wmState.media.id });
+      if (r.ok && r.regions?.length) {
+        wmState.boxes.push(...r.regions);
+        wmRenderBoxes();
+        status.className = "status-msg ok";
+        status.textContent = `La IA marcó ${r.regions.length} zona(s). Ajústalas o pulsa «Quitar marca aquí».`;
+      } else {
+        status.className = "status-msg err";
+        status.textContent =
+          (r.error || "La IA no encontró la marca.") +
+          " Puedes marcarla a mano con el recuadro.";
+      }
+    } catch (err) {
+      status.className = "status-msg err";
+      status.textContent = "Error con la IA: " + (err.message || String(err));
+    } finally {
+      detect.disabled = false;
+      detect.textContent = "🤖 Detectar con IA";
+    }
+  });
+
+  apply?.addEventListener("click", async () => {
+    if (!wmState) return;
+    if (!wmState.boxes.length) {
+      status.className = "status-msg err";
+      status.textContent = "Marca al menos un recuadro sobre la marca de agua.";
+      return;
+    }
+    apply.disabled = true;
+    apply.textContent = "⏳ Procesando…";
+    status.className = "status-msg";
+    status.textContent = "Quitando la marca solo en lo que marcaste…";
+    if (video) {
+      video.pause();
+      video.removeAttribute("src");
+      video.load();
+    }
+    await new Promise((r) => setTimeout(r, 200));
+    try {
+      const r = await api.invoke("watermark:remove", {
+        mediaId: wmState.media.id,
+        mode: "manual",
+        manualRegions: wmState.boxes,
+      });
+      if (r.ok) {
+        closeWatermarkEditor();
+        alert("Listo. Reproduce el video para revisar la marca.");
+        lastMediaSignature = null;
+        await refreshMedia();
+      } else {
+        status.className = "status-msg err";
+        status.textContent = r.error || "No se pudo procesar.";
+      }
+    } catch (err) {
+      status.className = "status-msg err";
+      status.textContent = "Error: " + (err.message || String(err));
+    } finally {
+      apply.disabled = false;
+      apply.textContent = "✅ Quitar marca aquí";
+    }
+  });
+}
+
+async function enviarPathARanking(filePath) {
+  if (!filePath) return { ok: false, error: "No hay video para enviar." };
+  let data = await api.invoke("ranking:import", filePath);
+  if (data?.offline) {
+    const abrir = confirm(
+      "Rankings Scarlett no está abierto.\n\n¿Quieres que lo abra y reintente el envío?"
+    );
+    if (!abrir) return { ok: false, cancelled: true };
+    const abierto = await api.invoke("ranking:launch");
+    if (!abierto?.ok) {
+      alert(abierto?.error || "No pude abrir Rankings Scarlett.");
+      return { ok: false, error: abierto?.error };
+    }
+    await new Promise((r) => setTimeout(r, 4000));
+    data = await api.invoke("ranking:import", filePath);
+  }
+  if (data?.ok) {
+    alert(
+      `✅ Video enviado a Rankings Scarlett.\n\nAhora tienes ${data.total_clips} clips en el ranking.\n(La ventana de Rankings se actualiza sola)`
+    );
+  } else if (!data?.cancelled) {
+    alert(data?.error || "No se pudo enviar a Ranking App.");
+  }
+  return data;
+}
+
 function escapeHtml(s) {
   return s
     .replace(/&/g, "&amp;")
@@ -506,25 +755,32 @@ async function refreshMedia() {
         btnWm.type = "button";
         btnWm.textContent = "💧";
         btnWm.title = "Quitar marca de agua — modo Máximo (IA + ffmpeg)";
-        btnWm.addEventListener("click", async () => {
-          const netHint = (fileName.split("-")[0] || "").toLowerCase();
-          btnWm.disabled = true;
-          const r = await api.invoke("watermark:remove", {
-            mediaId: m.id,
-            preset: "auto",
-            networkHint: netHint,
-            mode: "max",
-          });
-          btnWm.disabled = false;
-          if (r.ok) {
-            alert("Marca de agua procesada. Reproduce el video para revisar.");
-            lastMediaSignature = null;
-            await refreshMedia();
-          } else {
-            alert(r.error || "No se pudo procesar.");
-          }
+        btnWm.addEventListener("click", () => {
+          // Abrir el editor: el usuario marca dónde está la marca y se borra solo ahí.
+          openWatermarkEditor(m, preview);
         });
         actions.appendChild(btnWm);
+      }
+
+      // Botón para enviar a Ranking App
+      if (m.kind === "video") {
+        const btnRanking = document.createElement("button");
+        btnRanking.type = "button";
+        btnRanking.textContent = "🏆";
+        btnRanking.title = "Enviar a Rankings Scarlett (puerto 5002)";
+        btnRanking.addEventListener("click", async () => {
+          btnRanking.disabled = true;
+          btnRanking.textContent = "⏳";
+          try {
+            await enviarPathARanking(m.path);
+          } catch (e) {
+            alert("Error al conectar con Rankings Scarlett: " + e.message);
+          } finally {
+            btnRanking.disabled = false;
+            btnRanking.textContent = "🏆";
+          }
+        });
+        actions.appendChild(btnRanking);
       }
 
       const btnCopy = document.createElement("button");
@@ -1391,10 +1647,12 @@ async function initCutter() {
     tr.querySelector(".clip-start")?.addEventListener("input", () => {
       validateClipRow(tr);
       scheduleRowThumbRefresh(tr);
+      paintTimeline();
     });
     tr.querySelector(".clip-end")?.addEventListener("input", () => {
       validateClipRow(tr);
       scheduleRowThumbRefresh(tr);
+      paintTimeline();
     });
   }
 
@@ -1413,7 +1671,8 @@ async function initCutter() {
     }
     previewVideo.pause();
     previewVideo.currentTime = Math.max(0, timeSec);
-    if (previewTimeEl) previewTimeEl.textContent = formatClock(previewVideo.currentTime);
+    if (previewTimeEl) previewTimeEl.textContent = formatClockPrecise(previewVideo.currentTime);
+    paintTimeline();
   }
 
   // Check ffmpeg
@@ -1428,7 +1687,10 @@ async function initCutter() {
   // Toggle hook text visible
   overlayCb?.addEventListener("change", () => {
     hookInput?.classList.toggle("hidden", !overlayCb.checked);
+    applyPreviewMode();
   });
+  hookInput?.addEventListener("input", () => applyPreviewMode());
+  verticalCb?.addEventListener("change", () => applyPreviewMode());
 
   function formatClock(s) {
     const h = Math.floor(s / 3600);
@@ -1438,13 +1700,36 @@ async function initCutter() {
     return `${m}:${String(sec).padStart(2, "0")}`;
   }
 
+  function formatClockPrecise(s) {
+    const clamped = Math.max(0, Number(s) || 0);
+    const h = Math.floor(clamped / 3600);
+    const m = Math.floor((clamped % 3600) / 60);
+    const sec = clamped % 60;
+    const secStr = sec.toFixed(1).padStart(4, "0");
+    if (h > 0) return `${h}:${String(m).padStart(2, "0")}:${secStr}`;
+    return `${m}:${secStr}`;
+  }
+
   previewAudioCb?.addEventListener("change", () => {
     if (previewVideo) previewVideo.muted = !previewAudioCb.checked;
   });
 
   previewVideo?.addEventListener("timeupdate", () => {
     if (previewTimeEl && previewVideo) {
-      previewTimeEl.textContent = formatClock(previewVideo.currentTime || 0);
+      previewTimeEl.textContent = formatClockPrecise(previewVideo.currentTime || 0);
+    }
+    paintTimeline();
+    syncBlurPreview();
+    if (!$("#cutter-loop")?.checked) return;
+    const activeRow = tbody.querySelector("tr.selected-clip-row");
+    if (!activeRow || !previewVideo) return;
+    const endVal = activeRow.querySelector(".clip-end")?.value;
+    const startVal = activeRow.querySelector(".clip-start")?.value;
+    if (!endVal || !startVal) return;
+    const endSec = parseClock(endVal);
+    const startSec = parseClock(startVal);
+    if (!Number.isNaN(endSec) && !Number.isNaN(startSec) && previewVideo.currentTime >= endSec - 0.05) {
+      previewVideo.currentTime = startSec;
     }
   });
 
@@ -1458,7 +1743,7 @@ async function initCutter() {
     previewVideo.pause();
     const startIn = tr.querySelector(".clip-start");
     if (startIn) {
-      startIn.value = formatClock(previewVideo.currentTime || 0);
+      startIn.value = formatClockPrecise(previewVideo.currentTime || 0);
       validateClipRow(tr);
       previewClipRow(tr);
       scheduleRowThumbRefresh(tr, 80);
@@ -1475,7 +1760,7 @@ async function initCutter() {
     previewVideo.pause();
     const endIn = tr.querySelector(".clip-end");
     if (endIn) {
-      endIn.value = formatClock(previewVideo.currentTime || 0);
+      endIn.value = formatClockPrecise(previewVideo.currentTime || 0);
       validateClipRow(tr);
       previewClipRow(tr);
       scheduleRowThumbRefresh(tr, 80);
@@ -1516,11 +1801,12 @@ async function initCutter() {
   };
 
   function parseClock(t) {
-    const parts = String(t).trim().split(":").map(Number);
-    if (!parts.length || parts.some(Number.isNaN)) return NaN;
-    if (parts.length === 1) return parts[0];
-    if (parts.length === 2) return parts[0] * 60 + parts[1];
-    if (parts.length === 3) return parts[0] * 3600 + parts[1] * 60 + parts[2];
+    const parts = String(t).trim().split(":");
+    if (!parts.length || parts.some((p) => p === "" || Number.isNaN(Number(p)))) return NaN;
+    const nums = parts.map(Number);
+    if (nums.length === 1) return nums[0];
+    if (nums.length === 2) return nums[0] * 60 + nums[1];
+    if (nums.length === 3) return nums[0] * 3600 + nums[1] * 60 + nums[2];
     return NaN;
   }
 
@@ -1599,7 +1885,11 @@ async function initCutter() {
     if (Number.isNaN(startSec)) return;
 
     previewVideo.currentTime = startSec;
-    void previewVideo.play().catch(() => {});
+    if ($("#cutter-loop")?.checked) {
+      void previewVideo.play().catch(() => {});
+    } else {
+      previewVideo.pause();
+    }
 
     if (clipBadge) {
       clipBadge.textContent = `${clipName} (${startVal} - ${endVal || "fin"})`;
@@ -1612,6 +1902,7 @@ async function initCutter() {
     sourceTotalSec = 0;
     thumbCache.clear();
     btnPostLastCut?.classList.add("hidden");
+    $("#btn-ranking-last-cut")?.classList.add("hidden");
     lastCutOutputPaths = [];
     if (!p) {
       durationEl.textContent = "";
@@ -1624,6 +1915,11 @@ async function initCutter() {
     if (previewVideo) {
       previewVideo.src = toFileUrl(p);
       previewVideo.load();
+      const bg = $("#cutter-video-bg");
+      if (bg) {
+        bg.src = previewVideo.src;
+        bg.load();
+      }
     }
     try {
       const { seconds, formatted } = await api.invoke("cutter:getDuration", p);
@@ -1633,6 +1929,8 @@ async function initCutter() {
       durationEl.textContent = "";
     }
     validateAllClipRows();
+    applyPreviewMode();
+    paintTimeline();
     const first = tbody.querySelector("tr");
     if (first && previewVideo?.src) previewClipRow(first);
     void refreshAllRowThumbnails();
@@ -1730,7 +2028,7 @@ async function initCutter() {
       appendClipRow(formatClock(a), formatClock(b), `${base}-p${String(i + 1).padStart(pad, "0")}`);
     });
 
-    const vertical = verticalCb?.checked ?? true;
+    const vertical = verticalCb?.checked ?? false;
     resultEl.className = "status-msg ok";
     resultEl.textContent =
       `✅ ${segments.length} clips en la tabla. Revisa miniaturas In/Out, ajusta segundos y pulsa «Cortar Todos».` +
@@ -1778,20 +2076,14 @@ async function initCutter() {
     if (tr && previewVideo?.src) previewClipRow(tr);
   });
 
-  previewVideo?.addEventListener("timeupdate", () => {
-    const activeRow = tbody.querySelector("tr.selected-clip-row");
-    if (!activeRow || !previewVideo) return;
-    const endVal = activeRow.querySelector(".clip-end")?.value;
-    const startVal = activeRow.querySelector(".clip-start")?.value;
-    if (!endVal || !startVal) return;
-    const endSec = parseClock(endVal);
-    const startSec = parseClock(startVal);
-    if (!Number.isNaN(endSec) && !Number.isNaN(startSec) && previewVideo.currentTime >= endSec - 0.05) {
-      previewVideo.currentTime = startSec;
-    }
+  previewVideo?.addEventListener("play", () => {
+    const bg = $("#cutter-video-bg");
+    if (bg && !bg.hidden) void bg.play().catch(() => {});
+  });
+  previewVideo?.addEventListener("pause", () => {
+    $("#cutter-video-bg")?.pause();
   });
 
-  // Progress listener
   if (api.onCutterProgress) {
     api.onCutterProgress(({ msg, done, total }) => {
       progressEl.classList.remove("hidden");
@@ -1847,11 +2139,13 @@ async function initCutter() {
   async function afterCutOutputs(outputs) {
     if (!outputs?.length) {
       btnPostLastCut?.classList.add("hidden");
+      $("#btn-ranking-last-cut")?.classList.add("hidden");
       lastCutOutputPaths = [];
       return;
     }
     lastCutOutputPaths = outputs;
     btnPostLastCut?.classList.remove("hidden");
+    $("#btn-ranking-last-cut")?.classList.remove("hidden");
     lastMediaSignature = null;
     await refreshMedia();
     await refreshCutterSource();
@@ -1889,7 +2183,7 @@ async function initCutter() {
       const result = await api.invoke("cutter:cut", {
         sourcePath,
         clips: payloadClips,
-        vertical: verticalCb?.checked ?? true,
+        vertical: verticalCb?.checked ?? false,
         hookText: overlayCb?.checked ? (hookInput?.value?.trim() || "") : "",
       });
 
@@ -2029,7 +2323,7 @@ async function initCutter() {
         appendClipRow(formatClock(ch.start_time), formatClock(ch.end_time), name);
       }
 
-      const vertical = verticalCb?.checked ?? true;
+      const vertical = verticalCb?.checked ?? false;
       chaptersStatus.className = "status-msg ok";
       chaptersStatus.textContent =
         `✅ ${chapters.length} capítulos en la tabla. Revisa miniaturas In/Out y ajusta antes de «Cortar Todos».` +
@@ -2054,6 +2348,202 @@ async function initCutter() {
     /* ignore */
   }
 
+  function activeRange() {
+    const tr = getActiveClipRow();
+    const dur = sourceTotalSec || previewVideo?.duration || 0;
+    const startRaw = tr?.querySelector(".clip-start")?.value ?? "0";
+    const endRaw = tr?.querySelector(".clip-end")?.value ?? "";
+    let start = parseClock(startRaw);
+    let end = parseClock(endRaw);
+    if (Number.isNaN(start)) start = 0;
+    if (!String(endRaw).trim() || Number.isNaN(end)) end = dur;
+    return { start, end, dur };
+  }
+
+  function paintTimeline() {
+    const bar = $("#cutter-timeline");
+    const range = $("#cutter-trim-range");
+    const head = $("#cutter-playhead");
+    const hin = $("#cutter-handle-in");
+    const hout = $("#cutter-handle-out");
+    if (!bar || !range || !head || !hin || !hout) return;
+    const { start, end, dur } = activeRange();
+    if (!(dur > 0)) return;
+    const a = Math.min(1, Math.max(0, start / dur));
+    const b = Math.min(1, Math.max(a, end / dur));
+    const p = Math.min(1, Math.max(0, (previewVideo?.currentTime || 0) / dur));
+    hin.style.left = `${a * 100}%`;
+    hout.style.left = `${b * 100}%`;
+    range.style.left = `${a * 100}%`;
+    range.style.width = `${(b - a) * 100}%`;
+    head.style.left = `${p * 100}%`;
+  }
+
+  function syncBlurPreview() {
+    const bg = $("#cutter-video-bg");
+    if (!bg || bg.hidden || !previewVideo) return;
+    if (Math.abs((bg.currentTime || 0) - (previewVideo.currentTime || 0)) > 0.4) {
+      try {
+        bg.currentTime = previewVideo.currentTime;
+      } catch {
+        /* el video aún no tiene metadata */
+      }
+    }
+  }
+
+  function applyPreviewMode() {
+    const card = $("#cutter-preview-card");
+    const bg = $("#cutter-video-bg");
+    const vertical = !!verticalCb?.checked;
+    card?.classList.toggle("mode-vertical", vertical);
+    card?.classList.toggle("mode-original", !vertical);
+    if (bg) {
+      bg.hidden = !vertical;
+      if (vertical && previewVideo?.src && bg.getAttribute("src") !== previewVideo.getAttribute("src")) {
+        bg.src = previewVideo.src;
+      }
+    }
+    const hint = $("#cutter-encode-hint");
+    if (!hint) return;
+    const hookOn = !!overlayCb?.checked && !!(hookInput?.value || "").trim();
+    if (!vertical && !hookOn) {
+      hint.textContent =
+        "Corte rápido: copia el tramo tal cual, sin re-codificar. Suele tardar unos segundos. El preview muestra el video original.";
+    } else if (vertical) {
+      hint.textContent =
+        "9:16 vuelve a codificar el clip (más lento) con el video centrado sobre un fondo difuminado. El preview imita ese encuadre y no recorta la imagen.";
+    } else {
+      hint.textContent =
+        "El texto del hook obliga a re-codificar. Si lo quitas y dejas el formato original, el corte vuelve a ser copia rápida.";
+    }
+  }
+
+  function writeBound(which, sec) {
+    const tr = getActiveClipRow();
+    if (!tr) return;
+    const input = tr.querySelector(which === "in" ? ".clip-start" : ".clip-end");
+    if (!input) return;
+    const dur = sourceTotalSec || previewVideo?.duration || 0;
+    let t = Math.max(0, sec);
+    if (dur > 0) t = Math.min(dur, t);
+    const otherRaw = tr.querySelector(which === "in" ? ".clip-end" : ".clip-start")?.value || "";
+    const other = parseClock(otherRaw);
+    if (which === "in") {
+      const end = !String(otherRaw).trim() || Number.isNaN(other) ? dur : other;
+      t = Math.min(t, Math.max(0, end - 0.1));
+    } else if (!Number.isNaN(other)) {
+      t = Math.max(t, other + 0.1);
+    }
+    input.value = formatClockPrecise(t);
+    validateClipRow(tr);
+    const clipName = tr.querySelector(".clip-name")?.value?.trim() || "Clip";
+    const startVal = tr.querySelector(".clip-start")?.value;
+    const endVal = tr.querySelector(".clip-end")?.value;
+    if (clipBadge) {
+      clipBadge.textContent = `${clipName} (${startVal || "?"} - ${endVal || "fin"})`;
+      clipBadge.classList.remove("hidden");
+    }
+    paintTimeline();
+  }
+
+  function fractionFromPointer(ev) {
+    const bar = $("#cutter-timeline");
+    const rect = bar.getBoundingClientRect();
+    if (!rect.width) return 0;
+    return Math.min(1, Math.max(0, (ev.clientX - rect.left) / rect.width));
+  }
+
+  function dragHandle(which) {
+    return (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const move = (ev) => {
+        const dur = sourceTotalSec || previewVideo?.duration || 0;
+        if (!(dur > 0)) return;
+        const sec = fractionFromPointer(ev) * dur;
+        writeBound(which, sec);
+        if (previewVideo) {
+          previewVideo.pause();
+          previewVideo.currentTime = sec;
+        }
+      };
+      const up = () => {
+        window.removeEventListener("pointermove", move);
+        window.removeEventListener("pointerup", up);
+        scheduleRowThumbRefresh(getActiveClipRow(), 80);
+      };
+      window.addEventListener("pointermove", move);
+      window.addEventListener("pointerup", up);
+      move(e);
+    };
+  }
+
+  function nudgePlayhead(delta) {
+    if (!previewVideo?.src) return;
+    const dur = sourceTotalSec || previewVideo.duration || 0;
+    const next = Math.max(0, Math.min(dur || Infinity, (previewVideo.currentTime || 0) + delta));
+    previewVideo.pause();
+    previewVideo.currentTime = next;
+    if (previewTimeEl) previewTimeEl.textContent = formatClockPrecise(next);
+    paintTimeline();
+  }
+
+  function quitarUltimos() {
+    const dur = sourceTotalSec || previewVideo?.duration || 0;
+    if (!(dur > 0)) {
+      resultEl.className = "status-msg err";
+      resultEl.textContent = "Elige primero el video fuente.";
+      return;
+    }
+    const cola = Math.max(0.1, Number($("#cutter-tail-seconds")?.value) || 3);
+    const tr = getActiveClipRow();
+    if (!tr) return;
+    const startIn = tr.querySelector(".clip-start");
+    const endIn = tr.querySelector(".clip-end");
+    if (startIn) startIn.value = formatClockPrecise(0);
+    if (endIn) endIn.value = formatClockPrecise(Math.max(0.2, dur - cola));
+    validateClipRow(tr);
+    if (previewVideo) {
+      previewVideo.pause();
+      previewVideo.currentTime = Math.max(0, dur - cola - 0.4);
+    }
+    paintTimeline();
+    scheduleRowThumbRefresh(tr, 80);
+    resultEl.className = "status-msg ok";
+    resultEl.textContent = `Fin del recorte: se quitan los últimos ${cola} s. Pulsa «Recortar este tramo».`;
+  }
+
+  $("#cutter-handle-in")?.addEventListener("pointerdown", dragHandle("in"));
+  $("#cutter-handle-out")?.addEventListener("pointerdown", dragHandle("out"));
+  $("#cutter-timeline")?.addEventListener("pointerdown", (e) => {
+    if (e.target.closest(".trim-handle")) return;
+    const dur = sourceTotalSec || previewVideo?.duration || 0;
+    if (!(dur > 0) || !previewVideo) return;
+    previewVideo.pause();
+    previewVideo.currentTime = fractionFromPointer(e) * dur;
+    paintTimeline();
+  });
+  $("#btn-nudge-m1")?.addEventListener("click", () => nudgePlayhead(-1));
+  $("#btn-nudge-m01")?.addEventListener("click", () => nudgePlayhead(-0.1));
+  $("#btn-nudge-p01")?.addEventListener("click", () => nudgePlayhead(0.1));
+  $("#btn-nudge-p1")?.addEventListener("click", () => nudgePlayhead(1));
+  $("#btn-drop-tail")?.addEventListener("click", quitarUltimos);
+  $("#btn-cut-quick")?.addEventListener("click", async () => {
+    const tr = getActiveClipRow();
+    if (!tr) return;
+    const endIn = tr.querySelector(".clip-end");
+    const startIn = tr.querySelector(".clip-start");
+    if (startIn && !startIn.value.trim()) startIn.value = formatClockPrecise(0);
+    if (endIn && !endIn.value.trim() && sourceTotalSec > 0) endIn.value = formatClockPrecise(sourceTotalSec);
+    await runCutJob(collectClipsFromRows([tr]));
+  });
+  $("#btn-ranking-last-cut")?.addEventListener("click", async () => {
+    const outPath = lastCutOutputPaths[lastCutOutputPaths.length - 1];
+    if (!outPath) return;
+    await enviarPathARanking(outPath);
+  });
+  applyPreviewMode();
+
   const firstRow = tbody.querySelector("tr");
   if (firstRow) firstRow.classList.add("selected-clip-row");
 }
@@ -2063,6 +2553,7 @@ async function boot() {
   void initTanda13Composer();
   void initDownloader();
   void initCutter();
+  initWatermarkEditor();
   await refreshInfo();
   await refreshMetaOAuthUi();
   await Promise.all([refreshAccounts(), refreshMedia(), refreshTargets(), refreshGroups(), refreshLogs()]);

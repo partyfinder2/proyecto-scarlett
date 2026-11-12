@@ -1,5 +1,6 @@
 const SECCIONES = [
   ["inicio", "🏠 Inicio"],
+  ["lote", "📦 Lote Afiliado"],
   ["canales", "📡 Mis 10 Canales"],
   ["crear", "🎬 Crear Video"],
   ["cola", "📋 Cola"],
@@ -495,6 +496,104 @@ async function vistaGuardian() {
   };
 }
 
+async function vistaLote() {
+  const est = await api("/api/lote");
+  const ultimos = (est.ultimos || [])
+    .map(
+      (r) => `<tr class="border-t border-linea text-sm">
+        <td class="p-3">#${r.id}</td>
+        <td class="p-3">${r.plataforma || ""}</td>
+        <td class="p-3">${r.estado_fabrica || ""}${r.qc_semaforo ? ` (${r.qc_semaforo})` : ""}</td>
+        <td class="p-3 truncate max-w-xs">${r.url_video || ""}</td>
+        <td class="p-3 text-center whitespace-nowrap">
+          <button data-lote-ver="${r.id}" class="px-2" title="Ver video" ${r.output_path ? "" : "disabled"}>▶️</button>
+        </td>
+      </tr>`
+    )
+    .join("");
+  $("vista").innerHTML = `
+    <h2 class="text-2xl font-semibold">📦 Lote — El Libro de la Sabiduría</h2>
+    <p class="text-zinc-400 mb-4">Links desde Telegram → Excel → procesar aquí (Fase A: salida en <code class="text-zinc-300">output/</code>).</p>
+  <div class="flex flex-wrap gap-2 mb-4 text-sm">
+      <span class="rounded-full bg-zinc-800 px-3 py-1">Total: ${est.total || 0}</span>
+      <span class="rounded-full bg-amber-900/50 px-3 py-1">Pendientes: ${est.pendientes || 0}</span>
+      <span class="rounded-full bg-emerald-900/50 px-3 py-1">Listos: ${est.listos || 0}</span>
+      <span class="rounded-full bg-zinc-800 px-3 py-1">Bot: @${est.bot_username || "…"} ${est.bot_conectado ? "🟢" : "🔴"}</span>
+    </div>
+    <div class="flex flex-wrap gap-2 mb-6">
+      <button id="lote-uno" class="rounded-xl bg-emerald-600 px-4 py-2 font-semibold">▶️ Procesar siguiente</button>
+      <button id="lote-tres" class="rounded-xl bg-zinc-100 text-zinc-900 px-4 py-2 font-semibold">▶️ Procesar 3</button>
+    </div>
+    <div class="rounded-2xl border border-linea bg-tarjeta overflow-x-auto">
+      <table class="w-full text-left px-4">
+        <thead class="text-zinc-400 text-xs"><tr>
+          <th class="p-3 text-left">ID</th><th class="text-left">Plataforma</th><th class="text-left">Estado</th><th class="text-left">URL</th><th class="p-3">Ver</th>
+        </tr></thead>
+        <tbody>${ultimos || "<tr><td colspan='5' class='p-4 text-zinc-500'>Sin links aún — manda URLs al bot.</td></tr>"}</tbody>
+      </table>
+    </div>
+    <div id="reproductor-lote" class="mt-6 max-w-md">
+      <p class="text-sm text-zinc-500 mb-2">Pulsa ▶️ en una fila para previsualizar aquí (igual que en 📋 Cola).</p>
+    </div>`;
+  $("vista").querySelectorAll("[data-lote-ver]").forEach((b) => b.onclick = () => {
+    const id = b.dataset.loteVer;
+    const box = $("reproductor-lote");
+  const src = `/api/lote/${id}/video?ts=${Date.now()}`;
+    box.innerHTML = `<video id="lote-video" controls playsinline class="w-full rounded-2xl border border-linea" src="${src}"></video>
+      <p class="text-xs text-zinc-500 mt-2">Lote #${id} — video editado (no es el link de TikTok).</p>`;
+    const vid = $("lote-video");
+    if (vid) {
+      vid.onerror = () => {
+        aviso("No pude cargar el video. Reinicia la Fábrica (arrancar_todo.bat) y vuelve a pulsar ▶️.");
+      };
+    }
+    box.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  });
+  async function esperarLote(taskId) {
+    for (let i = 0; i < 120; i++) {
+      await new Promise((r) => setTimeout(r, 3000));
+      const t = await api(`/api/lote/tarea/${taskId}`);
+      if (t.status === "listo" || t.status === "fallido") return t;
+    }
+    throw new Error("El lote tardó demasiado. Revisa el Bot Guardián.");
+  }
+
+  $("lote-uno").onclick = async () => {
+    try {
+      aviso("Procesando un video… (1–5 min)");
+      const kick = await api("/api/lote/procesar-siguiente", { method: "POST" });
+      const fin = await esperarLote(kick.task_id);
+      const r = fin.result || {};
+      if (fin.status === "fallido") throw new Error(fin.error || "falló el lote");
+      aviso(
+        r.procesado
+          ? r.ok
+            ? `Listo lote #${r.lote_id} — QC ${r.qc?.semaforo || "ok"}`
+            : `Falló #${r.lote_id}: ${r.error || r.detalle || "revisa Telegram"}`
+          : "No hay pendientes"
+      );
+      vistaLote();
+    } catch (err) {
+      aviso(err.message);
+    }
+  };
+  $("lote-tres").onclick = async () => {
+    try {
+      aviso("Procesando tanda (máx. 3)…");
+      const kick = await api("/api/lote/procesar-tanda", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ max_items: 3 }),
+      });
+      await esperarLote(kick.task_id);
+      aviso("Tanda terminada. Revisa output/ o BabelDesk Inbox.");
+      vistaLote();
+    } catch (err) {
+      aviso(err.message);
+    }
+  };
+}
+
 async function vistaConfig() {
   const { claves } = await api("/api/config/claves");
   const fila = (clave, etiqueta) => {
@@ -534,6 +633,7 @@ async function mostrar() {
   $("vista").innerHTML = `<p class="text-zinc-400">Cargando…</p>`;
   try {
     if (seccion === "inicio") await vistaInicio();
+    else if (seccion === "lote") await vistaLote();
     else if (seccion === "canales") await vistaCanales();
     else if (seccion === "crear") await vistaCrear();
     else if (seccion === "cola") await vistaCola();

@@ -6,8 +6,11 @@ from pathlib import Path
 
 import requests
 
-PEXELS_API_KEY = os.environ.get("PEXELS_API_KEY", "")
 CACHE_VIDEOS = Path(__file__).resolve().parent.parent / "cache" / "videos"
+
+
+def pexels_api_key() -> str:
+    return (os.environ.get("PEXELS_API_KEY") or "").strip()
 
 KEYWORDS_POR_NICHO = {
     "mecanica": "motorcycle repair workshop mechanic vertical",
@@ -23,7 +26,8 @@ KEYWORDS_POR_NICHO = {
 
 def obtener_video_fondo_automatico(nicho: str) -> str | None:
     """Descarga un vertical HD libre de derechos desde Pexels si hay API key."""
-    if not PEXELS_API_KEY:
+    api_key = pexels_api_key()
+    if not api_key:
         return None
 
     CACHE_VIDEOS.mkdir(parents=True, exist_ok=True)
@@ -31,7 +35,7 @@ def obtener_video_fondo_automatico(nicho: str) -> str | None:
 
     resp = requests.get(
         "https://api.pexels.com/videos/search",
-        headers={"Authorization": PEXELS_API_KEY},
+        headers={"Authorization": api_key},
         params={"query": query, "orientation": "portrait", "size": "medium", "per_page": 15},
         timeout=15,
     )

@@ -8,8 +8,10 @@ import { getOpenRouterCredentials } from "./openrouter-config";
 import { checkYtDlpAvailable, detectNetwork, downloadVideo } from "../connectors/downloader";
 import { resolveYtDlpCookieArgs } from "../connectors/ytDlpCookies";
 import {
+  detectWatermarkRegions,
   removeWatermarkFromFile,
   resolvePresetKey,
+  type DelogoRegionPct,
   type WatermarkPresetKey,
 } from "../connectors/watermarkRemover";
 import {
@@ -160,7 +162,8 @@ export function registerWatermarkHandlers(
         mediaId: string;
         preset?: WatermarkPresetKey | "auto";
         networkHint?: string;
-        mode?: "off" | "standard" | "max";
+        mode?: "off" | "standard" | "max" | "manual";
+        manualRegions?: DelogoRegionPct[];
       }
     ) => {
       const row = getMediaById(opts.mediaId);
@@ -174,10 +177,19 @@ export function registerWatermarkHandlers(
         inputPath: row.path,
         preset,
         mode: opts.mode ?? "max",
+        manualRegions: opts.manualRegions,
         dataDir,
       });
     }
   );
+
+  // Detección automática con IA de visión: devuelve cajas 0–1, no aplica nada.
+  ipcMain.handle("watermark:detect", async (_event, opts: { mediaId: string }) => {
+    const row = getMediaById(opts.mediaId);
+    if (!row) return { ok: false, error: "Video no encontrado." };
+    if (row.kind !== "video") return { ok: false, error: "Solo aplica a videos." };
+    return detectWatermarkRegions({ inputPath: row.path, dataDir });
+  });
 }
 
 export function registerCutterHandlers(

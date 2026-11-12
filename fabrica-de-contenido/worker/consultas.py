@@ -497,6 +497,33 @@ def primer_canal_activo() -> dict | None:
         con.close()
 
 
+def canal_lote_afiliado() -> dict:
+    """Canal fijo para links de Telegram / Excel del libro (no el primer canal activo)."""
+    con = conectar()
+    try:
+        row = con.execute(
+            """
+            SELECT * FROM canales
+            WHERE lower(nombre) LIKE '%libro%' OR lower(nombre) LIKE '%sabidur%'
+            ORDER BY numero LIMIT 1
+            """
+        ).fetchone()
+        if row:
+            return dict(row)
+    finally:
+        con.close()
+    fallback = primer_canal_activo()
+    if fallback:
+        return fallback
+    return {
+        "id": 1,
+        "nombre": "El Libro de la Sabiduría",
+        "emoji": "📖",
+        "voz_fallback": "es-MX-JorgeNeural",
+        "voice_id": "",
+    }
+
+
 def estado_pipeline(tarea_id: str) -> dict | None:
     con = conectar()
     try:

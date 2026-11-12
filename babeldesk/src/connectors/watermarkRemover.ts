@@ -7,7 +7,7 @@ import { checkFfmpegAvailable } from "./videoCutter";
 import { detectWatermarkRegionsWithAI } from "./watermarkVision";
 
 export type WatermarkPresetKey = NetworkKey | "generic" | "none";
-export type WatermarkMode = "off" | "standard" | "max";
+export type WatermarkMode = "off" | "standard" | "max" | "manual";
 
 export type DelogoRegionPct = {
   xPct: number;
@@ -225,7 +225,7 @@ async function applyDelogoPass(
       "-preset",
       "fast",
       "-crf",
-      "18",
+      "16",
       "-c:a",
       "copy",
       "-movflags",
@@ -259,7 +259,7 @@ async function applyDelogoPass(
           "-preset",
           "fast",
           "-crf",
-          "18",
+          "16",
           "-c:a",
           "copy",
           "-movflags",
@@ -294,50 +294,120 @@ export function clampBoxBlurRadius(radius: number): number {
   return Math.min(9, Math.max(1, Math.floor(radius)));
 }
 
-/** filter_complex for blur-overlay on a rectangular region. */
-export function buildBlurCoverFilterComplex(
-  x: number,
-  y: number,
-  w: number,
-  h: number,
+/**
+ * Construye UN SOLO filter_complex que aplica blur a regiones grandes
+ * y delogo a regiones pequeñas, todo en una pasada.
+ */
+export function buildCombinedFilterComplex(
+  largeRegions: Array<{ x: number; y: number; w: number; h: number }>,
+  smallRegions: Array<{ x: number; y: number; w: number; h: number }>,
   radius = 8
 ): string {
+  const parts: string[] = [];
   const lr = clampBoxBlurRadius(radius);
   const cr = clampBoxBlurRadius(radius);
-  return `[0:v]split[main][tmp];[tmp]crop=${w}:${h}:${x}:${y},boxblur=${lr}:2:${cr}:2[blur];[main][blur]overlay=${x}:${y}`;
+
+  // Si no hay nada que hacer, devolver vacío
+  if (largeRegions.length === 0 && smallRegions.length === 0) return "";
+
+  // Paso 1: Blurs encadenados para regiones grandes
+  let currentLabel = "0:v";
+  for (let i = 0; i < largeRegions.length; i++) {
+    const { x, y, w, h } = largeRegions[i];
+    const outLabel = `blur${i}`;
+    // split → crop → blur → overlay
+    parts.push(
+      `[${currentLabel}]split[main${i}][tmp${i}];` +
+      `[tmp${i}]crop=${w}:${h}:${x}:${y},boxblur=${lr}:2:${cr}:2[blr${i}];` +
+      `[main${i}][blr${i}]overlay=${x}:${y}[${outLabel}]`
+    );
+    currentLabel = outLabel;
+  }
+
+  // Paso 2: Delogos encadenados para regiones pequeñas
+  if (smallRegions.length > 0) {
+    const delogoParts = smallRegions.map(
+      (r) => `delogo=x=${r.x}:y=${r.y}:w=${r.w}:h=${r.h}`
+    );
+    // Si hay blurs previos, encadenar; si no, empezar desde 0:v
+    if (largeRegions.length > 0) {
+      parts.push(`[${currentLabel}]${delogoParts.join(",")}[outv]`);
+    } else {
+      parts.push(`[0:v]${delogoParts.join(",")}[outv]`);
+    }
+    currentLabel = "outv";
+  } else if (largeRegions.length > 0) {
+    // Renombrar el último blur a outv
+    const lastPart = parts[parts.length - 1];
+    parts[parts.length - 1] = lastPart.replace(/\[blur\d+\]$/, "[outv]");
+    currentLabel = "outv";
+  }
+
+  return parts.join(";");
 }
 
-async function applyBlurCoverPass(
+/** Aplica blur+delogo combinados en una sola pasada ffmpeg. */
+async function applyCombinedPass(
   input: string,
   output: string,
-  r: DelogoRegionPct,
+  largeRegions: DelogoRegionPct[],
+  smallRegions: DelogoRegionPct[],
   width: number,
-  height: number
-): Promise<void> {
-  const { x, y, w, h } = toPixels(r, width, height);
-  if (w < 16 || h < 16) return;
-  const fc = buildBlurCoverFilterComplex(x, y, w, h, 8);
-  await runFfmpeg([
-    "-y",
-    "-hide_banner",
-    "-loglevel",
-    "error",
-    "-i",
-    input,
-    "-filter_complex",
-    fc,
-    "-c:v",
-    "libx264",
-    "-preset",
-    "fast",
-    "-crf",
-    "18",
-    "-c:a",
-    "copy",
-    "-movflags",
-    "+faststart",
-    output,
-  ]);
+  height: number,
+  timeoutMs = 300_000
+): Promise<boolean> {
+  // Convertir regiones a píxeles
+  const largePx = largeRegions
+    .map((r) => toPixels(r, width, height))
+    .filter((p) => p.w >= 16 && p.h >= 16);
+  const smallPx = smallRegions
+    .map((r) => toDelogoPixels(r, width, height))
+    .filter((p): p is NonNullable<typeof p> => p !== null);
+
+  if (largePx.length === 0 && smallPx.length === 0) return false;
+
+  const fc = buildCombinedFilterComplex(largePx, smallPx, 8);
+  if (!fc) return false;
+
+  return new Promise((resolve) => {
+    const proc = execFile(
+      "ffmpeg",
+      [
+        "-y",
+        "-hide_banner",
+        "-loglevel",
+        "error",
+        "-i",
+        input,
+        "-filter_complex",
+        fc,
+        "-map",
+        "[outv]",
+        "-map",
+        "0:a?",
+        "-c:v",
+        "libx264",
+        "-preset",
+        "fast",
+        "-crf",
+        "16",
+        "-c:a",
+        "copy",
+        "-movflags",
+        "+faststart",
+        output,
+      ],
+      { timeout: timeoutMs },
+      (err) => {
+        if (err) {
+          resolve(false);
+        } else {
+          resolve(true);
+        }
+      }
+    );
+    proc.unref?.();
+  });
 }
 
 async function collectRegions(opts: {
@@ -408,6 +478,54 @@ export type RemoveWatermarkResult = {
 };
 
 /**
+ * Detecta regiones de marca de agua con IA de visión (no aplica nada).
+ * Extrae 3 frames y pregunta al modelo dónde hay logos/textos.
+ */
+export async function detectWatermarkRegions(opts: {
+  inputPath: string;
+  dataDir?: string;
+}): Promise<{ ok: boolean; regions?: DelogoRegionPct[]; error?: string }> {
+  const abs = path.resolve(opts.inputPath);
+  if (!fs.existsSync(abs)) return { ok: false, error: "Archivo no encontrado." };
+  if (!opts.dataDir) {
+    return { ok: false, error: "Falta configurar la clave de IA (OpenRouter)." };
+  }
+
+  const ffmpegOk = await checkFfmpegAvailable();
+  if (!ffmpegOk) return { ok: false, error: "ffmpeg no está en PATH." };
+
+  const tmpDir = path.join(opts.dataDir, "wm-frames", crypto.randomUUID());
+  fs.mkdirSync(tmpDir, { recursive: true });
+  try {
+    const duration = await probeDurationSec(abs);
+    const times = [0.05, 0.5, 0.85].map((p) => Math.max(0, duration * p));
+    const frames: string[] = [];
+    for (let i = 0; i < times.length; i++) {
+      const fp = path.join(tmpDir, `f${i}.jpg`);
+      await extractFrameJpeg(abs, times[i], fp);
+      frames.push(fp);
+    }
+    const regions = await detectWatermarkRegionsWithAI(opts.dataDir, frames);
+    if (regions.length === 0) {
+      return {
+        ok: false,
+        error:
+          "La IA no devolvió zonas (¿clave de OpenRouter sin modelo de visión, sin saldo, o no detectó marca?).",
+      };
+    }
+    return { ok: true, regions: mergeRegionsUnique(regions) };
+  } catch (e) {
+    return { ok: false, error: String(e) };
+  } finally {
+    try {
+      fs.rmSync(tmpDir, { recursive: true, force: true });
+    } catch {
+      /* ignore */
+    }
+  }
+}
+
+/**
  * Quita / difumina marcas de agua (estándar o máximo con IA).
  */
 export async function removeWatermarkFromFile(opts: {
@@ -415,6 +533,8 @@ export async function removeWatermarkFromFile(opts: {
   preset: WatermarkPresetKey;
   mode?: WatermarkMode;
   dataDir?: string;
+  /** Regiones marcadas a mano por el usuario (0–1). En modo "manual" son las únicas. */
+  manualRegions?: DelogoRegionPct[];
 }): Promise<RemoveWatermarkResult> {
   const mode = opts.mode ?? "standard";
   const abs = path.resolve(opts.inputPath);
@@ -438,79 +558,80 @@ export async function removeWatermarkFromFile(opts: {
     return { ok: false, error: String(e) };
   }
 
-  const regions = await collectRegions({
-    preset: opts.preset,
-    mode,
-    inputPath: abs,
-    dataDir: opts.dataDir,
-  });
+  let regions: DelogoRegionPct[];
+  if (mode === "manual") {
+    // Solo lo que el usuario dibujó: nada de presets ni rejilla agresiva.
+    regions = mergeRegionsUnique(
+      (opts.manualRegions ?? []).filter((r) => r.wPct > 0.01 && r.hPct > 0.01)
+    );
+    if (regions.length === 0) {
+      return { ok: false, error: "No marcaste ninguna zona sobre la marca de agua." };
+    }
+  } else {
+    regions = await collectRegions({
+      preset: opts.preset,
+      mode,
+      inputPath: abs,
+      dataDir: opts.dataDir,
+    });
+  }
   if (regions.length === 0) {
     return { ok: true, outputPath: abs, mode, regionsUsed: 0 };
   }
 
   const LARGE = 0.032;
-  let small = regions.filter((r) => regionArea(r) < LARGE);
+  const small = regions.filter((r) => regionArea(r) < LARGE);
   const large = regions.filter((r) => regionArea(r) >= LARGE);
 
   const dir = path.dirname(abs);
   const base = path.basename(abs, path.extname(abs));
-  let current = abs;
-  let pass = 0;
-  const tempFiles: string[] = [];
-
-  const swapTemp = () => path.join(dir, `${base}.__nowm.${pass}.mp4`);
+  const tempOut = path.join(dir, `${base}.__nowm.tmp.mp4`);
 
   try {
-    for (const r of large) {
-      const out = swapTemp();
-      pass++;
-      tempFiles.push(out);
-      try {
-        await applyBlurCoverPass(current, out, r, width, height);
-      } catch {
-        /* blur falló (ffmpeg/build) → delogo en esa zona */
-        small = mergeRegionsUnique(small.concat([r]));
-        try {
-          fs.unlinkSync(out);
-        } catch {
-          /* ignore */
-        }
-        tempFiles.pop();
-        pass--;
-        continue;
-      }
-      if (current !== abs) {
-        try {
-          fs.unlinkSync(current);
-        } catch {
-          /* ignore */
-        }
-      }
-      current = out;
-    }
+    // UNA SOLA PASADA: blur + delogo combinados
+    const ok = await applyCombinedPass(abs, tempOut, large, small, width, height);
 
-    if (small.length > 0) {
-      const out = pass === 0 ? path.join(dir, `${base}.__nowm.tmp.mp4`) : swapTemp();
-      pass++;
-      const did = await applyDelogoPass(current, out, small, width, height);
-      if (did) {
-        if (current !== abs) {
-          try {
-            fs.unlinkSync(current);
-          } catch {
-            /* ignore */
-          }
+    if (!ok) {
+      // Fallback: solo delogo si el combinado falló
+      if (small.length > 0) {
+        const delogoOk = await applyDelogoPass(abs, tempOut, small, width, height);
+        if (!delogoOk) {
+          return { ok: true, outputPath: abs, mode, regionsUsed: 0 };
         }
-        current = out;
+      } else {
+        return { ok: true, outputPath: abs, mode, regionsUsed: 0 };
       }
     }
 
-    if (current === abs) {
+    if (!fs.existsSync(tempOut)) {
       return { ok: true, outputPath: abs, mode, regionsUsed: regions.length };
     }
 
-    fs.unlinkSync(abs);
-    fs.renameSync(current, abs);
+    // Reemplazar original con resultado
+    // Intentar varias veces en caso de que Windows tenga el archivo bloqueado
+    let replaced = false;
+    for (let retry = 0; retry < 5; retry++) {
+      try {
+        fs.unlinkSync(abs);
+        fs.renameSync(tempOut, abs);
+        replaced = true;
+        break;
+      } catch {
+        await new Promise((r) => setTimeout(r, 200 * (retry + 1)));
+      }
+    }
+
+    if (!replaced && fs.existsSync(tempOut)) {
+      // Si no pudimos reemplazar, copiar contenido y limpiar
+      try {
+        fs.copyFileSync(tempOut, abs);
+        fs.unlinkSync(tempOut);
+        replaced = true;
+      } catch {
+        /* ignore */
+      }
+    }
+
     return {
       ok: true,
       outputPath: abs,
@@ -519,20 +640,12 @@ export async function removeWatermarkFromFile(opts: {
       filter: `delogo×${small.length}+blur×${large.length}`,
     };
   } catch (e) {
-    if (current !== abs && fs.existsSync(current)) {
+    // Limpiar temporal si existe
+    if (fs.existsSync(tempOut)) {
       try {
-        fs.unlinkSync(current);
+        fs.unlinkSync(tempOut);
       } catch {
         /* ignore */
-      }
-    }
-    for (const t of tempFiles) {
-      if (t !== current && fs.existsSync(t)) {
-        try {
-          fs.unlinkSync(t);
-        } catch {
-          /* ignore */
-        }
       }
     }
     return { ok: false, error: String(e) };

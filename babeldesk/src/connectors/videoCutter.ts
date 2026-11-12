@@ -59,13 +59,23 @@ export function checkFfmpegAvailable(): Promise<boolean> {
   });
 }
 
-/** Convierte "mm:ss" o "h:mm:ss" a segundos totales */
+/** Convierte "ss.d", "m:ss.d" o "h:mm:ss.d" a segundos. */
 export function parseTime(t: string): number {
-  const parts = t.trim().split(":").map(Number);
-  if (parts.some(isNaN)) return 0;
-  if (parts.length === 2) return parts[0] * 60 + parts[1];
-  if (parts.length === 3) return parts[0] * 3600 + parts[1] * 60 + parts[2];
+  const parts = t.trim().split(":");
+  if (!parts.length) return 0;
+  const nums = parts.map(Number);
+  if (nums.some((n) => Number.isNaN(n))) return 0;
+  if (nums.length === 1) return nums[0];
+  if (nums.length === 2) return nums[0] * 60 + nums[1];
+  if (nums.length === 3) return nums[0] * 3600 + nums[1] * 60 + nums[2];
   return 0;
+}
+
+/** Sin 9:16 y sin hook el corte es copia de stream. Cualquier filtro re-codifica. */
+export function resolveCutMode(vertical: boolean, hookText?: string): "copy" | "reencode" {
+  if (vertical) return "reencode";
+  if ((hookText || "").trim()) return "reencode";
+  return "copy";
 }
 
 /** Obtiene la duración de un video en segundos usando ffprobe */
@@ -103,15 +113,15 @@ function sanitizeName(name: string): string {
 }
 
 /** Construye los filtros de ffmpeg para un clip */
-function buildFilterComplex(vertical: boolean, hookText?: string): string {
+export function buildFilterComplex(vertical: boolean, hookText?: string): string {
   const filters: string[] = [];
 
   if (vertical) {
     // Escala preservando aspect ratio y rellena con blur a 1080x1920
     filters.push(
       "[0:v]split=2[bg][fg]",
-      "[bg]scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,boxblur=9:2:9:2[bgblurred]",
-      "[fg]scale=1080:1920:force_original_aspect_ratio=decrease[fgscaled]",
+      "[bg]scale=1080:1920:force_original_aspect_ratio=increase:flags=lanczos,crop=1080:1920,boxblur=9:2:9:2[bgblurred]",
+      "[fg]scale=1080:1920:force_original_aspect_ratio=decrease:flags=lanczos[fgscaled]",
       "[bgblurred][fgscaled]overlay=(W-w)/2:(H-h)/2[composed]"
     );
 
@@ -157,7 +167,8 @@ async function cutClip(
     outFile = path.join(inboxDir, `clip-${safeName}-${dateStr}-${n}.mp4`);
   }
 
-  const filterStr = buildFilterComplex(vertical, hookText);
+  const filterStr =
+    resolveCutMode(vertical, hookText) === "copy" ? "" : buildFilterComplex(vertical, hookText);
 
   const args: string[] = [
     "-y",
@@ -173,7 +184,7 @@ async function cutClip(
   }
 
   if (filterStr) {
-    args.push("-c:v", "libx264", "-preset", "fast", "-crf", "22", "-c:a", "aac", "-b:a", "128k");
+    args.push("-c:v", "libx264", "-preset", "fast", "-crf", "17", "-c:a", "aac", "-b:a", "256k");
   }
 
   args.push("-movflags", "+faststart", outFile);

@@ -36,9 +36,10 @@ export interface DownloadOptions {
   dataDir?: string;
 }
 
-/** Carpeta Descargas del usuario (donde Pablo agarra los videos). */
+/** Carpeta Descargas del usuario de Windows que esté usando la app. */
 export function userDownloadsDir(): string {
-  return path.join(process.env.USERPROFILE || "C:\\Users\\pablo", "Downloads");
+  const home = process.env.USERPROFILE || process.env.HOME || "";
+  return path.join(home, "Downloads");
 }
 
 function uniqueMp4Path(dir: string, filename: string): string {

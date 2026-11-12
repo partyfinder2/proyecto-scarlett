@@ -2,7 +2,7 @@ import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import {
   buildAggressiveGrid,
-  buildBlurCoverFilterComplex,
+  buildCombinedFilterComplex,
   buildDelogoFilter,
   clampBoxBlurRadius,
   mergeRegionsUnique,
@@ -46,8 +46,27 @@ describe("watermarkRemover", () => {
   it("boxblur radius stays within ffmpeg chroma limit (9)", () => {
     assert.equal(clampBoxBlurRadius(12), 9);
     assert.equal(clampBoxBlurRadius(0), 1);
-    const fc = buildBlurCoverFilterComplex(100, 200, 320, 180, 12);
+    // Test buildCombinedFilterComplex con una región grande
+    const fc = buildCombinedFilterComplex(
+      [{ x: 100, y: 200, w: 320, h: 180 }], // largeRegions
+      [], // smallRegions
+      12 // radius (debería ser clamped a 9)
+    );
     assert.match(fc, /boxblur=9:2:9:2/);
     assert.doesNotMatch(fc, /boxblur=12/);
+  });
+
+  it("buildCombinedFilterComplex combina blur y delogo", () => {
+    const fc = buildCombinedFilterComplex(
+      [{ x: 100, y: 200, w: 320, h: 180 }], // largeRegions
+      [{ x: 50, y: 50, w: 100, h: 40 }], // smallRegions
+      8
+    );
+    // Debe tener blur para large
+    assert.match(fc, /boxblur/);
+    // Debe tener delogo para small
+    assert.match(fc, /delogo=x=50:y=50:w=100:h=40/);
+    // Debe terminar en [outv]
+    assert.match(fc, /\[outv\]$/);
   });
 });

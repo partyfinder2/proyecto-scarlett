@@ -1,0 +1,9 @@
+Para que yt-dlp baje TikTok/Instagram cuando piden login:
+
+1. En Chrome (logueado), exporta cookies con una extensión tipo "Get cookies.txt LOCALLY".
+2. Guarda el archivo aquí como: data/cookies.txt
+   (o define YTDLP_COOKIES en .env.local con la ruta completa)
+
+Misma idea que docs/YTDLP_COOKIES.md en BabelDesk.
+
+Sin cookies, el lote marca el link como roto o necesita_cookies — NO usamos videos de prueba falsos.

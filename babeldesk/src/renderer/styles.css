@@ -4,6 +4,65 @@
   background: #f4f1ea;
 }
 body { margin: 0; padding: 16px; }
+
+/* Modal quitamarcas manual */
+.wm-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.wm-modal.hidden { display: none; }
+.wm-dialog {
+  background: #fff;
+  border-radius: 12px;
+  padding: 16px;
+  width: min(560px, 94vw);
+  max-height: 94vh;
+  overflow: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+}
+.wm-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.wm-x { border: none; background: #eee; border-radius: 6px; width: 28px; height: 28px; cursor: pointer; font-size: 14px; }
+.wm-hint { font-size: 12px; color: #555; margin: 4px 0 10px; }
+.wm-stage {
+  position: relative;
+  width: 100%;
+  max-height: 60vh;
+  background: #000;
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+}
+.wm-video { max-width: 100%; max-height: 60vh; display: block; }
+.wm-overlay { position: absolute; inset: 0; cursor: crosshair; }
+.wm-box {
+  position: absolute;
+  border: 2px solid #ffd400;
+  background: rgba(255, 212, 0, 0.18);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5);
+}
+.wm-box .wm-del {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  width: 20px;
+  height: 20px;
+  border: none;
+  border-radius: 50%;
+  background: #c22;
+  color: #fff;
+  cursor: pointer;
+  font-size: 12px;
+  line-height: 1;
+}
+.wm-toolbar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin: 10px 0; }
+.wm-count { font-size: 12px; color: #555; margin-left: auto; }
+.wm-actions { display: flex; gap: 8px; justify-content: flex-end; }
 header { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
 .sub { color: #666; margin: 0; }
 .pill { background: #222; color: #fff; padding: 2px 8px; border-radius: 999px; font-size: 12px; }
@@ -110,7 +169,7 @@ pre { background: #fff; border: 1px solid #ddd; padding: 8px; overflow: auto; ma
 .media-card-actions button.btn-flow:hover { background: #333; }
 
 /* Cutter module */
-.cutter-block { margin: 16px 0 24px; padding: 16px; background: #fff; border: 1px solid #ddd; border-radius: 8px; max-width: 680px; }
+.cutter-block { margin: 16px 0 24px; padding: 16px; background: #fff; border: 1px solid #ddd; border-radius: 8px; max-width: 960px; }
 .cutter-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
 .cutter-duration { font-size: 13px; color: #555; font-weight: 600; }
 .cutter-options { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
@@ -164,16 +223,10 @@ pre { background: #fff; border: 1px solid #ddd; padding: 8px; overflow: auto; ma
   border: 1px solid #ddd;
 }
 
-.cutter-preview-hint {
-  margin: 10px 0 0;
-  text-align: center;
-  max-width: 280px;
-}
-
 .preview-card-916 {
   position: relative;
-  width: 240px;
-  height: 426px;
+  width: min(640px, 100%);
+  height: 360px;
   background: #000;
   border-radius: 12px;
   overflow: hidden;
@@ -181,10 +234,99 @@ pre { background: #fff; border: 1px solid #ddd; padding: 8px; overflow: auto; ma
   border: 2px solid #1a1a1a;
 }
 
+.preview-card-916.mode-vertical {
+  width: 300px;
+  height: 533px;
+}
+
+.cutter-video-bg,
+.cutter-video-fg,
 .preview-card-916 video {
   width: 100%;
   height: 100%;
+}
+
+.preview-card-916.mode-original .cutter-video-fg {
+  object-fit: contain;
+  background: #000;
+}
+
+.preview-card-916.mode-vertical .cutter-video-bg {
+  position: absolute;
+  inset: 0;
   object-fit: cover;
+  filter: blur(16px);
+  transform: scale(1.12);
+}
+
+.preview-card-916.mode-vertical .cutter-video-fg {
+  position: relative;
+  z-index: 1;
+  object-fit: contain;
+  background: transparent;
+}
+
+.trim-timeline {
+  position: relative;
+  width: min(640px, 100%);
+  height: 36px;
+  margin: 14px auto 6px;
+  background: #d7d7d7;
+  border-radius: 8px;
+  touch-action: none;
+}
+
+.trim-range {
+  position: absolute;
+  top: 10px;
+  height: 16px;
+  background: #1a1a1a;
+  border-radius: 4px;
+  pointer-events: none;
+}
+
+.trim-playhead {
+  position: absolute;
+  top: 0;
+  width: 2px;
+  height: 36px;
+  background: #c22;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.trim-handle {
+  position: absolute;
+  top: 2px;
+  width: 14px;
+  height: 32px;
+  margin-left: -7px;
+  padding: 0;
+  background: #fff;
+  border: 2px solid #1a1a1a;
+  border-radius: 4px;
+  cursor: ew-resize;
+  z-index: 2;
+}
+
+.cutter-advanced {
+  margin-top: 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 8px 12px 12px;
+  background: #fafafa;
+}
+
+.cutter-advanced summary {
+  cursor: pointer;
+  font-weight: 700;
+  padding: 6px 2px 10px;
+}
+
+.cutter-preview-hint {
+  margin: 10px 0 0;
+  text-align: center;
+  max-width: 640px;
 }
 
 .cutter-clip-badge {

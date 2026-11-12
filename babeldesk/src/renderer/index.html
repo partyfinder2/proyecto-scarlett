@@ -131,8 +131,8 @@
     </section>
 
     <section id="tab-cortar" class="tab">
-      <h2>✂️ Cortar Video en Clips</h2>
-      <p class="hint">Selecciona un video largo de tu Inbox y define los clips que quieres extraer. Se guardan directo en Inbox listos para publicar.</p>
+      <h2>✂️ Recortar video</h2>
+      <p class="hint">Elige un video, marca inicio y fin en la línea de tiempo y recorta. Los clips quedan en Inbox.</p>
 
       <div class="cutter-block">
         <div class="cutter-row">
@@ -142,35 +142,70 @@
         </div>
 
         <div class="cutter-preview-container">
-          <div class="preview-card-916">
-            <video id="cutter-video-preview" controls muted playsinline></video>
-            <div id="cutter-clip-badge" class="cutter-clip-badge hidden">Clip (0:00 - fin)</div>
+          <div class="preview-card-916 mode-original" id="cutter-preview-card">
+            <video id="cutter-video-bg" class="cutter-video-bg" muted playsinline hidden></video>
+            <video id="cutter-video-preview" class="cutter-video-fg" controls muted playsinline></video>
+            <div id="cutter-clip-badge" class="cutter-clip-badge hidden">Clip</div>
           </div>
           <div class="cutter-preview-toolbar">
-            <span id="cutter-preview-time" class="cutter-preview-time">0:00</span>
-            <button type="button" id="btn-mark-start" class="btn-secondary">⏱ Inicio aquí</button>
-            <button type="button" id="btn-mark-end" class="btn-secondary">⏱ Fin aquí</button>
+            <span id="cutter-preview-time" class="cutter-preview-time">0:00.0</span>
+            <button type="button" id="btn-nudge-m1" class="btn-secondary">−1s</button>
+            <button type="button" id="btn-nudge-m01" class="btn-secondary">−0.1s</button>
+            <button type="button" id="btn-nudge-p01" class="btn-secondary">+0.1s</button>
+            <button type="button" id="btn-nudge-p1" class="btn-secondary">+1s</button>
+          </div>
+          <div class="trim-timeline" id="cutter-timeline">
+            <div class="trim-range" id="cutter-trim-range"></div>
+            <div class="trim-playhead" id="cutter-playhead"></div>
+            <button type="button" class="trim-handle" id="cutter-handle-in" aria-label="Inicio del recorte"></button>
+            <button type="button" class="trim-handle" id="cutter-handle-out" aria-label="Fin del recorte"></button>
+          </div>
+          <div class="cutter-preview-toolbar">
+            <button type="button" id="btn-mark-start" class="btn-secondary">Inicio aquí</button>
+            <button type="button" id="btn-mark-end" class="btn-secondary">Fin aquí</button>
+            <label class="field inline-check">Quitar últimos
+              <input type="number" id="cutter-tail-seconds" min="0.1" max="120" step="0.1" value="3" />
+              s
+            </label>
+            <button type="button" id="btn-drop-tail" class="btn-secondary">Quitar últimos</button>
             <label class="field inline-check cutter-audio-check">
               <input type="checkbox" id="cutter-preview-audio" />
-              Sonido en preview
+              Sonido
+            </label>
+            <label class="field inline-check">
+              <input type="checkbox" id="cutter-loop" />
+              🔁 Repetir tramo
             </label>
           </div>
-          <p class="hint cutter-preview-hint">
-            Vista previa 9:16 · clic en una fila para bucle · pausa el video y marca inicio/fin en la fila seleccionada.
+          <p class="hint cutter-preview-hint" id="cutter-encode-hint">
+            Corte rápido: copia el tramo sin re-codificar. Arrastra las manijas o usa «Quitar últimos» para borrar un logo del final.
           </p>
         </div>
 
         <div class="cutter-options">
           <label class="field inline-check">
-            <input type="checkbox" id="cutter-vertical" checked />
-            Recortar a vertical 9:16 (1080×1920)
+            <input type="checkbox" id="cutter-vertical" />
+            Recortar a vertical 9:16 (1080×1920, re-codifica con fondo difuminado)
           </label>
           <label class="field inline-check">
             <input type="checkbox" id="cutter-overlay" />
-            Agregar hook de texto en el clip
+            Agregar hook de texto en el clip (también re-codifica)
           </label>
           <input type="text" id="cutter-hook-text" placeholder="Texto del hook (ej: Puerto Vallarta 🌅)" class="cutter-hook-input hidden" />
         </div>
+
+        <div class="cutter-actions">
+          <button id="btn-cut-quick" type="button" class="btn-primary">✂ Recortar este tramo</button>
+          <button id="btn-cancel-cut" type="button" class="btn-danger hidden">❌ Cancelar</button>
+          <button id="btn-post-last-cut" type="button" class="btn-secondary hidden">📝 Crear post con último clip</button>
+          <button id="btn-ranking-last-cut" type="button" class="btn-secondary hidden">🏆 Enviar a Ranking</button>
+        </div>
+
+        <div id="cutter-progress" class="cutter-progress hidden"></div>
+        <div id="cutter-result" class="status-msg"></div>
+
+        <details class="cutter-advanced" id="cutter-advanced">
+          <summary>Varios clips / Capítulos de YouTube / Auto-corte</summary>
 
         <div class="cutter-chapters-block">
           <strong>📺 Capítulos de YouTube</strong>
@@ -201,7 +236,7 @@
             </label>
             <button id="btn-auto-generate" type="button">⚡ Generar clips en la tabla</button>
           </div>
-          <p class="hint">Llena la tabla sola; mira las miniaturas <strong>In / Out</strong> de cada fila (cuándo entra y sale), ajusta segundos, borra filas malas y luego «Cortar Todos». Un sobrante final muy corto se pega al clip anterior.</p>
+          <p class="hint">Llena la tabla sola. Un sobrante final muy corto se pega al clip anterior.</p>
         </div>
 
         <table class="cutter-table" id="cutter-table">
@@ -219,8 +254,8 @@
             <tr data-row="1">
               <td>1</td>
               <td><input type="text" class="clip-start" placeholder="0:00" value="0:00" /></td>
-              <td><input type="text" class="clip-end" placeholder="0:45" /></td>
-              <td><input type="text" class="clip-name" placeholder="clip-1" /></td>
+              <td><input type="text" class="clip-end" placeholder="fin" /></td>
+              <td><input type="text" class="clip-name" placeholder="clip-1" value="clip-1" /></td>
               <td class="clip-preview-cell">
                 <div class="cutter-thumb-pair">
                   <button type="button" class="cutter-thumb-btn" data-thumb-at="start" title="Ver inicio en reproductor">
@@ -249,14 +284,11 @@
           <button id="btn-clear-table" type="button" class="btn-secondary">🗑 Vaciar tabla</button>
           <button id="btn-cut-selected" type="button">▶ Cortar fila seleccionada</button>
           <button id="btn-cut-all" type="button" class="btn-primary">▶ Cortar Todos</button>
-          <button id="btn-cancel-cut" type="button" class="btn-danger hidden">❌ Cancelar</button>
-          <button id="btn-post-last-cut" type="button" class="btn-secondary hidden">📝 Crear post con último clip</button>
         </div>
-
-        <div id="cutter-progress" class="cutter-progress hidden"></div>
-        <div id="cutter-result" class="status-msg"></div>
+        </details>
       </div>
     </section>
+
 
     <section id="tab-cola" class="tab">
       <h2>Cola</h2>
@@ -408,6 +440,34 @@
       </form>
     </section>
   </main>
+
+  <div id="wm-modal" class="wm-modal hidden" aria-hidden="true">
+    <div class="wm-dialog">
+      <div class="wm-head">
+        <strong>💧 Quitar marca de agua</strong>
+        <button type="button" id="wm-close" class="wm-x" title="Cerrar">✕</button>
+      </div>
+      <p class="wm-hint">
+        Arrastra sobre la marca para dibujar un recuadro. Puedes marcar varios.
+        Pausa el video donde se vea la marca y tápala. Solo se borra lo que marques.
+      </p>
+      <div class="wm-stage" id="wm-stage">
+        <video id="wm-video" class="wm-video" controls muted playsinline></video>
+        <div id="wm-overlay" class="wm-overlay"></div>
+      </div>
+      <div class="wm-toolbar">
+        <button type="button" id="wm-undo" class="btn-secondary">↶ Deshacer recuadro</button>
+        <button type="button" id="wm-clear" class="btn-secondary">🗑 Borrar recuadros</button>
+        <button type="button" id="wm-detect" class="btn-secondary">🤖 Detectar con IA</button>
+        <span id="wm-count" class="wm-count">0 recuadros</span>
+      </div>
+      <div class="wm-actions">
+        <button type="button" id="wm-cancel" class="btn-secondary">Cancelar</button>
+        <button type="button" id="wm-apply" class="btn-primary">✅ Quitar marca aquí</button>
+      </div>
+      <div id="wm-status" class="status-msg"></div>
+    </div>
+  </div>
 
   <script src="app.js"></script>
 </body>

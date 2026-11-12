@@ -7,7 +7,7 @@ import shutil
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent
-INBOX_DEFAULT = Path(r"C:\Users\pablo\Downloads\BabelDesk\Inbox")
+INBOX_DEFAULT = Path.home() / "Downloads" / "BabelDesk" / "Inbox"
 
 
 def ruta_inbox_babeldesk() -> Path:

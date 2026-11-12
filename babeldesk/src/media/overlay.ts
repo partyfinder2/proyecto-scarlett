@@ -25,7 +25,7 @@ export function escapeDrawtext(text: string): string {
 }
 
 export function buildReelVideoFilter(opts: { hook: string; showBranding: boolean }): string {
-  const base = `scale=${REEL_WIDTH}:${REEL_HEIGHT}:force_original_aspect_ratio=decrease,pad=${REEL_WIDTH}:${REEL_HEIGHT}:(ow-iw)/2:(oh-ih)/2:black`;
+  const base = `scale=${REEL_WIDTH}:${REEL_HEIGHT}:force_original_aspect_ratio=decrease:flags=lanczos,pad=${REEL_WIDTH}:${REEL_HEIGHT}:(ow-iw)/2:(oh-ih)/2:black`;
   const filters: string[] = [base];
   const hook = sanitizeHook(opts.hook);
   const font = process.platform === "win32" ? "C\\\\:/Windows/Fonts/segoeui.ttf" : "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf";
@@ -91,11 +91,11 @@ export async function exportReel(opts: ExportReelOpts): Promise<ExportReelResult
     "-preset",
     "fast",
     "-crf",
-    "23",
+    "17",
     "-c:a",
     "aac",
     "-b:a",
-    "128k",
+    "256k",
     "-movflags",
     "+faststart",
     "-pix_fmt",
