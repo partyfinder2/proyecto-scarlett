@@ -46,6 +46,22 @@ body {
   gap: 8px;
 }
 
+.btn-sync {
+  font: inherit;
+  font-size: 11px;
+  padding: 3px 9px;
+  border-radius: 4px;
+  background: #232323;
+  color: #e8e8e8;
+  border: 1px solid #3a3a3a;
+  cursor: pointer;
+}
+
+.btn-sync:hover {
+  border-color: #facc15;
+  color: #facc15;
+}
+
 .badge {
   font-size: 11px;
   padding: 3px 9px;

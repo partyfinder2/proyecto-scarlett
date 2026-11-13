@@ -21,8 +21,11 @@
   let fuenteEventos = null;
   let ultimoMp4 = null;
   let exportando = false;
-  let versionProyecto = "";
   let pollInterval = null;
+  let revisionServidor = 0;
+  let aplicandoExterno = false;
+  let guardando = false;
+  let vaciarPendiente = false;
   let miniaturaActualPath = null;
   let miniaturaBaseImg = null;
   let miniaturaDirty = false;
@@ -100,7 +103,7 @@
   }
 
   async function api(ruta, opciones = {}) {
-    const res = await fetch(ruta, opciones);
+    const res = await fetch(ruta, { cache: "no-store", ...opciones });
     const tipo = res.headers.get("content-type") || "";
     if (tipo.includes("application/json")) {
       const data = await res.json();
@@ -116,89 +119,138 @@
 
   function programarGuardado() {
     clearTimeout(guardarTimer);
-    guardarTimer = setTimeout(guardarProyecto, 700);
+    guardarTimer = setTimeout(() => {
+      void guardarProyecto();
+    }, 700);
   }
 
   async function guardarProyecto() {
+    if (aplicandoExterno) return;
+    clearTimeout(guardarTimer);
+    guardando = true;
     try {
-      await api("/api/proyecto", {
+      aplicarCamposAEstado();
+      const payload = clonarEstado();
+      payload.revision = revisionServidor;
+      payload.vaciar = vaciarPendiente;
+      vaciarPendiente = false;
+      const res = await fetch("/api/proyecto", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(clonarEstado()),
+        cache: "no-store",
+        body: JSON.stringify(payload),
       });
-      await actualizarVersion();
+      const data = await res.json().catch(() => ({}));
+      if (res.status === 409 && data.proyecto) {
+        aplicarProyectoServidor(data.proyecto, data.revision);
+        const aviso = $("texto-export");
+        if (aviso) {
+          aviso.textContent =
+            data.detail || `Lista actualizada: ${estado.clips.length} clips.`;
+          aviso.className = "tip ok";
+        }
+        await refrescarPreview(false);
+        return;
+      }
+      if (!res.ok) {
+        const det = data.detail || data.error || `Error ${res.status}`;
+        throw new Error(typeof det === "string" ? det : JSON.stringify(det));
+      }
+      if (typeof data.revision === "number") revisionServidor = data.revision;
     } catch (e) {
       console.warn("Autoguardado:", e.message);
+    } finally {
+      guardando = false;
+    }
+  }
+
+  function aplicarProyectoServidor(data, revision) {
+    aplicandoExterno = true;
+    clearTimeout(guardarTimer);
+    vaciarPendiente = false;
+    try {
+      const tituloActivo = document.activeElement && document.activeElement.id === "campo-titulo";
+      const tituloLocal = tituloActivo ? $("campo-titulo").value : null;
+      const salidaActiva = document.activeElement && document.activeElement.id === "campo-salida";
+      const salidaLocal = salidaActiva ? $("campo-salida").value : null;
+      Object.assign(estado, data || {});
+      estado.clips = Array.isArray(data && data.clips) ? data.clips : [];
+      estado.vaciar = false;
+      if (typeof revision === "number") revisionServidor = revision;
+      if (!estado.music) estado.music = { path: null, volume: 0.25 };
+      if (!estado.sting) estado.sting = { path: null, volume: 0.8 };
+      if (!estado.voiceover) estado.voiceover = { path: null, volume: 1.0 };
+      if (!estado.watermark) estado.watermark = { path: null, opacity: 0.85 };
+      if (!estado.hook) estado.hook = { enabled: false, fromRankId: null, seconds: 1.5 };
+      if (tituloLocal != null) estado.title = tituloLocal;
+      if (salidaLocal != null) estado.outputDir = salidaLocal;
+      if (indicePreview >= estado.clips.length) {
+        indicePreview = Math.max(0, estado.clips.length - 1);
+      }
+      sincronizarFormulario();
+      if (tituloLocal != null && $("campo-titulo")) $("campo-titulo").value = tituloLocal;
+      pintarDeck();
+      actualizarResumen();
+    } finally {
+      aplicandoExterno = false;
     }
   }
 
   async function cargarInicial() {
     try {
       const data = await api("/api/proyecto");
-      Object.assign(estado, data);
-      if (!estado.clips) estado.clips = [];
-      if (!estado.music) estado.music = { path: null, volume: 0.25 };
-      if (!estado.sting) estado.sting = { path: null, volume: 0.8 };
-      // Guardar versión para detectar cambios externos
-      await actualizarVersion();
+      let revision = 0;
+      try {
+        const v = await api("/api/proyecto/version");
+        revision = Number(v.revision) || 0;
+      } catch {
+        /* la lista igual se pinta con lo que haya en disco */
+      }
+      aplicarProyectoServidor(data, revision);
     } catch (e) {
       console.warn(e);
+      sincronizarFormulario();
+      pintarDeck();
+      actualizarResumen();
     }
-    sincronizarFormulario();
-    pintarDeck();
-    actualizarResumen();
-    await refrescarPreview();
-    // Iniciar polling de cambios externos (cada 3 segundos)
+    await refrescarPreview(false);
     iniciarPolling();
   }
 
-  async function actualizarVersion() {
+  async function recargarSiHaceFalta(forzar) {
+    if ((aplicandoExterno || guardando) && !forzar) return;
     try {
       const v = await api("/api/proyecto/version");
-      versionProyecto = v.version;
-    } catch {
-      /* ignore */
-    }
-  }
-
-  async function verificarCambiosExternos() {
-    if (exportando) return; // No recargar mientras exporta
-    try {
-      const v = await api("/api/proyecto/version");
-      if (v.version && v.version !== versionProyecto) {
-        console.log("Detectados cambios externos, recargando proyecto...");
-        versionProyecto = v.version;
-        await recargarProyectoExterno();
-      }
-    } catch {
-      /* ignore */
-    }
-  }
-
-  async function recargarProyectoExterno() {
-    try {
+      const rev = Number(v.revision) || 0;
+      const cambiaron = rev !== revisionServidor || Number(v.clips) !== estado.clips.length;
+      if (!forzar && !cambiaron) return;
+      clearTimeout(guardarTimer);
       const data = await api("/api/proyecto");
-      // Solo recargar si hay más clips o cambios significativos
-      if (data.clips && data.clips.length !== estado.clips.length) {
-        Object.assign(estado, data);
-        if (!estado.clips) estado.clips = [];
-        sincronizarFormulario();
-        pintarDeck();
-        actualizarResumen();
-        await refrescarPreview();
-        $("texto-export").textContent = `Se agregaron clips desde otra app (${estado.clips.length} total).`;
-        $("texto-export").className = "tip ok";
+      const antes = estado.clips.length;
+      aplicarProyectoServidor(data, rev);
+      if (forzar || estado.clips.length !== antes) {
+        await refrescarPreview(false);
       }
-    } catch {
-      /* ignore */
+      if (estado.clips.length !== antes) {
+        const aviso = $("texto-export");
+        if (aviso) {
+          aviso.textContent = `Clip nuevo desde BabelDesk. Ahora hay ${estado.clips.length}.`;
+          aviso.className = "tip ok";
+        }
+      }
+    } catch (e) {
+      console.warn("Sync:", e.message || e);
     }
   }
 
   function iniciarPolling() {
     if (pollInterval) clearInterval(pollInterval);
-    pollInterval = setInterval(verificarCambiosExternos, 3000);
-    // También verificar al enfocar la ventana
-    window.addEventListener("focus", verificarCambiosExternos);
+    pollInterval = setInterval(() => {
+      void recargarSiHaceFalta(false);
+    }, 800);
+    window.addEventListener("focus", () => {
+      void recargarSiHaceFalta(false);
+    });
   }
 
   function sincronizarFormulario() {
@@ -568,18 +620,21 @@
     }
     pintarDeck();
     actualizarResumen();
-    void refrescarPreview();
+    programarGuardado();
+    void refrescarPreview(false);
   }
 
   function vaciarDeck() {
     if (!estado.clips.length) return;
     clearTimeout(guardarTimer);
+    vaciarPendiente = true;
     estado.clips = [];
     if (estado.hook) estado.hook.fromRankId = null;
     indicePreview = 0;
     pintarDeck();
     actualizarResumen();
-    void refrescarPreview();
+    void guardarProyecto();
+    void refrescarPreview(false);
   }
 
   async function subirVideos(files) {
@@ -613,8 +668,8 @@
     }
   }
 
-  async function refrescarPreview() {
-    await guardarProyecto();
+  async function refrescarPreview(guardar = true) {
+    if (guardar) await guardarProyecto();
     await refrescarOverlay();
     await prepararVideoPreview();
     const n = estado.clips.length;
@@ -1237,6 +1292,9 @@
 
     $("btn-shuffle").addEventListener("click", mezclarDeck);
     $("btn-clear-deck")?.addEventListener("click", vaciarDeck);
+    $("btn-sincronizar")?.addEventListener("click", () => {
+      void recargarSiHaceFalta(true);
+    });
 
     $("hook-enabled").addEventListener("change", () => {
       estado.hook.enabled = $("hook-enabled").checked;

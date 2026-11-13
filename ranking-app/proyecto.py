@@ -83,6 +83,9 @@ class ProyectoRanking(BaseModel):
     sting: StingConfig = Field(default_factory=StingConfig)
     watermark: WatermarkConfig = Field(default_factory=WatermarkConfig)
     output_dir: str = Field("", alias="outputDir")
+    # Los manda el panel para no pisar un import de BabelDesk. No se guardan en el JSON.
+    revision: int | None = Field(default=None, exclude=True)
+    vaciar: bool = Field(default=False, exclude=True)
     clips: list[ClipProyecto] = Field(default_factory=list)
 
 

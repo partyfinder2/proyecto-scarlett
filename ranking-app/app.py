@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import asyncio
 import base64
+import hashlib
 import json
 import subprocess
 import threading
@@ -17,11 +18,11 @@ import urllib.request
 from fastapi import Body, FastAPI, HTTPException, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
-from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 from babeldesk_entrega import entregar_ranking_en_inbox
 from proyecto import (
+    PROYECTOS_DIR,
     ClipProyecto,
     ErrorProyecto,
     ProyectoRanking,
@@ -50,6 +51,9 @@ IMAGEN_EXT = {".png", ".webp", ".jpg", ".jpeg"}
 
 _export_jobs: dict[str, dict[str, Any]] = {}
 _jobs_lock = threading.Lock()
+_proyecto_lock = threading.Lock()
+_REV_PATH = PROYECTOS_DIR / ".revision"
+BUILD = "2026-11-13-sync1"
 
 app = FastAPI(title="Ranking App", version="1.0.0")
 # BabelDesk corre en file:// (origen "null"). Sin reflejar ese origen, el preflight OPTIONS del fetch falla.
@@ -61,8 +65,20 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-if PANEL_DIR.is_dir():
-    app.mount("/static", StaticFiles(directory=PANEL_DIR), name="static")
+
+@app.middleware("http")
+async def no_cache_panel(request: Request, call_next):
+    response = await call_next(request)
+    path = request.url.path
+    if (
+        path == "/"
+        or path.startswith("/static")
+        or path.startswith("/api/proyecto")
+        or path == "/health"
+    ):
+        response.headers["Cache-Control"] = "no-store, max-age=0"
+        response.headers["Pragma"] = "no-cache"
+    return response
 
 
 class ImportarBody(BaseModel):
@@ -251,17 +267,75 @@ def _payload_babeldesk(proyecto: ProyectoRanking) -> dict:
     }
 
 
+def _leer_revision() -> int:
+    try:
+        return int(_REV_PATH.read_text(encoding="utf-8").strip() or "0")
+    except (OSError, ValueError):
+        return 0
+
+
+def _avanzar_revision() -> int:
+    PROYECTOS_DIR.mkdir(parents=True, exist_ok=True)
+    n = _leer_revision() + 1
+    tmp = _REV_PATH.with_suffix(".revision.tmp")
+    tmp.write_text(str(n), encoding="utf-8")
+    tmp.replace(_REV_PATH)
+    return n
+
+
+def _conflicto_proyecto(actual: ProyectoRanking) -> JSONResponse:
+    return JSONResponse(
+        status_code=409,
+        content={
+            "ok": False,
+            "error": "desactualizado",
+            "detail": "Llegó un clip desde BabelDesk. Recargué la lista para no borrarla.",
+            "revision": _leer_revision(),
+            "clips": len(actual.clips),
+            "proyecto": actual.model_dump(mode="json", by_alias=True),
+        },
+    )
+
+
+def _guardar_bajo_candado(proyecto: ProyectoRanking) -> tuple[Path, int]:
+    ruta = guardar_proyecto(proyecto)
+    revision = _avanzar_revision()
+    return ruta, revision
+
+
 @app.get("/")
 def pagina_principal() -> FileResponse:
     index = PANEL_DIR / "index.html"
     if not index.is_file():
         raise HTTPException(status_code=500, detail="Falta panel/index.html")
-    return FileResponse(index)
+    return FileResponse(index, headers={"Cache-Control": "no-store, max-age=0"})
+
+
+@app.get("/static/{asset_path:path}")
+def panel_estatico(asset_path: str) -> FileResponse:
+    raiz = PANEL_DIR.resolve()
+    destino = (PANEL_DIR / asset_path).resolve()
+    if not destino.is_file() or raiz not in destino.parents:
+        raise HTTPException(status_code=404, detail="No encuentro ese archivo del panel.")
+    media = {
+        ".html": "text/html; charset=utf-8",
+        ".js": "text/javascript; charset=utf-8",
+        ".css": "text/css; charset=utf-8",
+        ".svg": "image/svg+xml",
+        ".png": "image/png",
+        ".webp": "image/webp",
+        ".ico": "image/x-icon",
+    }.get(destino.suffix.lower())
+    return FileResponse(
+        destino,
+        media_type=media,
+        headers={"Cache-Control": "no-store, max-age=0"},
+    )
 
 
 @app.get("/health")
 def health() -> dict:
-    return {"status": "ok"}
+    return {"status": "ok", "build": BUILD}
 
 
 @app.get("/api/proyecto")
@@ -271,13 +345,30 @@ def api_get_proyecto() -> dict:
 
 
 @app.post("/api/proyecto")
-def api_post_proyecto(proyecto: ProyectoRanking) -> dict:
-    ruta = guardar_proyecto(proyecto)
-    return {
-        "ok": True,
-        "ruta": str(ruta),
-        "proyecto": proyecto.model_dump(mode="json", by_alias=True),
-    }
+def api_post_proyecto(proyecto: ProyectoRanking) -> JSONResponse:
+    with _proyecto_lock:
+        actual = cargar_proyecto()
+        rev = _leer_revision()
+        # El panel abierto manda su copia vieja (a veces con clips vacíos) y pisa el import.
+        if proyecto.revision is not None and proyecto.revision != rev:
+            return _conflicto_proyecto(actual)
+        if (
+            proyecto.revision is None
+            and len(proyecto.clips) == 0
+            and len(actual.clips) > 0
+            and not proyecto.vaciar
+        ):
+            return _conflicto_proyecto(actual)
+        ruta, nueva = _guardar_bajo_candado(proyecto)
+    return JSONResponse(
+        {
+            "ok": True,
+            "ruta": str(ruta),
+            "revision": nueva,
+            "clips": len(proyecto.clips),
+            "proyecto": proyecto.model_dump(mode="json", by_alias=True),
+        }
+    )
 
 
 @app.post("/api/importar")
@@ -360,39 +451,40 @@ async def api_importar_y_guardar(body: ImportarYGuardarBody) -> dict:
     if not nuevos:
         raise HTTPException(status_code=400, detail="No se pudo importar ningún video.")
 
-    # Cargar proyecto actual
-    proyecto = cargar_proyecto()
-
-    # Convertir a ClipProyecto y agregar
-    for clip_meta in nuevos:
-        from proyecto import ClipProyecto
-        nuevo_clip = ClipProyecto(
-            id=clip_meta["id"],
-            path=clip_meta["path"],
-            label=clip_meta.get("label", "Sin nombre"),
-            texto_lista=clip_meta.get("textoLista", ""),
-            trim_in=clip_meta.get("trimIn", 0.0),
-            trim_out=clip_meta.get("trimOut", 5.0),
-            keep_audio=clip_meta.get("keepAudio", False),
-        )
-        if len(proyecto.clips) >= 10:
-            raise HTTPException(status_code=400, detail="El ranking ya tiene 10 clips (máximo).")
+    with _proyecto_lock:
+        proyecto = cargar_proyecto()
+        if len(proyecto.clips) + len(nuevos) > 10:
+            raise HTTPException(
+                status_code=400,
+                detail=(
+                    f"El ranking ya tiene {len(proyecto.clips)} clips y el máximo es 10. "
+                    "Vacía la lista o quita alguno antes de enviar más."
+                ),
+            )
+        entrantes = [
+            ClipProyecto(
+                id=clip_meta["id"],
+                path=clip_meta["path"],
+                label=clip_meta.get("label", "Sin nombre"),
+                texto_lista=clip_meta.get("textoLista", ""),
+                trim_in=clip_meta.get("trimIn", 0.0),
+                trim_out=clip_meta.get("trimOut", 5.0),
+                keep_audio=clip_meta.get("keepAudio", False),
+            )
+            for clip_meta in nuevos
+        ]
         if body.al_inicio:
-            proyecto.clips.insert(0, nuevo_clip)
+            proyecto.clips[0:0] = entrantes
         else:
-            # Agregar antes del #1 (penúltimo) para que quede como nuevo #2
-            if len(proyecto.clips) > 0:
-                proyecto.clips.insert(len(proyecto.clips) - 1, nuevo_clip)
-            else:
-                proyecto.clips.append(nuevo_clip)
-
-    # Guardar proyecto
-    ruta = guardar_proyecto(proyecto)
+            # Al final de la lista: el clip nuevo queda como #1.
+            proyecto.clips.extend(entrantes)
+        ruta, revision = _guardar_bajo_candado(proyecto)
 
     return {
         "ok": True,
         "clips_agregados": len(nuevos),
         "total_clips": len(proyecto.clips),
+        "revision": revision,
         "proyecto_guardado": str(ruta),
         "clips": nuevos,
     }
@@ -400,12 +492,11 @@ async def api_importar_y_guardar(body: ImportarYGuardarBody) -> dict:
 
 @app.get("/api/proyecto/version")
 def api_proyecto_version() -> dict:
-    """Devuelve un hash del proyecto para detectar cambios desde el panel."""
-    import hashlib
+    """Hash + revisión para que el panel detecte imports de BabelDesk."""
     p = cargar_proyecto()
     contenido = p.model_dump_json(by_alias=True)
     h = hashlib.md5(contenido.encode()).hexdigest()[:12]
-    return {"version": h, "clips": len(p.clips)}
+    return {"version": h, "clips": len(p.clips), "revision": _leer_revision()}
 
 
 @app.post("/api/importar-imagen")
