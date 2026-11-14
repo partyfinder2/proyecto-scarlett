@@ -8,6 +8,8 @@ if not exist "%DST%" (
 )
 for %%F in (
   package.json
+  src\connectors\downloader.ts
+  src\connectors\videoCutter.ts
   src\main\db.ts
   src\main\inbox-watcher.ts
   src\main\inbox-watcher.test.ts

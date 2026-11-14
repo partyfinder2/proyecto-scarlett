@@ -1,6 +1,24 @@
-# proyecto-scarlett — cuatro carpetas
+# metodo-scarlett — Reglas Principales y Candados de Estabilidad
 
-1. `fabrica-de-contenido/` es la app activa de automatización. Sus reglas están en `fabrica-de-contenido/.cursorrules`.
-2. `ranking-app/` es la app local de Ranking Shorts (puerto 5002). Sus reglas están en `ranking-app/.cursorrules` y su tablero en `ranking-app/ESTADO_AVANCE.md`. No mezclarla con `fabrica-de-contenido/`.
-3. `babeldesk/` es el respaldo de BabelDesk. No mezclarlo con la fábrica ni con ranking-app.
-4. `libro/` es el manuscrito, en pausa. No editarlo salvo que Pablo lo pida.
+Este repositorio contiene las 3 aplicaciones clave del método Scarlett:
+1. `babeldesk/`: Aplicación de escritorio Electron para descarga y preparación de videos.
+2. `fabrica-de-contenido/`: Automatización de contenido masivo (Puerto 5001).
+3. `ranking-app/`: Aplicación de ranking shorts verticales (Puerto 5002).
+4. `libro/`: Manuscrito del método (en pausa, PROHIBIDO modificar salvo orden de Pablo).
+
+## 🔒 CANDADOS DE CÓDIGO Y ESTABILIDAD (OBLIGATORIO LEER)
+Antes de realizar cualquier modificación, consulta el archivo:
+`CONTRATO_ESTABLE_TRES_APPS.md`
+
+### REGLAS DE ORO:
+1. **ZONAS SELLADAS:**
+   - **BabelDesk:** Prohibido limitar la calidad de descarga de videos (debe soportar hasta 4K nativo para recorte 9:16). Prohibido romper el botón 🏆 y el IPC `ranking:import` ni la lectura de archivos gemelos `.json` en Inbox.
+   - **Fábrica de Contenido (5001):** Prohibido cambiar el puerto 5001. La pestaña y endpoints de 🏆 Rankings (`/api/rankings`, entrega atómica a BabelDesk con `babeldesk_entrega.py`) están sellados.
+   - **Rankings Scarlett (5002):** Prohibido cambiar el puerto 5002. Los parámetros de render (CRF 15, Lanczos, unsharp, `-c copy`) y la sincronización SSE en vivo (`/api/proyecto/stream`) están sellados.
+2. **VENTANAS DE ESCRITORIO PROPIAS (NUNCA GOOGLE CHROME):**
+   - Tanto Fábrica como Rankings Scarlett abren con ventanas nativas del sistema (WebView2 vía `pywebview` con AppUserModelID e icono `.ico` propio).
+   - **ESTRICTAMENTE PROHIBIDO** lanzar las aplicaciones usando Google Chrome o navegadores con pestañas. Deben operar como software de escritorio independiente.
+3. **TEST DE CANDADOS OBLIGATORIO:**
+   - Cada vez que se trabaje en una actualización, se debe correr:
+     `python tests/test_candados_tres_apps.py`
+     Si falla, el cambio no está autorizado.

@@ -1,33 +1,20 @@
-' Abre la Fabrica como ventana propia, sin pestanas del navegador.
+' Fábrica de Contenido — ventana propia (WebView2). Sin pestañas del navegador.
 Option Explicit
-Dim shell, fso, base, http, ok, chrome, perfil, cmd
+Dim shell, fso, base, py, script
 Set shell = CreateObject("WScript.Shell")
 Set fso = CreateObject("Scripting.FileSystemObject")
 base = fso.GetParentFolderName(fso.GetParentFolderName(WScript.ScriptFullName))
-shell.CurrentDirectory = base
+script = base & "\scripts\ventana_fabrica.py"
+If Not fso.FileExists(script) Then
+  MsgBox "No encuentro scripts\ventana_fabrica.py en " & base, vbCritical, "Fábrica de Contenido"
+  WScript.Quit 1
+End If
 
-ok = False
+py = "pythonw"
 On Error Resume Next
-Set http = CreateObject("MSXML2.ServerXMLHTTP.6.0")
-http.setTimeouts 1500, 1500, 1500, 1500
-http.Open "GET", "http://127.0.0.1:5001/health", False
-http.Send
-If Err.Number = 0 Then
-  If http.Status = 200 Then ok = True
+shell.Run """" & py & """ """ & script & """", 1, False
+If Err.Number <> 0 Then
+  Err.Clear
+  py = "python"
+  shell.Run """" & py & """ """ & script & """", 1, False
 End If
-Err.Clear
-On Error GoTo 0
-
-If Not ok Then
-  shell.Run "cmd /c python -m uvicorn worker.app:app --host 127.0.0.1 --port 5001", 0, False
-  WScript.Sleep 3500
-End If
-
-chrome = "C:\Program Files\Google\Chrome\Application\chrome.exe"
-If Not fso.FileExists(chrome) Then
-  chrome = "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"
-End If
-
-perfil = shell.ExpandEnvironmentStrings("%LOCALAPPDATA%") & "\FabricaDeContenido\perfil"
-cmd = """" & chrome & """ --app=http://127.0.0.1:5001/ --user-data-dir=""" & perfil & """ --no-first-run --no-default-browser-check --disable-session-crashed-bubble"
-shell.Run cmd, 1, False

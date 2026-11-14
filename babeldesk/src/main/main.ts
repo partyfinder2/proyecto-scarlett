@@ -298,8 +298,10 @@ function rankingLauncherPath(): string | null {
   const home = process.env.USERPROFILE || process.env.HOME || "";
   const candidates = [
     process.env.RANKING_LAUNCHER,
+    path.join(ROOT, "..", "ranking-app", "scripts", "abrir_ranking.vbs"),
     path.join(ROOT, "..", "VENUZ-Complete-App", "metodo-scarlett", "ranking-app", "scripts", "abrir_ranking.vbs"),
     path.join(home, "Downloads", "VENUZ-Complete-App", "metodo-scarlett", "ranking-app", "scripts", "abrir_ranking.vbs"),
+    path.join(home, "Downloads", "BabelDesk", "..", "VENUZ-Complete-App", "metodo-scarlett", "ranking-app", "scripts", "abrir_ranking.vbs"),
   ].filter((p): p is string => Boolean(p));
   for (const candidate of candidates) {
     if (fs.existsSync(candidate)) return candidate;

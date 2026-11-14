@@ -260,14 +260,10 @@ export async function downloadVideo(opts: DownloadOptions): Promise<DownloadResu
   const finalFilename = path.basename(targetFilePath);
 
   // Seleccionar formato óptimo:
-  // YouTube (corto y largo): 1080p mp4 (o mejor disponible si < 1080p)
-  // TikTok / IG / FB / X: mejor calidad disponible
-  let formatArg = "bestvideo[height<=1080][ext=mp4]+bestaudio[ext=m4a]/best[height<=1080][ext=mp4]/bestvideo[height<=1080]+bestaudio/best";
-  if (netInfo.key !== "youtube") {
-    // Preferir stream sin marca cuando el extractor lo expone (TikTok/IG varía por versión yt-dlp).
-    formatArg =
-      "bestvideo*[ext=mp4]+bestaudio/bestvideo+bestaudio/best[ext=mp4]/best";
-  }
+  // Máxima fidelidad y resolución nativa disponible (4K/1440p/1080p) sin cap artificial,
+  // para que al hacer encuadre/recorte vertical 9:16 en ranking-app o BabelDesk no pierda nitidez.
+  let formatArg =
+    "bestvideo*[ext=mp4]+bestaudio[ext=m4a]/bestvideo*+bestaudio/best[ext=mp4]/best";
 
   const ytdlpTempDir = path.join(os.tmpdir(), "babeldesk-ytdlp");
   if (!fs.existsSync(ytdlpTempDir)) fs.mkdirSync(ytdlpTempDir, { recursive: true });

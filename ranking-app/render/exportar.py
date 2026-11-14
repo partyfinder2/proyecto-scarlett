@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import shutil
 import subprocess
 import threading
 import uuid
@@ -17,6 +18,7 @@ from .sting import STING_PATH, asegurar_sting_default
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 CACHE_EXPORT = BASE_DIR / "cache" / "export"
+PREVIEW_ULTIMO = CACHE_EXPORT / "preview" / "ultimo_preview.mp4"
 OUTPUT_DEFAULT = BASE_DIR / "output"
 
 
@@ -192,16 +194,46 @@ def _validar_clips(clips: list[ClipExport]) -> None:
 
 
 def _vf_puesto(framing: str, ancho: int = 1080, alto: int = 1920) -> str:
+    sharp = "unsharp=5:5:0.5:5:5:0.0,"
     if (framing or "fill").lower() == "fit":
         return (
-            f"scale={ancho}:{alto}:force_original_aspect_ratio=decrease:flags=lanczos,"
+            f"scale={ancho}:{alto}:force_original_aspect_ratio=decrease:flags=lanczos+accurate_rnd,"
             f"pad={ancho}:{alto}:(ow-iw)/2:(oh-ih)/2:color=black,"
-            "fps=30,format=yuv420p,setsar=1"
+            f"{sharp}fps=30,format=yuv420p,setsar=1"
         )
     return (
-        f"scale={ancho}:{alto}:force_original_aspect_ratio=increase:flags=lanczos,"
-        f"crop={ancho}:{alto},fps=30,format=yuv420p,setsar=1"
+        f"scale={ancho}:{alto}:force_original_aspect_ratio=increase:flags=lanczos+accurate_rnd,"
+        f"crop={ancho}:{alto},{sharp}fps=30,format=yuv420p,setsar=1"
     )
+
+
+def _remux_faststart(
+    ffmpeg: str,
+    video_in: Path,
+    video_out: Path,
+    ses: ExportSession,
+) -> None:
+    """Chrome necesita moov al inicio para reproducir sin descargar todo el MP4."""
+    tmp = video_out
+    if video_in.resolve() == video_out.resolve():
+        tmp = video_out.parent / f"_faststart_{video_out.name}"
+    cmd = [
+        ffmpeg,
+        "-y",
+        "-hide_banner",
+        "-loglevel",
+        "error",
+        "-i",
+        str(video_in),
+        "-c",
+        "copy",
+        "-movflags",
+        "+faststart",
+        str(tmp),
+    ]
+    _ejecutar(cmd, ses, tmp)
+    if tmp != video_out:
+        tmp.replace(video_out)
 
 
 def _render_puesto(
@@ -211,18 +243,35 @@ def _render_puesto(
     video_out: Path,
     framing: str,
     ses: ExportSession,
+    *,
+    rapido: bool = False,
+    watermark_path: Path | None = None,
+    watermark_opacity: float = 0.85,
 ) -> None:
-    """Un solo encode 1080×1920. CRF 17 conserva el detalle del original."""
+    """Un solo encode 1080×1920 de máxima fidelidad (CRF 15 + tune film). Combina overlay y watermark en una sola pasada."""
     duracion = float(clip.trim_out) - float(clip.trim_in)
     meta = inspeccionar_clip(clip.path)
     usar_audio = bool(clip.keep_audio and meta["tiene_audio"])
     ancho, alto = 1080, 1920
     vf = _vf_puesto(framing, ancho, alto)
-    video = (
-        f"[0:v]{vf}[base];"
-        f"[1:v]scale={ancho}:{alto}:flags=lanczos,format=rgba[ov];"
-        f"[base][ov]overlay=0:0:format=auto[v]"
-    )
+    tiene_wm = bool(watermark_path and Path(watermark_path).is_file())
+
+    if tiene_wm:
+        op = max(0.0, min(1.0, float(watermark_opacity)))
+        video = (
+            f"[0:v]{vf}[base];"
+            f"[1:v]scale={ancho}:{alto}:flags=lanczos,format=rgba[ov];"
+            f"[2:v]format=rgba,colorchannelmixer=aa={op:.3f}[wm];"
+            f"[base][ov]overlay=0:0:format=auto[vtmp];"
+            f"[vtmp][wm]overlay=main_w-overlay_w-40:main_h-overlay_h-140[v]"
+        )
+    else:
+        video = (
+            f"[0:v]{vf}[base];"
+            f"[1:v]scale={ancho}:{alto}:flags=lanczos,format=rgba[ov];"
+            f"[base][ov]overlay=0:0:format=auto[v]"
+        )
+
     cmd = [
         ffmpeg,
         "-y",
@@ -236,6 +285,9 @@ def _render_puesto(
         "-i",
         str(overlay_png),
     ]
+    if tiene_wm:
+        cmd.extend(["-i", str(watermark_path)])
+
     if usar_audio:
         cmd.extend(
             [
@@ -250,6 +302,7 @@ def _render_puesto(
             ]
         )
     else:
+        anull_idx = 3 if tiene_wm else 2
         cmd.extend(
             [
                 "-f",
@@ -263,7 +316,7 @@ def _render_puesto(
                 "-map",
                 "[v]",
                 "-map",
-                "2:a:0",
+                f"{anull_idx}:a:0",
                 "-shortest",
             ]
         )
@@ -272,11 +325,15 @@ def _render_puesto(
             "-c:v",
             "libx264",
             "-preset",
-            "fast",
+            "fast" if rapido else "medium",
             "-crf",
-            "17",
+            "15",
+            "-tune",
+            "film",
             "-pix_fmt",
             "yuv420p",
+            "-r",
+            "30",
             "-c:a",
             "aac",
             "-b:a",
@@ -340,13 +397,22 @@ def _superponer_overlay(
     _ejecutar(cmd, ses, video_out)
 
 
-def _concatenar(ffmpeg: str, partes: list[Path], destino: Path, ses: ExportSession) -> None:
+def _concatenar(
+    ffmpeg: str,
+    partes: list[Path],
+    destino: Path,
+    ses: ExportSession,
+    *,
+    preview: bool = False,
+) -> None:
     lista = destino.parent / "concat_list.txt"
     lineas = []
     for p in partes:
         ruta = str(p.resolve()).replace("\\", "/").replace("'", "'\\''")
         lineas.append(f"file '{ruta}'")
     lista.write_text("\n".join(lineas) + "\n", encoding="utf-8")
+
+    # 1. Intentar SIEMPRE concat demuxer con stream copy (instantáneo, sin pérdida de calidad)
     cmd = [
         ffmpeg,
         "-y",
@@ -361,13 +427,23 @@ def _concatenar(ffmpeg: str, partes: list[Path], destino: Path, ses: ExportSessi
         str(lista),
         "-c",
         "copy",
+        "-movflags",
+        "+faststart",
         str(destino),
     ]
-    _ejecutar(cmd, ses, destino)
+    try:
+        _ejecutar(cmd, ses, destino)
+    except Exception:
+        pass
+
+    # 2. Solo si no se generó o quedó corrupto, fallback a re-encode de alta fidelidad (CRF 15)
     if not destino.exists() or destino.stat().st_size < 1000:
         cmd_re = [
             ffmpeg,
             "-y",
+            "-hide_banner",
+            "-loglevel",
+            "error",
             "-f",
             "concat",
             "-safe",
@@ -377,9 +453,11 @@ def _concatenar(ffmpeg: str, partes: list[Path], destino: Path, ses: ExportSessi
             "-c:v",
             "libx264",
             "-preset",
-            "fast",
+            "fast" if preview else "medium",
             "-crf",
-            "17",
+            "15",
+            "-tune",
+            "film",
             "-pix_fmt",
             "yuv420p",
             "-r",
@@ -439,7 +517,9 @@ def _aplicar_watermark(
         "-preset",
         "fast",
         "-crf",
-        "17",
+        "15",
+        "-tune",
+        "film",
         "-pix_fmt",
         "yuv420p",
         "-movflags",
@@ -458,6 +538,8 @@ def _mezclar_audio_final(
     duraciones: list[float],
     opciones: OpcionesExport,
     ses: ExportSession,
+    *,
+    watermark_ya_aplicada: bool = False,
 ) -> None:
     tiene_musica = bool(opciones.music_path and Path(opciones.music_path).is_file())
     tiene_voz = bool(opciones.voiceover_path and Path(opciones.voiceover_path).is_file())
@@ -466,7 +548,7 @@ def _mezclar_audio_final(
 
     if not tiene_musica and not usar_sting and not tiene_voz:
         salida = video_out
-        if opciones.watermark_path and Path(opciones.watermark_path).is_file():
+        if not watermark_ya_aplicada and opciones.watermark_path and Path(opciones.watermark_path).is_file():
             _aplicar_watermark(
                 ffmpeg,
                 video_in,
@@ -583,7 +665,7 @@ def _mezclar_audio_final(
     ]
     _ejecutar(cmd, ses, paso_audio)
 
-    if opciones.watermark_path and Path(opciones.watermark_path).is_file():
+    if not watermark_ya_aplicada and opciones.watermark_path and Path(opciones.watermark_path).is_file():
         _aplicar_watermark(
             ffmpeg,
             paso_audio,
@@ -609,6 +691,8 @@ def exportar_ranking(
     Orden de reproducción = orden del array clips (arriba primero, abajo #1 al final).
     """
     _validar_clips(opciones.clips)
+    if opciones.preview:
+        opciones.usar_sting_en_cortes = False
     jid = job_id or str(uuid.uuid4())[:8]
     ses = ExportSession()
     _sesiones[jid] = ses
@@ -628,7 +712,7 @@ def exportar_ranking(
     salida_final = out_dir / nombre
     ses.salida_parcial = salida_final
 
-    total_pasos = len(opciones.clips) + 3
+    total_pasos = len(opciones.clips) + (4 if opciones.preview else 3)
     paso = 0
 
     def tick(msg: str) -> None:
@@ -640,6 +724,13 @@ def exportar_ranking(
     puestos = _lista_puestos(opciones.clips)
     partes_overlay: list[Path] = []
     duraciones: list[float] = []
+
+    wm_path = (
+        Path(opciones.watermark_path)
+        if opciones.watermark_path and Path(opciones.watermark_path).is_file()
+        else None
+    )
+    wm_op = float(opciones.watermark_opacity)
 
     try:
         hook_pack = _clip_hook(opciones)
@@ -660,7 +751,17 @@ def exportar_ranking(
                 accent=opciones.accent,
             )
             parte_h = temp / "parte_hook.mp4"
-            _render_puesto(ffmpeg, hook_clip, png_h, parte_h, opciones.framing, ses)
+            _render_puesto(
+                ffmpeg,
+                hook_clip,
+                png_h,
+                parte_h,
+                opciones.framing,
+                ses,
+                rapido=opciones.preview,
+                watermark_path=wm_path,
+                watermark_opacity=wm_op,
+            )
             duraciones.append(d_hook)
             partes_overlay.append(parte_h)
 
@@ -684,18 +785,42 @@ def exportar_ranking(
                 tick(f"Vista previa #{num}…")
             else:
                 tick(f"Preparando puesto #{num}…")
-            _render_puesto(ffmpeg, clip, png, con_overlay, opciones.framing, ses)
+            _render_puesto(
+                ffmpeg,
+                clip,
+                png,
+                con_overlay,
+                opciones.framing,
+                ses,
+                rapido=opciones.preview,
+                watermark_path=wm_path,
+                watermark_opacity=wm_op,
+            )
             partes_overlay.append(con_overlay)
 
         tick("Uniendo segmentos…")
         concat_tmp = temp / "concat_sin_audio_extra.mp4"
-        _concatenar(ffmpeg, partes_overlay, concat_tmp, ses)
+        _concatenar(ffmpeg, partes_overlay, concat_tmp, ses, preview=opciones.preview)
 
         tick("Mezclando audio (música / sting)…")
-        _mezclar_audio_final(ffmpeg, concat_tmp, salida_final, duraciones, opciones, ses)
+        _mezclar_audio_final(
+            ffmpeg,
+            concat_tmp,
+            salida_final,
+            duraciones,
+            opciones,
+            ses,
+            watermark_ya_aplicada=bool(wm_path),
+        )
 
         if not salida_final.is_file():
             raise ErrorExportar("No se generó el archivo final.")
+
+        if opciones.preview:
+            tick("Preparando reproducción en el navegador…")
+            _remux_faststart(ffmpeg, salida_final, salida_final, ses)
+            PREVIEW_ULTIMO.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(salida_final, PREVIEW_ULTIMO)
 
         meta = inspeccionar_clip(str(salida_final))
         return {

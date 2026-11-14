@@ -1,7 +1,10 @@
 ﻿$base = Split-Path $PSScriptRoot -Parent
 $vbs = Join-Path $base "scripts\abrir_ranking.vbs"
 $ico = Join-Path $base "assets\ranking_app.ico"
-$desk = [Environment]::GetFolderPath("Desktop")
+$desk = Join-Path $env:USERPROFILE "OneDrive\Escritorio"
+if (-not (Test-Path $desk)) {
+  $desk = [Environment]::GetFolderPath("Desktop")
+}
 $nombre = "Rankings Scarlett"
 $lnk = Join-Path $desk "$nombre.lnk"
 $viejo = Join-Path $desk "Ranking App.lnk"
@@ -14,7 +17,7 @@ $sc.Arguments = "`"$vbs`""
 $sc.WorkingDirectory = $base
 $sc.IconLocation = "$ico,0"
 $sc.Description = "Rankings Scarlett — videos Top verticales para TikTok e Instagram"
-$sc.WindowStyle = 1
+$sc.WindowStyle = 7
 $sc.Save()
 
 Write-Host "Acceso directo creado: $lnk"

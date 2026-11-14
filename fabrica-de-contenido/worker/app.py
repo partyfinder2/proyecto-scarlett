@@ -16,7 +16,7 @@ from datetime import datetime
 from pathlib import Path
 
 from fastapi import FastAPI, File, HTTPException, UploadFile
-from fastapi.responses import FileResponse, StreamingResponse
+from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
@@ -371,6 +371,21 @@ def health():
     return {"status": "vivo", "hora": datetime.now().isoformat()}
 
 
+@app.get("/manifest.webmanifest")
+def manifest_web():
+    return JSONResponse(
+        {
+            "name": "Fábrica de Contenido",
+            "short_name": "Fábrica",
+            "start_url": "/",
+            "display": "standalone",
+            "background_color": "#090b10",
+            "theme_color": "#14532d",
+            "lang": "es",
+        }
+    )
+
+
 @app.get("/api/inicio")
 def api_inicio():
     datos = resumen_inicio()
@@ -589,6 +604,7 @@ class RecibirRankingBody(BaseModel):
     mp4_path: str
     title: str = ""
     caption: str = ""
+    miniatura_path: str | None = None
     puestos: list[dict] = []
 
 
@@ -612,11 +628,29 @@ def api_recibir_ranking(body: RecibirRankingBody):
         final.unlink()
     temporal.replace(final)
 
+    # Miniatura
+    miniatura_final = None
+    if body.miniatura_path and Path(body.miniatura_path).is_file():
+        jpg_dest = destino_dir / f"{final.stem}.jpg"
+        shutil.copy2(Path(body.miniatura_path), jpg_dest)
+        miniatura_final = str(jpg_dest)
+    else:
+        # Generar thumbnail con ffmpeg
+        jpg_dest = destino_dir / f"{final.stem}.jpg"
+        try:
+            cmd = ["ffmpeg", "-y", "-ss", "1.0", "-i", str(final), "-frames:v", "1", "-q:v", "1", str(jpg_dest)]
+            subprocess.run(cmd, capture_output=True, timeout=30)
+            if jpg_dest.is_file():
+                miniatura_final = str(jpg_dest)
+        except Exception:
+            miniatura_final = None
+
     meta = {
-        "title": body.title,
-        "caption": body.caption or body.title,
+        "title": body.title or final.stem,
+        "caption": body.caption or body.title or final.stem,
         "puestos": body.puestos,
         "origen": str(origen),
+        "miniatura": f"{final.stem}.jpg" if miniatura_final else None,
         "recibido_en": datetime.now().isoformat(timespec="seconds"),
         "fuente": "ranking-app",
     }
@@ -645,10 +679,96 @@ def api_recibir_ranking(body: RecibirRankingBody):
     return {
         "ok": True,
         "ruta": str(final),
+        "stem": final.stem,
         "video_id": video_id,
         "canal_id": canal_id,
         "mensaje": f"Ranking guardado en Fábrica: {final.name}",
     }
+
+
+@app.get("/api/rankings")
+def api_listar_rankings():
+    """Lista todos los rankings recibidos desde ranking-app con sus metadatos."""
+    destino_dir = BASE_DIR / "cache" / "desde-ranking"
+    if not destino_dir.exists():
+        return {"rankings": []}
+
+    items = []
+    for json_file in destino_dir.glob("*.json"):
+        mp4_file = json_file.with_suffix(".mp4")
+        if not mp4_file.is_file():
+            continue
+        try:
+            meta = json.loads(json_file.read_text(encoding="utf-8"))
+        except Exception:
+            meta = {}
+        stem = json_file.stem
+        jpg_file = json_file.with_suffix(".jpg")
+        items.append({
+            "stem": stem,
+            "title": meta.get("title") or stem,
+            "caption": meta.get("caption") or meta.get("title") or stem,
+            "recibido_en": meta.get("recibido_en") or "",
+            "tiene_miniatura": jpg_file.is_file(),
+            "miniatura_url": f"/api/rankings/{stem}/miniatura" if jpg_file.is_file() else None,
+            "video_url": f"/api/rankings/{stem}/video",
+            "mp4_path": str(mp4_file.resolve()),
+            "tamano_mb": round(mp4_file.stat().st_size / (1024 * 1024), 2),
+        })
+
+    items.sort(key=lambda x: x["recibido_en"], reverse=True)
+    return {"rankings": items}
+
+
+@app.get("/api/rankings/{stem}/video")
+def api_ranking_video(stem: str):
+    destino_dir = BASE_DIR / "cache" / "desde-ranking"
+    mp4 = destino_dir / f"{stem}.mp4"
+    if not mp4.is_file():
+        raise HTTPException(404, "Video no encontrado.")
+    return FileResponse(str(mp4), media_type="video/mp4", filename=f"{stem}.mp4")
+
+
+@app.get("/api/rankings/{stem}/miniatura")
+def api_ranking_miniatura(stem: str):
+    destino_dir = BASE_DIR / "cache" / "desde-ranking"
+    jpg = destino_dir / f"{stem}.jpg"
+    if not jpg.is_file():
+        raise HTTPException(404, "Miniatura no encontrada.")
+    return FileResponse(str(jpg), media_type="image/jpeg", filename=f"{stem}.jpg")
+
+
+@app.post("/api/rankings/{stem}/enviar-a-babeldesk")
+def api_ranking_enviar_babeldesk(stem: str):
+    destino_dir = BASE_DIR / "cache" / "desde-ranking"
+    mp4 = destino_dir / f"{stem}.mp4"
+    if not mp4.is_file():
+        raise HTTPException(404, "Video no encontrado.")
+    meta = {}
+    json_path = destino_dir / f"{stem}.json"
+    if json_path.is_file():
+        try:
+            meta = json.loads(json_path.read_text(encoding="utf-8"))
+        except Exception:
+            pass
+
+    jpg = destino_dir / f"{stem}.jpg"
+    miniatura = str(jpg) if jpg.is_file() else None
+
+    try:
+        from .babeldesk_entrega import entregar_ranking_en_inbox
+    except ImportError:
+        from babeldesk_entrega import entregar_ranking_en_inbox
+
+    res = entregar_ranking_en_inbox(
+        mp4_path=str(mp4),
+        miniatura_path=miniatura,
+        title=meta.get("title") or stem,
+        caption=meta.get("caption") or meta.get("title") or stem,
+    )
+    if not res.get("ok"):
+        raise HTTPException(500, res.get("error") or "No se pudo entregar en BabelDesk.")
+    return res
 
 
 @app.get("/api/status/{task_id}")

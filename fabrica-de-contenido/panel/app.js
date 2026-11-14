@@ -1,5 +1,6 @@
 const SECCIONES = [
   ["inicio", "🏠 Inicio"],
+  ["rankings", "🏆 Rankings"],
   ["lote", "📦 Lote Afiliado"],
   ["canales", "📡 Mis 10 Canales"],
   ["crear", "🎬 Crear Video"],
@@ -629,10 +630,137 @@ async function vistaConfig() {
   };
 }
 
+async function vistaRankings() {
+  const data = await api("/api/rankings");
+  const lista = data.rankings || [];
+
+  const filas = lista.map((r, i) => `
+    <tr class="border-t border-linea text-sm hover:bg-zinc-800/40 transition">
+      <td class="p-3 font-semibold text-emerald-400">#${i + 1}</td>
+      <td class="p-3">
+        <div class="flex items-center gap-3">
+          ${r.miniatura_url
+            ? `<img src="${r.miniatura_url}" class="w-12 h-16 object-cover rounded-lg border border-linea shadow" alt="thumb" />`
+            : `<div class="w-12 h-16 rounded-lg bg-zinc-800 border border-linea flex items-center justify-center text-xs text-zinc-500">🎬</div>`
+          }
+          <div>
+            <p class="font-semibold text-zinc-100">${r.title}</p>
+            <p class="text-xs text-zinc-400">${(r.recibido_en || "").replace("T", " ")} · ${r.tamano_mb} MB</p>
+          </div>
+        </div>
+      </td>
+      <td class="p-3 text-center whitespace-nowrap">
+        <button data-ver-ranking="${r.stem}" class="rounded-xl bg-zinc-800 hover:bg-zinc-700 px-3 py-1.5 font-medium text-xs border border-linea transition" title="Previsualizar video">
+          ▶️ Previsualizar
+        </button>
+      </td>
+      <td class="p-3 text-right whitespace-nowrap">
+        <button data-enviar-babeldesk="${r.stem}" class="rounded-xl bg-emerald-600 hover:bg-emerald-500 px-3.5 py-1.5 font-semibold text-xs transition shadow" title="Enviar a BabelDesk Inbox">
+          🚀 Enviar a BabelDesk
+        </button>
+      </td>
+    </tr>
+  `).join("");
+
+  $("vista").innerHTML = `
+    <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+      <div>
+        <h2 class="text-2xl font-semibold">🏆 Rankings de Videos</h2>
+        <p class="text-zinc-400 text-sm mt-1">Videos completos exportados desde Ranking App (:5002) listos para previsualizar y publicar.</p>
+      </div>
+      <span class="rounded-full bg-emerald-950 border border-emerald-700/60 text-emerald-300 text-xs px-3.5 py-1.5 font-medium">
+        Total: ${lista.length} videos
+      </span>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      <div class="lg:col-span-7 rounded-2xl border border-linea bg-tarjeta overflow-hidden shadow-lg">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left">
+            <thead class="bg-zinc-900/80 text-zinc-400 text-xs uppercase tracking-wider">
+              <tr>
+                <th class="p-3">#</th>
+                <th class="p-3">Video / Título</th>
+                <th class="p-3 text-center">Ver</th>
+                <th class="p-3 text-right">Acción</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${filas || `
+                <tr>
+                  <td colspan="4" class="p-8 text-center text-zinc-500 text-sm">
+                    No has recibido ningún video de Ranking App aún.<br/>
+                    Abre <a href="http://127.0.0.1:5002" target="_blank" class="text-emerald-400 underline mt-2 inline-block">Ranking App (:5002)</a> y pulsa «Enviar a Fábrica».
+                  </td>
+                </tr>
+              `}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="lg:col-span-5 rounded-2xl border border-linea bg-tarjeta p-5 shadow-lg sticky top-24">
+        <h3 class="font-semibold text-sm text-zinc-300 mb-3 flex items-center gap-2">
+          <span>📺 Previsualización en Alta Calidad</span>
+        </h3>
+        <div id="reproductor-ranking" class="flex flex-col items-center justify-center min-h-[360px] bg-zinc-950/60 rounded-xl border border-linea/60 p-3">
+          ${lista.length > 0
+            ? `<video controls playsinline class="w-full max-h-[60vh] rounded-xl border border-linea shadow-2xl" src="${lista[0].video_url}"></video>
+               <div class="w-full mt-3 text-left">
+                 <p class="font-semibold text-sm text-zinc-100">${lista[0].title}</p>
+                 <p class="text-xs text-zinc-400 mt-1">${lista[0].caption || ""}</p>
+                 <button data-enviar-babeldesk="${lista[0].stem}" class="w-full mt-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 py-2.5 font-semibold text-xs transition shadow flex items-center justify-center gap-2">
+                   🚀 Enviar este video a BabelDesk
+                 </button>
+               </div>`
+            : `<p class="text-sm text-zinc-500 text-center">Selecciona un ranking para previsualizar aquí.</p>`
+          }
+        </div>
+      </div>
+    </div>
+  `;
+
+  $("vista").querySelectorAll("[data-ver-ranking]").forEach((btn) => {
+    btn.onclick = () => {
+      const stem = btn.dataset.verRanking;
+      const rank = lista.find((x) => x.stem === stem);
+      if (!rank) return;
+      const box = $("reproductor-ranking");
+      box.innerHTML = `
+        <video controls autoplay playsinline class="w-full max-h-[60vh] rounded-xl border border-linea shadow-2xl" src="${rank.video_url}?ts=${Date.now()}"></video>
+        <div class="w-full mt-3 text-left">
+          <p class="font-semibold text-sm text-zinc-100">${rank.title}</p>
+          <p class="text-xs text-zinc-400 mt-1">${rank.caption || ""}</p>
+          <button data-enviar-babeldesk="${rank.stem}" class="w-full mt-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 py-2.5 font-semibold text-xs transition shadow flex items-center justify-center gap-2">
+            🚀 Enviar este video a BabelDesk
+          </button>
+        </div>
+      `;
+      box.querySelector("[data-enviar-babeldesk]").onclick = () => enviarABabelDesk(rank.stem);
+      box.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    };
+  });
+
+  async function enviarABabelDesk(stem) {
+    try {
+      aviso("Entregando video a BabelDesk Inbox…");
+      const res = await api(`/api/rankings/${stem}/enviar-a-babeldesk`, { method: "POST" });
+      aviso("✅ ¡Entregado con éxito en BabelDesk Inbox! Ya está disponible en Mis Videos.");
+    } catch (err) {
+      aviso(`❌ Error al entregar: ${err.message}`);
+    }
+  }
+
+  $("vista").querySelectorAll("[data-enviar-babeldesk]").forEach((btn) => {
+    btn.onclick = () => enviarABabelDesk(btn.dataset.enviarBabeldesk);
+  });
+}
+
 async function mostrar() {
   $("vista").innerHTML = `<p class="text-zinc-400">Cargando…</p>`;
   try {
     if (seccion === "inicio") await vistaInicio();
+    else if (seccion === "rankings") await vistaRankings();
     else if (seccion === "lote") await vistaLote();
     else if (seccion === "canales") await vistaCanales();
     else if (seccion === "crear") await vistaCrear();

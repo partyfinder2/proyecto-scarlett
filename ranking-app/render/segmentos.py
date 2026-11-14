@@ -85,15 +85,16 @@ def inspeccionar_clip(ruta: str) -> dict:
 
 def _cadena_video_framing(framing: str) -> str:
     f = (framing or "fill").lower()
+    sharp = "unsharp=5:5:0.5:5:5:0.0,"
     if f == "fit":
         return (
-            "scale=1080:1920:force_original_aspect_ratio=decrease:flags=lanczos,"
+            "scale=1080:1920:force_original_aspect_ratio=decrease:flags=lanczos+accurate_rnd,"
             "pad=1080:1920:(ow-iw)/2:(oh-ih)/2:color=black,"
-            "fps=30,format=yuv420p,setsar=1"
+            f"{sharp}fps=30,format=yuv420p,setsar=1"
         )
     return (
-        "scale=1080:1920:force_original_aspect_ratio=increase:flags=lanczos,crop=1080:1920,"
-        "fps=30,format=yuv420p,setsar=1"
+        "scale=1080:1920:force_original_aspect_ratio=increase:flags=lanczos+accurate_rnd,crop=1080:1920,"
+        f"{sharp}fps=30,format=yuv420p,setsar=1"
     )
 
 
@@ -146,7 +147,9 @@ def normalizar_segmento(
             "-preset",
             "fast",
             "-crf",
-            "17",
+            "15",
+            "-tune",
+            "film",
             "-pix_fmt",
             "yuv420p",
             "-r",
@@ -192,7 +195,9 @@ def normalizar_segmento(
             "-preset",
             "fast",
             "-crf",
-            "17",
+            "15",
+            "-tune",
+            "film",
             "-pix_fmt",
             "yuv420p",
             "-r",

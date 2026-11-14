@@ -303,9 +303,26 @@ async function enviarPathARanking(filePath) {
   }
   if (data?.ok) {
     alert(
-      `✅ Video enviado a Rankings Scarlett.\n\nAhora tienes ${data.total_clips} clips en el ranking.\n(La ventana de Rankings se actualiza sola)`
+      `✅ Video enviado a Rankings Scarlett.\n\nAhora tienes ${data.total_clips} clip(s) en el ranking.\n(La ventana de Rankings se actualiza sola en 1–2 s; si no los ves, pulsa F5 en Rankings.)`
     );
   } else if (!data?.cancelled) {
+    if (data?.error && (data.error.includes("10 clips") || data.error.includes("máximo"))) {
+      const vaciar = confirm(
+        "El ranking en Rankings Scarlett ya alcanzó el máximo de 10 clips.\n\n¿Deseas vaciarlo para empezar un ranking nuevo con este video?"
+      );
+      if (vaciar) {
+        try {
+          await fetch("http://127.0.0.1:5002/api/proyecto/vaciar", { method: "POST" });
+          data = await api.invoke("ranking:import", filePath);
+          if (data?.ok) {
+            alert("✅ Ranking vaciado e iniciado nuevo ranking con este video (1 clip).");
+            return data;
+          }
+        } catch {
+          /* ignore */
+        }
+      }
+    }
     alert(data?.error || "No se pudo enviar a Ranking App.");
   }
   return data;

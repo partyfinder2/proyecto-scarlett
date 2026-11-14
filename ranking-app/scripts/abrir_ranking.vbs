@@ -1,33 +1,58 @@
-' Abre Ranking App como ventana propia (Chrome --app en :5002).
+' Abre Rankings Scarlett (ventana WebView2). El servidor queda en 127.0.0.1:5002.
 Option Explicit
-Dim shell, fso, base, http, ok, chrome, perfil, cmd
+Dim shell, fso, base, script, py, pyw, cmd, rc, logDir, logFile, ts
 Set shell = CreateObject("WScript.Shell")
 Set fso = CreateObject("Scripting.FileSystemObject")
 base = fso.GetParentFolderName(fso.GetParentFolderName(WScript.ScriptFullName))
+script = base & "\scripts\ventana_ranking.py"
 shell.CurrentDirectory = base
 
-ok = False
-On Error Resume Next
-Set http = CreateObject("MSXML2.ServerXMLHTTP.6.0")
-http.setTimeouts 1500, 1500, 1500, 1500
-http.Open "GET", "http://127.0.0.1:5002/health", False
-http.Send
-If Err.Number = 0 Then
-  If http.Status = 200 Then ok = True
+If Not fso.FileExists(script) Then
+  MsgBox "No encuentro el lanzador:" & vbCrLf & script, vbCritical, "Rankings Scarlett"
+  WScript.Quit 1
 End If
-Err.Clear
+
+pyw = ""
+If fso.FileExists("C:\Python314\pythonw.exe") Then
+  pyw = "C:\Python314\pythonw.exe"
+ElseIf fso.FileExists("C:\Python313\pythonw.exe") Then
+  pyw = "C:\Python313\pythonw.exe"
+Else
+  pyw = shell.ExpandEnvironmentStrings("%LOCALAPPDATA%\Programs\Python\Python314\pythonw.exe")
+  If Not fso.FileExists(pyw) Then pyw = "pythonw"
+End If
+
+py = Replace(pyw, "pythonw.exe", "python.exe")
+If Not fso.FileExists(py) Then py = Replace(pyw, "pythonw", "python")
+
+logDir = shell.ExpandEnvironmentStrings("%LOCALAPPDATA%") & "\RankingApp"
+If Not fso.FolderExists(logDir) Then fso.CreateFolder logDir
+logFile = logDir & "\launcher.log"
+ts = Now
+On Error Resume Next
+Dim tsLog
+Set tsLog = fso.OpenTextFile(logFile, 8, True)
+tsLog.WriteLine CStr(ts) & "  Abriendo con " & pyw
+tsLog.Close
 On Error GoTo 0
 
-If Not ok Then
-  shell.Run "cmd /c python -m uvicorn app:app --host 127.0.0.1 --port 5002", 0, False
-  WScript.Sleep 3500
+cmd = """" & pyw & """ """ & script & """"
+' True = esperar hasta que cierres Rankings (antes era False y parecía que "no abría")
+rc = shell.Run(cmd, 0, True)
+If rc <> 0 Then
+  On Error Resume Next
+  Set tsLog = fso.OpenTextFile(logFile, 8, True)
+  tsLog.WriteLine CStr(Now) & "  pythonw falló (rc=" & rc & "), probando python visible"
+  tsLog.Close
+  On Error GoTo 0
+  cmd = """" & py & """ """ & script & """"
+  rc = shell.Run(cmd, 1, True)
 End If
 
-chrome = "C:\Program Files\Google\Chrome\Application\chrome.exe"
-If Not fso.FileExists(chrome) Then
-  chrome = "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"
+If rc <> 0 Then
+  MsgBox "No pude abrir Rankings Scarlett." & vbCrLf & vbCrLf & _
+    "Python usado: " & pyw & vbCrLf & _
+    "Log: " & logFile & vbCrLf & vbCrLf & _
+    "Prueba también: ranking-app\ABRIR_RANKINGS.bat", vbCritical, "Rankings Scarlett"
+  WScript.Quit CInt(rc)
 End If
-
-perfil = shell.ExpandEnvironmentStrings("%LOCALAPPDATA%") & "\RankingApp\perfil"
-cmd = """" & chrome & """ --app=http://127.0.0.1:5002/ --user-data-dir=""" & perfil & """ --no-first-run --no-default-browser-check --disable-session-crashed-bubble"
-shell.Run cmd, 1, False

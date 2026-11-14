@@ -184,7 +184,7 @@ async function cutClip(
   }
 
   if (filterStr) {
-    args.push("-c:v", "libx264", "-preset", "fast", "-crf", "17", "-c:a", "aac", "-b:a", "256k");
+    args.push("-c:v", "libx264", "-preset", "fast", "-crf", "15", "-tune", "film", "-c:a", "aac", "-b:a", "256k");
   }
 
   args.push("-movflags", "+faststart", outFile);

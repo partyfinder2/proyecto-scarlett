@@ -73,3 +73,50 @@ def entregar_lote_en_inbox(
         "jpg": str(jpg_out) if jpg_out else None,
         "json": str(json_path),
     }
+
+
+def entregar_ranking_en_inbox(
+    mp4_path: str,
+    miniatura_path: str | None,
+    title: str,
+    caption: str | None = None,
+) -> dict:
+    stem = f"ranking-{Path(mp4_path).stem.replace('ranking-', '')}"
+    inbox = ruta_inbox_babeldesk()
+    if not inbox.parent.exists():
+        return {
+            "ok": False,
+            "error": f"No existe la carpeta padre de Inbox: {inbox.parent}",
+            "inbox": str(inbox),
+        }
+
+    mp4_out = _copia_atomica(Path(mp4_path), inbox, f"{stem}.mp4")
+    jpg_out = None
+    if miniatura_path and Path(miniatura_path).exists():
+        jpg_out = _copia_atomica(Path(miniatura_path), inbox, f"{stem}.jpg")
+
+    json_payload = {
+        "title": title or stem,
+        "caption": caption or title or stem,
+        "source": "ranking-app-via-fabrica",
+    }
+    json_path = inbox / f"{stem}.json"
+    tmp_json = inbox / f"{stem}.json.tmp"
+    tmp_json.write_text(json.dumps(json_payload, ensure_ascii=False, indent=2), encoding="utf-8")
+    if json_path.exists():
+        json_path.unlink()
+    tmp_json.replace(json_path)
+
+    anotar(
+        "health_check",
+        "verde",
+        f"📤 Ranking '{title or stem}' entregado en BabelDesk Inbox.",
+        str(mp4_out),
+    )
+    return {
+        "ok": True,
+        "inbox": str(inbox),
+        "mp4": str(mp4_out),
+        "jpg": str(jpg_out) if jpg_out else None,
+        "json": str(json_path),
+    }

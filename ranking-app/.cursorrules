@@ -4,12 +4,15 @@
 2. **PUERTO Y ARRANQUE PROPIOS:**
    - Esta app corre en `127.0.0.1:5002` (verificado libre). No usar el puerto `5001` (reservado para `fabrica-de-contenido/`).
    - Usar siempre `python -m uvicorn app:app --host 127.0.0.1 --port 5002` (no `uvicorn` directo, para evitar problemas de PATH en Python 3.14).
-   - Para abrir la ventana de la app, usar `scripts/abrir_ranking.vbs` / `arrancar_ranking.bat` con `C:\Program Files\Google\Chrome\Application\chrome.exe --app=http://127.0.0.1:5002/` (respaldo: `C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe`). Nunca usar `webbrowser.open()`.
+   - Para abrir la ventana de la app, usar `scripts/abrir_ranking.vbs` ejecutando `scripts/ventana_ranking.py` con ventana nativa del sistema (WebView2 vía pywebview con AppUserModelID `Scarlett.RankingApp.1` e icono propio `assets/ranking_app.ico`). **PROHIBIDO** abrir Google Chrome o usar pestañas de navegador; debe comportarse como software independiente del sistema operativo.
    - Para FFmpeg/FFprobe, resolver con `shutil.which("ffmpeg")` / `shutil.which("ffprobe")` (respaldo: `%LOCALAPPDATA%\Microsoft\WinGet\Links\`) y devolver error claro en español si faltan.
-3. **CONTRATO DE ARQUITECTURA (NO CAMBIAR SIN APROBACIÓN):**
-   - Stack: Python 3.14 + FastAPI + Pillow + FFmpeg local + ventana Chrome `--app`. Frontend en HTML + CSS + JavaScript vanilla (`panel/index.html`, `panel/app.js`, `panel/style.css`), sin React, sin Vue, sin `npm` ni CDNs externos.
+3. **CONTRATO DE ARQUITECTURA Y CALIDAD BLINDADA (ZONA CERRADA - NO MODIFICAR):**
+   - Stack: Python 3.14 + FastAPI + Pillow + FFmpeg local + Ventana nativa WebView2. Frontend en HTML + CSS + JavaScript vanilla (`panel/index.html`, `panel/app.js`, `panel/style.css`), sin frameworks pesados ni dependencias externas.
+   - Sincronización en vivo: Endpoint SSE `/api/proyecto/stream` activo para auto-refrescar la lista de clips cuando BabelDesk o la Fábrica envíen videos. Cabeceras anti-caché obligatorias.
+   - Calidad Máxima de Render (NO degradar): CRF 15, flags de escala `lanczos+accurate_rnd`, filtro `unsharp=5:5:0.5:5:5:0.0`, tune film. Prohibido usar CRF alto (>18) o presets ultrarrápidos que degraden imagen.
+   - Concatenado: Usar `-c copy` para los segmentos ya normalizados (sin re-codificación adicional).
    - Overlays: generar un PNG transparente por puesto con **Pillow** y usarlo tanto en el preview como en el export FFmpeg (`overlay=`). **NO** usar `drawtext` para el look final.
-   - Render FFmpeg seguro: normalizar cada segmento por separado a `1080x1920`, `30 fps`, `yuv420p`, `setsar=1`; si un clip no tiene audio, inyectar `anullsrc`; concatenar segmentos; mezclar música/sting/voz con `amix=...:normalize=0`; exportar con `-pix_fmt yuv420p -r 30 -movflags +faststart -map_metadata -1`.
+   - Normalización FFmpeg: `1080x1920`, `30 fps`, `yuv420p`, `setsar=1`; inyectar `anullsrc` en clips mudos; audio de música/sting/voz con `amix=...:normalize=0`; exportar con `-pix_fmt yuv420p -r 30 -movflags +faststart -map_metadata -1`.
    - Regla de orden: el último clip del deck es el `#1` y se reproduce al final (`#5 -> #4 -> #3 -> #2 -> #1`).
 4. **SIN BLOQUEAR EN REDES NI NUBE:** Esta app solo produce el `.mp4` local, guarda el proyecto JSON local y, opcionalmente, entrega `.mp4` + `.jpg` + `.json` de forma atómica en `BabelDesk\Inbox` usando `babeldesk_entrega.py` (`entregar_ranking_en_inbox`, ya incluido). No implementa cuentas, login, nube ni auto-publicación directa.
 5. **ACTUALIZAR AVANCE:** Cada módulo terminado o probado debe actualizarse en `ESTADO_AVANCE.md`.
