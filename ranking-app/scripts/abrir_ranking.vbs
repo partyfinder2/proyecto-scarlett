@@ -37,7 +37,6 @@ tsLog.Close
 On Error GoTo 0
 
 cmd = """" & pyw & """ """ & script & """"
-' True = esperar hasta que cierres Rankings (antes era False y parecía que "no abría")
 rc = shell.Run(cmd, 0, True)
 If rc <> 0 Then
   On Error Resume Next
